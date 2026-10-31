@@ -9,7 +9,7 @@ const SALES_STATUSES = [
   "DELIVERED",
 ];
 
-const persianFormatter = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {timeZone:"Asia/Tehran",year:"numeric",month:"numeric",day:"numeric"});
+const persianFormatter = new Intl.DateTimeFormat("fa-IR-u-ca-persian-nu-latn", {timeZone:"Asia/Tehran",year:"numeric",month:"numeric",day:"numeric"});
 const persianMonthFormatter = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {timeZone:"Asia/Tehran",month:"long"});
 const persianParts = (date) => Object.fromEntries(persianFormatter.formatToParts(date).map(({type,value})=>[type,value]));
 const persianKey = (date) => { const p=persianParts(date); return String(p.year).replace(/\D/g,"")+"-"+String(p.month).replace(/\D/g,"").padStart(2,"0"); };
