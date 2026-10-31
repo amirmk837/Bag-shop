@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { FiRefreshCw, FiSearch, FiTrash2 } from "react-icons/fi";
 
 import FeedbackDialog from "../components/ui/FeedbackDialog";
@@ -93,6 +94,7 @@ const AdminOrders = () => {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -184,6 +186,11 @@ const AdminOrders = () => {
     }
   };
 
+  useEffect(() => {
+    const orderId = searchParams.get("orderId");
+    if (orderId) openOrder(orderId);
+  }, [searchParams]);
+
   const closeModal = () => {
     if (updatingStatus || updatingShipping || deletingOrderId !== null) {
       return;
@@ -191,6 +198,7 @@ const AdminOrders = () => {
 
     setModalOpen(false);
     setSelectedOrder(null);
+    if (searchParams.has("orderId")) setSearchParams({}, { replace: true });
     setDetailError("");
     setStatusSuccess("");
     setShippingSuccess("");
