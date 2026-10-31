@@ -107,15 +107,16 @@ app.use((error, req, res, next) => {
 
   console.error("Unhandled API error:", {
     method: req.method,
-    path: req.originalUrl,
+    path: req.path,
     message: error?.message,
   });
 
+  const candidateStatus = error?.statusCode ?? error?.status;
   const statusCode =
-    Number.isInteger(error?.statusCode) &&
-    error.statusCode >= 400 &&
-    error.statusCode < 500
-      ? error.statusCode
+    Number.isInteger(candidateStatus) &&
+    candidateStatus >= 400 &&
+    candidateStatus < 500
+      ? candidateStatus
       : 500;
 
   return res.status(statusCode).json({
