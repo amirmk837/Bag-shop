@@ -176,6 +176,66 @@ export const getAdminOrderDetail = async (orderId) => {
 };
 
 // =========================================
+// LIST UNRESOLVED PAYMENT TRANSACTIONS
+// =========================================
+
+export const getPaymentReconciliationQueue = async ({ page = 1, pageSize = 20 } = {}) => {
+  const currentPage = parsePositiveInt(page, 1, 100000);
+  const currentPageSize = parsePositiveInt(pageSize, 20, 100);
+  const where = {
+    status: { in: ["REQUESTING", "REQUESTED"] },
+    order: { status: "PENDING" },
+  };
+
+  const [total, payments] = await prisma.$transaction([
+    prisma.payment.count({ where }),
+    prisma.payment.findMany({
+      where,
+      select: {
+        id: true,
+        orderId: true,
+        provider: true,
+        status: true,
+        amountRial: true,
+        authority: true,
+        createdAt: true,
+        updatedAt: true,
+        order: {
+          select: {
+            id: true,
+            status: true,
+            totalAmount: true,
+            createdAt: true,
+            user: { select: { id: true, username: true, phone: true } },
+          },
+        },
+      },
+      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
+      skip: (currentPage - 1) * currentPageSize,
+      take: currentPageSize,
+    }),
+  ]);
+
+  return {
+    items: payments.map((payment) => ({
+      ...payment,
+      reconciliationHint:
+        payment.status === "REQUESTING"
+          ? "REQUEST_RESULT_UNKNOWN_NO_AUTHORITY_SAVED"
+          : "AWAITING_CALLBACK_OR_VERIFICATION",
+      hasAuthority: Boolean(payment.authority),
+      authority: undefined,
+    })),
+    pagination: {
+      page: currentPage,
+      pageSize: currentPageSize,
+      total,
+      totalPages: Math.ceil(total / currentPageSize),
+    },
+  };
+};
+
+// =========================================
 // FIND PRODUCT FOR ORDER ITEM
 // =========================================
 
