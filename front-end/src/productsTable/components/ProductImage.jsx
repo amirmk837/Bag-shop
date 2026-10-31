@@ -1,37 +1,34 @@
 import { useRef } from "react";
 
-const ProductImage = ({ image, title, id, onNext, onPrev }) => {
+const ProductImage = ({ image, title, id, onNext, onPrev, onClick }) => {
   const touchStartX = useRef(null);
   const touchEndX = useRef(null);
 
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX;
+  const handleTouchStart = (event) => {
+    touchStartX.current = event.touches[0].clientX;
+    touchEndX.current = null;
   };
 
-  const handleTouchMove = (e) => {
-    touchEndX.current = e.touches[0].clientX;
+  const handleTouchMove = (event) => {
+    touchEndX.current = event.touches[0].clientX;
   };
 
-  const handleTouchEnd = (e) => {
+  const handleTouchEnd = (event) => {
     if (touchStartX.current === null || touchEndX.current === null) {
+      touchStartX.current = null;
+      touchEndX.current = null;
       return;
     }
 
     const distance = touchStartX.current - touchEndX.current;
 
-    const minimumSwipe = 50;
+    if (Math.abs(distance) >= 50) {
+      event.preventDefault();
+      event.stopPropagation();
 
-    if (Math.abs(distance) >= minimumSwipe) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      // کشیدن از چپ به راست
       if (distance < 0) {
         onNext?.();
-      }
-
-      // کشیدن از راست به چپ
-      if (distance > 0) {
+      } else {
         onPrev?.();
       }
     }
@@ -41,34 +38,22 @@ const ProductImage = ({ image, title, id, onNext, onPrev }) => {
   };
 
   return (
-    <button
-      type="button"
-      className="
-        h-full
-        w-full
-        cursor-pointer
-        touch-pan-y
-      "
+    <img
+      src={image}
+      alt={title || id || "تصویر محصول"}
+      draggable="false"
+      onClick={onClick}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-    >
-      <img
-        src={image}
-        alt={title || id}
-        draggable="false"
-        className="
-          h-full
-          w-full
-          select-none
-          object-contain
-          p-4
-          transition-transform
-          duration-700
-          group-hover:scale-105
-        "
-      />
-    </button>
+      className="
+        h-full w-full cursor-pointer
+        select-none object-contain p-4
+        touch-pan-y
+        transition-transform duration-700
+        group-hover:scale-105
+      "
+    />
   );
 };
 

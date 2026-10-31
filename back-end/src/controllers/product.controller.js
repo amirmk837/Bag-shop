@@ -78,13 +78,6 @@ const createProductController = async (req, res) => {
         errors: validation.error.issues,
       });
     }
-    if (!validation.success) {
-      return res.status(400).json({
-        success: false,
-        message: "اطلاعات محصول نامعتبر است",
-        errors: validation.error.issues,
-      });
-    }
 
     const product = await createProduct(validation.data);
 
@@ -102,6 +95,13 @@ const createProductController = async (req, res) => {
       });
     }
 
+    if (error.code === "DUPLICATE_COLOR") {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
     res.status(500).json({
       success: false,
       message: "خطا در ایجاد محصول",
@@ -115,13 +115,9 @@ const createProductController = async (req, res) => {
 
 const updateProductController = async (req, res) => {
   try {
-    console.log("PATCH BODY:", req.body);
-
     const { productCode } = req.params;
 
     const validation = updateProductSchema.safeParse(req.body);
-
-    console.log("VALIDATION:", validation.success);
 
     if (!validation.success) {
       return res.status(400).json({
@@ -138,7 +134,33 @@ const updateProductController = async (req, res) => {
       data: product,
     });
   } catch (error) {
-    // ...
+    console.error("Update product error:", error);
+
+    if (error.code === "P2025") {
+      return res.status(404).json({
+        success: false,
+        message: "محصول یا دسته‌بندی پیدا نشد",
+      });
+    }
+
+    if (error.code === "CATEGORY_NOT_FOUND") {
+      return res.status(400).json({
+        success: false,
+        message: "دسته‌بندی پیدا نشد",
+      });
+    }
+
+    if (error.code === "DUPLICATE_COLOR") {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "خطا در ویرایش محصول",
+    });
   }
 };
 

@@ -8,16 +8,41 @@ import {
   deleteProductController,
 } from "../controllers/product.controller.js";
 
+import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
+
 const router = express.Router();
 
+// =========================================
+// Public Routes
+// =========================================
+
+// دریافت همه محصولات
 router.get("/", getProductsController);
 
+// دریافت یک محصول
 router.get("/:productCode", getProductByCodeController);
 
-router.post("/", createProductController);
+// =========================================
+// Protected Admin Routes
+// =========================================
 
-router.patch("/:productCode", updateProductController);
+// ایجاد محصول
+router.post("/", requireAuth, requireAdmin, createProductController);
 
-router.delete("/:productCode", deleteProductController);
+// ویرایش محصول
+router.patch(
+  "/:productCode",
+  requireAuth,
+  requireAdmin,
+  updateProductController,
+);
+
+// حذف محصول
+router.delete(
+  "/:productCode",
+  requireAuth,
+  requireAdmin,
+  deleteProductController,
+);
 
 export default router;

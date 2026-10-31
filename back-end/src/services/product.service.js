@@ -1,14 +1,49 @@
 import prisma from "../config/prisma.js";
 
+const productInclude = {
+  category: true,
+  colorStocks: {
+    orderBy: { id: "asc" },
+    select: { id: true, color: true, count: true },
+  },
+};
+
+const createProductError = (code, message) => {
+  const error = new Error(message);
+  error.code = code;
+  return error;
+};
+
+const normalizeColorStocks = (colorStocks) => {
+  const result = new Map();
+
+  for (const item of Array.isArray(colorStocks) ? colorStocks : []) {
+    const color = String(item?.color ?? "").trim();
+
+    if (!color) continue;
+
+    if (result.has(color)) {
+      throw createProductError("DUPLICATE_COLOR", `رنگ «${color}» تکراری است.`);
+    }
+
+    result.set(color, Number(item.count));
+  }
+
+  return [...result].map(([color, count]) => ({ color, count }));
+};
+
+const sumStocks = (stocks) =>
+  stocks.reduce((total, item) => total + item.count, 0);
+
+const joinColors = (stocks) => stocks.map((item) => item.color).join("، ");
+
 // =========================================
 // GET ALL
 // =========================================
 
 const getProducts = async () => {
   return prisma.product.findMany({
-    include: {
-      category: true,
-    },
+    include: productInclude,
     orderBy: {
       id: "asc",
     },
@@ -24,9 +59,7 @@ const getProductByCode = async (productCode) => {
     where: {
       productCode,
     },
-    include: {
-      category: true,
-    },
+    include: productInclude,
   });
 };
 
@@ -42,11 +75,11 @@ const createProduct = async (data) => {
   });
 
   if (!category) {
-    const error = new Error("دسته‌بندی پیدا نشد");
-    error.code = "CATEGORY_NOT_FOUND";
-
-    throw error;
+    throw createProductError("CATEGORY_NOT_FOUND", "دسته‌بندی پیدا نشد");
   }
+
+  const stocks = normalizeColorStocks(data.colorStocks);
+  const hasColors = stocks.length > 0;
 
   return prisma.product.create({
     data: {
@@ -59,16 +92,17 @@ const createProduct = async (data) => {
 
       categoryId: category.id,
 
-      count: data.count,
-      color: data.color,
+      // با رنگ‌بندی، موجودی کل مجموع موجودی رنگ‌هاست.
+      count: hasColors ? sumStocks(stocks) : data.count,
+      color: hasColors ? joinColors(stocks) : null,
       price: data.price,
       description: data.description,
       images: data.images,
+
+      colorStocks: hasColors ? { create: stocks } : undefined,
     },
 
-    include: {
-      category: true,
-    },
+    include: productInclude,
   });
 };
 
@@ -84,28 +118,93 @@ const updateProduct = async (productCode, data) => {
   });
 
   if (!category) {
-    const error = new Error("دسته‌بندی پیدا نشد");
-
-    error.code = "CATEGORY_NOT_FOUND";
-
-    throw error;
+    throw createProductError("CATEGORY_NOT_FOUND", "دسته‌بندی پیدا نشد");
   }
 
-  return prisma.product.update({
-    where: {
-      productCode,
-    },
+  const { colorStocks, color, count, ...fields } = data;
 
-    data: {
-      ...data,
+  const stocks =
+    colorStocks === undefined ? null : normalizeColorStocks(colorStocks);
+
+  return prisma.$transaction(async (tx) => {
+    const existing = await tx.product.findUnique({
+      where: { productCode },
+      select: { id: true },
+    });
+
+    if (!existing) {
+      throw createProductError("P2025", "محصول پیدا نشد");
+    }
+
+    const updateData = {
+      ...fields,
 
       // موقتاً برای سازگاری Frontend قدیمی
       brand: category.name,
-    },
+    };
 
-    include: {
-      category: true,
-    },
+    if (stocks === null) {
+      if (count !== undefined) updateData.count = count;
+      if (color !== undefined) updateData.color = color;
+    } else if (stocks.length > 0) {
+      const colors = stocks.map((item) => item.color);
+
+      // رنگ‌های حذف‌شده: موجودی و ردیف‌های سبد آن‌ها پاک می‌شود.
+      await tx.productColorStock.deleteMany({
+        where: {
+          productId: existing.id,
+          color: { notIn: colors },
+        },
+      });
+
+      await tx.cartItem.deleteMany({
+        where: {
+          productId: existing.id,
+          color: { notIn: colors },
+        },
+      });
+
+      for (const item of stocks) {
+        await tx.productColorStock.upsert({
+          where: {
+            productId_color: {
+              productId: existing.id,
+              color: item.color,
+            },
+          },
+          update: { count: item.count },
+          create: {
+            productId: existing.id,
+            color: item.color,
+            count: item.count,
+          },
+        });
+      }
+
+      updateData.count = sumStocks(stocks);
+      updateData.color = joinColors(stocks);
+    } else {
+      // محصول بدون رنگ‌بندی
+      await tx.productColorStock.deleteMany({
+        where: { productId: existing.id },
+      });
+
+      await tx.cartItem.deleteMany({
+        where: {
+          productId: existing.id,
+          NOT: { color: "" },
+        },
+      });
+
+      if (count !== undefined) updateData.count = count;
+      updateData.color = null;
+    }
+
+    return tx.product.update({
+      where: { productCode },
+      data: updateData,
+      include: productInclude,
+    });
   });
 };
 

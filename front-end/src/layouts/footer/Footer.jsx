@@ -4,25 +4,27 @@ import FooterAbout from "./FooterAbout";
 const Footer = () => {
   return (
     <footer
+      dir="rtl"
       className="
-        bg-gradient-to-br
-        from-zinc-900
-        via-zinc-700
-        to-zinc-900
-        px-4
-        py-8
-        sm:px-6
-        sm:py-10
+        relative overflow-hidden
+        border-t border-white/10
+        bg-gradient-to-br from-black via-zinc-900 to-black
+        px-4 py-8 text-white
+        sm:px-6 sm:py-10
         md:px-10
       "
     >
-      <div className="container mx-auto">
-        {/* نوار بالایی */}
+      <div className="container relative mx-auto max-w-7xl">
         <FooterTop />
 
-        {/* درباره ما */}
         <div className="mt-8 sm:mt-10">
           <FooterAbout />
+        </div>
+
+        <div className="mt-8 border-t border-white/10 pt-5 text-center">
+          <p className="text-xs text-zinc-500 sm:text-sm">
+            © فروشگاه الماس — تمامی حقوق محفوظ است.
+          </p>
         </div>
       </div>
     </footer>

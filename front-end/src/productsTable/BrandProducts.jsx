@@ -14,6 +14,8 @@ const BrandProducts = ({
   const [error, setError] = useState("");
 
   useEffect(() => {
+    let cancelled = false;
+
     const loadProducts = async () => {
       try {
         setLoading(true);
@@ -21,16 +23,30 @@ const BrandProducts = ({
 
         const data = await getProducts();
 
-        let filteredProducts = data;
+        if (cancelled) return;
 
+        const allProducts = Array.isArray(data) ? data : [];
+
+        let filteredProducts = allProducts;
+
+        // فیلتر برند
         if (brand) {
-          filteredProducts = data.filter(
-            (product) => product.brand?.toLowerCase() === brand.toLowerCase(),
-          );
+          const normalizedBrand = brand.trim().toLowerCase();
+
+          filteredProducts = filteredProducts.filter((product) => {
+            const productBrand = product.brand?.trim().toLowerCase();
+            const categoryName = product.category?.name?.trim().toLowerCase();
+
+            return (
+              productBrand === normalizedBrand ||
+              categoryName === normalizedBrand
+            );
+          });
         }
 
-        if (productCodes) {
-          filteredProducts = data.filter((product) =>
+        // فیلتر کد محصول؛ در صورت ارسال، با فیلتر برند ترکیب می‌شود.
+        if (Array.isArray(productCodes) && productCodes.length > 0) {
+          filteredProducts = filteredProducts.filter((product) =>
             productCodes.includes(product.productCode),
           );
         }
@@ -38,18 +54,30 @@ const BrandProducts = ({
         setProducts(filteredProducts);
       } catch (error) {
         console.error("Brand products error:", error);
-        setError("خطا در دریافت محصولات");
+
+        if (!cancelled) {
+          setError("خطا در دریافت محصولات");
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     };
 
     loadProducts();
+
+    return () => {
+      cancelled = true;
+    };
   }, [brand, productCodes]);
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center text-white">
+      <div
+        className="flex min-h-[50vh] items-center justify-center text-white"
+        dir="rtl"
+      >
         در حال دریافت محصولات...
       </div>
     );
@@ -57,55 +85,54 @@ const BrandProducts = ({
 
   if (error) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center text-red-400">
+      <div
+        className="flex min-h-[50vh] items-center justify-center text-red-400"
+        dir="rtl"
+      >
         {error}
       </div>
     );
   }
 
   return (
-    <div
+    <section
       className="w-full px-3 py-6 sm:px-5 sm:py-8 md:px-6 md:py-10"
       dir="rtl"
     >
       <div className="mx-auto w-full max-w-7xl">
-        <div className="flex justify-center">
-          <img
-            src={logo}
-            alt={logoAlt}
-            className={`mb-8 sm:mb-10 ${logoClassName}`}
-          />
-        </div>
+        {logo && (
+          <div className="mb-6 flex justify-center sm:mb-10">
+            <img
+              src={logo}
+              alt={logoAlt || (brand ? `لوگوی ${brand}` : "لوگوی فروشگاه")}
+              className={`max-w-full object-contain ${logoClassName}`}
+            />
+          </div>
+        )}
 
         {products.length === 0 ? (
-          <div className="flex min-h-[30vh] items-center justify-center text-zinc-500">
+          <div className="flex min-h-[30vh] items-center justify-center text-center text-zinc-400">
             محصولی برای این دسته پیدا نشد.
           </div>
         ) : (
           <div
             className="
-              grid
-              w-full
-              min-w-0
-              grid-cols-1
-              gap-4
-              sm:grid-cols-2
+              grid w-full min-w-0 grid-cols-2 gap-3
+              max-[360px]:grid-cols-1
               sm:gap-5
-              md:grid-cols-3
-              md:gap-6
-              lg:grid-cols-4
-              lg:gap-8
+              md:grid-cols-3 md:gap-6
+              lg:grid-cols-4 lg:gap-7
             "
           >
             {products.map((product) => (
-              <div key={product.productCode} className="w-full min-w-0">
+              <div key={product.productCode ?? product.id} className="min-w-0">
                 <ProductCard product={product} />
               </div>
             ))}
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 

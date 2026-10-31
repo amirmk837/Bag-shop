@@ -1,96 +1,76 @@
-import { FiPhone } from "react-icons/fi";
-import { FaHome } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { FiShoppingCart } from "react-icons/fi";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
+import HamburgerMenu from "./HamburgerMenu";
 
 const TopBar = () => {
+  const navigate = useNavigate();
+  const { user, loading } = useAuth();
+  const { totalItems } = useCart();
+
+  const cartCount = Number(totalItems || 0);
+  const showCart = !loading && user?.role !== "ADMIN";
+
   return (
-    <div className="container mx-auto px-3 sm:px-5">
+    <div className="container mx-auto w-full px-3 sm:px-5">
       <div
-        className="
-          flex
-          items-center
-          justify-between
-          gap-2
-          py-3
-          sm:gap-4
-          sm:py-4
-          md:py-5
-        "
+        dir="rtl"
+        className="relative flex items-center justify-between gap-2 py-3 sm:py-4 md:py-5"
       >
-        {/* ================================================= */}
-        {/* شماره تماس */}
-        {/* ================================================= */}
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <HamburgerMenu />
 
-        <div
-          className="
-            flex
-            min-w-0
-            shrink
-            items-center
-            gap-1.5
-            font-semibold
-            text-white
-            sm:gap-2
-          "
-        >
-          <FiPhone size={18} className="shrink-0 sm:h-5 sm:w-5" />
+          {showCart && (
+            <button
+              type="button"
+              onClick={() => navigate("/cart")}
+              aria-label="سبد خرید"
+              className="
+                relative flex h-10 w-10 shrink-0 items-center
+                justify-center rounded-xl text-zinc-300
+                transition duration-300 hover:bg-white/10
+                hover:text-white
+                focus-visible:outline-none
+                focus-visible:ring-2 focus-visible:ring-white/60
+              "
+            >
+              <FiShoppingCart size={21} />
 
-          <span
-            className="
-              whitespace-nowrap
-              text-[11px]
-              sm:text-sm
-              md:text-base
-            "
-          >
-            09106386819
-          </span>
+              {cartCount > 0 && (
+                <span
+                  className="
+                    absolute -right-0.5 -top-0.5 flex min-h-5
+                    min-w-5 items-center justify-center
+                    rounded-full bg-white px-1 text-[10px]
+                    font-black leading-none text-zinc-900
+                  "
+                >
+                  {cartCount > 99 ? "99+" : cartCount}
+                </span>
+              )}
+            </button>
+          )}
         </div>
-
-        {/* ================================================= */}
-        {/* لوگو */}
-        {/* ================================================= */}
-
-        <Link to="/" aria-label="صفحه اصلی" className="shrink-0">
-          <img
-            src="/images/icon.png"
-            alt="لوگوی فروشگاه کاظمی"
-            className="
-              w-11
-              object-contain
-              sm:w-14
-              md:w-16
-            "
-          />
-        </Link>
-
-        {/* ================================================= */}
-        {/* فروشگاه */}
-        {/* ================================================= */}
 
         <Link
           to="/"
+          aria-label="صفحه اصلی فروشگاه الماس"
           className="
-            flex
-            min-w-0
-            shrink
-            items-center
-            gap-1.5
-            whitespace-nowrap
-            font-bold
-            text-white
-            sm:gap-2
+            absolute left-1/2 top-1/2 flex -translate-x-1/2
+            -translate-y-1/2 items-center gap-2 rounded-xl p-1
+            transition-opacity duration-300 hover:opacity-80
+            focus-visible:outline-none
+            focus-visible:ring-2 focus-visible:ring-white/60
           "
         >
-          <FaHome size={21} className="shrink-0 sm:h-6 sm:w-6 md:h-7 md:w-7" />
+          <img
+            src="/images/icon.png"
+            alt=""
+            className="h-10 w-10 object-contain sm:h-12 sm:w-12"
+          />
 
-          <span
-            className="
-              text-[13px]
-              sm:text-base
-              md:text-[20px]
-            "
-          >
+          <span className="hidden whitespace-nowrap text-sm font-bold text-white sm:inline md:text-base">
             فروشگاه الماس
           </span>
         </Link>

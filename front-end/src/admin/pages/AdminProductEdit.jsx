@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
 import { getProductByCode, updateProduct } from "../../services/api";
-
 import AdminProductForm from "../components/AdminProductForm";
 
 const AdminProductEdit = () => {
@@ -22,6 +20,8 @@ const AdminProductEdit = () => {
   // =================================================
 
   useEffect(() => {
+    let ignore = false;
+
     const loadProduct = async () => {
       try {
         setLoading(true);
@@ -30,23 +30,36 @@ const AdminProductEdit = () => {
         const data = await getProductByCode(productCode);
 
         if (!data) {
-          setProduct(null);
-          setError("محصول پیدا نشد");
+          if (!ignore) {
+            setProduct(null);
+            setError("محصول پیدا نشد");
+          }
+
           return;
         }
 
-        setProduct(data);
+        if (!ignore) {
+          setProduct(data);
+        }
       } catch (error) {
         console.error("Load product error:", error);
 
-        setProduct(null);
-        setError("خطا در دریافت اطلاعات محصول");
+        if (!ignore) {
+          setProduct(null);
+          setError(error.message || "خطا در دریافت اطلاعات محصول");
+        }
       } finally {
-        setLoading(false);
+        if (!ignore) {
+          setLoading(false);
+        }
       }
     };
 
     loadProduct();
+
+    return () => {
+      ignore = true;
+    };
   }, [productCode]);
 
   // =================================================
@@ -59,7 +72,15 @@ const AdminProductEdit = () => {
       setError("");
       setSuccess("");
 
-      await updateProduct(productCode, data);
+      await updateProduct(productCode, {
+        title: data.title,
+        categoryId: data.categoryId,
+        count: data.count,
+        color: data.color,
+        price: data.price,
+        description: data.description,
+        images: data.images,
+      });
 
       setSuccess("محصول با موفقیت ویرایش شد.");
 
@@ -70,6 +91,8 @@ const AdminProductEdit = () => {
       console.error("Update product error:", error);
 
       setError(error.message || "خطا در ویرایش محصول");
+
+      throw error;
     } finally {
       setSaving(false);
     }
@@ -81,7 +104,15 @@ const AdminProductEdit = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-[40vh] items-center justify-center text-zinc-400">
+      <div
+        dir="rtl"
+        className="
+          flex min-h-[40vh]
+          items-center
+          justify-center
+          text-zinc-400
+        "
+      >
         در حال دریافت محصول...
       </div>
     );
@@ -93,7 +124,15 @@ const AdminProductEdit = () => {
 
   if (error && !product) {
     return (
-      <div className="flex min-h-[40vh] items-center justify-center text-red-400">
+      <div
+        dir="rtl"
+        className="
+          flex min-h-[40vh]
+          items-center
+          justify-center
+          text-red-400
+        "
+      >
         {error}
       </div>
     );
@@ -104,7 +143,7 @@ const AdminProductEdit = () => {
   }
 
   // =================================================
-  // Edit Form
+  // Edit
   // =================================================
 
   return (
@@ -121,19 +160,12 @@ const AdminProductEdit = () => {
         key={product.productCode}
         initialValues={{
           productCode: product.productCode || "",
-
           title: product.title || "",
-
           categoryId: product.categoryId ?? "",
-
           count: product.count ?? "",
-
           color: product.color || "",
-
           price: product.price ?? "",
-
           description: product.description || "",
-
           images: Array.isArray(product.url) ? product.url : [],
         }}
         onSubmit={handleSubmit}

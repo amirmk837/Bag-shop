@@ -1,4 +1,32 @@
+import { useEffect, useMemo, useState } from "react";
+import AddToCartButton from "../../components/cart/AddToCartButton";
+
 const ProductDetails = ({ product }) => {
+  // داخل کامپوننت ProductDetails، جایگزین بخش قبلی colors و selectedColor
+
+  const colors = useMemo(() => {
+    const rawColors = product.color;
+
+    const list = Array.isArray(rawColors)
+      ? rawColors
+      : typeof rawColors === "string"
+        ? rawColors.split(/[,،\n|]/)
+        : [];
+
+    return [
+      ...new Set(list.map((color) => String(color).trim()).filter(Boolean)),
+    ];
+  }, [product.color]);
+
+  const [selectedColor, setSelectedColor] = useState("");
+
+  useEffect(() => {
+    setSelectedColor(colors.length === 1 ? colors[0] : "");
+  }, [colors]);
+
+  const hasMultipleColors = colors.length > 1;
+  const hasColor = colors.length > 0;
+
   return (
     <div className="flex flex-col justify-center p-6 sm:p-8 md:p-14">
       {/* برند */}
@@ -35,7 +63,7 @@ const ProductDetails = ({ product }) => {
           </span>
         </div>
 
-        {/* تعداد */}
+        {/* موجودی */}
         <div className="flex items-center justify-between gap-4 border-b border-zinc-800 pb-4 sm:pb-5">
           <span className="shrink-0 text-sm text-zinc-500">تعداد</span>
 
@@ -43,12 +71,57 @@ const ProductDetails = ({ product }) => {
         </div>
 
         {/* رنگ */}
-        <div className="flex items-center justify-between gap-4 border-b border-zinc-800 pb-4 sm:pb-5">
-          <span className="shrink-0 text-sm text-zinc-500">رنگ</span>
+        <div className="border-b border-zinc-800 pb-4 sm:pb-5">
+          <div className="mb-3 flex items-center justify-between gap-4">
+            <span className="shrink-0 text-sm text-zinc-500">رنگ</span>
 
-          <span className="max-w-[60%] break-words text-left font-semibold">
-            {product.color}
-          </span>
+            {!hasColor && (
+              <span className="text-sm text-zinc-600">بدون رنگ‌بندی</span>
+            )}
+          </div>
+
+          {hasColor && hasMultipleColors && (
+            <div className="flex flex-wrap gap-2">
+              {colors.map((color) => {
+                const isSelected = selectedColor === color;
+
+                return (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => setSelectedColor(color)}
+                    className={`
+                      rounded-xl
+                      border
+                      px-4
+                      py-2
+                      text-sm
+                      font-semibold
+                      transition
+
+                      ${
+                        isSelected
+                          ? "border-white bg-white text-zinc-900"
+                          : "border-zinc-700 bg-zinc-900 text-zinc-300 hover:border-zinc-500"
+                      }
+                    `}
+                  >
+                    {color}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {hasColor && !hasMultipleColors && (
+            <span className="font-semibold">{colors[0]}</span>
+          )}
+
+          {hasMultipleColors && !selectedColor && (
+            <p className="mt-3 text-xs text-amber-500">
+              ابتدا رنگ موردنظر خود را انتخاب کنید.
+            </p>
+          )}
         </div>
       </div>
 
@@ -57,18 +130,27 @@ const ProductDetails = ({ product }) => {
         <span className="text-sm text-zinc-500">قیمت</span>
 
         <p className="mt-2 break-words text-3xl font-black sm:text-4xl">
-          {product.price}
+          {Number(product.price || 0).toLocaleString("fa-IR")} تومان
         </p>
       </div>
 
       {/* توضیحات */}
-      <div className="mt-8 rounded-2xl bg-zinc-800/60 p-4 sm:mt-10 sm:p-6">
+      <div className="mb-10 mt-8 rounded-2xl bg-zinc-800/60 p-4 sm:mt-10 sm:p-6">
         <span className="text-sm text-zinc-500">توضیحات</span>
 
         <p className="mt-3 break-words text-sm leading-7 text-zinc-300 sm:text-base sm:leading-8">
           {product.description || "توضیحی برای این محصول ثبت نشده است."}
         </p>
       </div>
+
+      {/* افزودن به سبد */}
+      <AddToCartButton
+        productCode={product.productCode}
+        productTitle={product.title}
+        productImage={product.images?.[0]}
+        color={selectedColor}
+        requireColor={colors.length > 0}
+      />
     </div>
   );
 };

@@ -1,9 +1,89 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_URL = (
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+).replace(/\/+$/, "");
+
+const API_ORIGIN = API_URL.startsWith("http") ? new URL(API_URL).origin : "";
+
 // =================================================
-// تبدیل Product از Backend به ساختار Frontend
+// مدیریت پاسخ سرور
+// =================================================
+
+const request = async (path, options = {}) => {
+  const response = await fetch(`${API_URL}${path}`, options);
+  const contentType = response.headers.get("content-type") || "";
+
+  let result = null;
+
+  if (contentType.includes("application/json")) {
+    try {
+      result = await response.json();
+    } catch {
+      throw new Error("پاسخ JSON سرور معتبر نیست.");
+    }
+  } else {
+    const text = await response.text();
+
+    if (!response.ok) {
+      throw new Error(
+        `خطای سرور (${response.status})${text ? `: ${text.slice(0, 150)}` : ""}`,
+      );
+    }
+
+    if (text.trim()) {
+      throw new Error("سرور پاسخ غیرمنتظره‌ای برگرداند.");
+    }
+  }
+
+  if (!response.ok) {
+    const error = new Error(
+      result?.message || `خطای سرور (${response.status})`,
+    );
+
+    error.status = response.status;
+    error.productCount = result?.productCount;
+
+    throw error;
+  }
+
+  return result;
+};
+
+const getData = (result) => result?.data ?? result;
+
+// =================================================
+// مدیریت آدرس تصاویر
+// =================================================
+
+const normalizeImageUrl = (url) => {
+  if (typeof url !== "string" || !url) return url;
+
+  if (/^https?:\/\//i.test(url)) {
+    return url;
+  }
+
+  // تصاویر آپلودشده روی بک‌اند
+  if (url.startsWith("/uploads/")) {
+    return `${API_ORIGIN}${url}`;
+  }
+
+  return url;
+};
+
+// =================================================
+// تبدیل محصول بک‌اند به ساختار فرانت‌اند
 // =================================================
 
 const normalizeProduct = (product) => {
+  if (!product || typeof product !== "object") {
+    throw new Error("ساختار اطلاعات محصول معتبر نیست.");
+  }
+
+  const images = Array.isArray(product.images)
+    ? product.images
+    : product.images
+      ? [product.images]
+      : [];
+
   return {
     ...product,
 
@@ -18,11 +98,7 @@ const normalizeProduct = (product) => {
         }
       : null,
 
-    url: Array.isArray(product.images)
-      ? product.images
-      : product.images
-        ? [product.images]
-        : [],
+    url: images.map(normalizeImageUrl),
   };
 };
 
@@ -31,15 +107,14 @@ const normalizeProduct = (product) => {
 // =================================================
 
 export const getProducts = async () => {
-  const response = await fetch(`${API_URL}/products`);
+  const result = await request("/products");
+  const data = getData(result);
 
-  if (!response.ok) {
-    throw new Error("خطا در دریافت محصولات");
+  if (!Array.isArray(data)) {
+    throw new Error("ساختار فهرست محصولات معتبر نیست.");
   }
 
-  const result = await response.json();
-
-  return result.data.map(normalizeProduct);
+  return data.map(normalizeProduct);
 };
 
 // =================================================
@@ -47,19 +122,25 @@ export const getProducts = async () => {
 // =================================================
 
 export const getProductByCode = async (productCode) => {
-  const response = await fetch(`${API_URL}/products/${productCode}`);
+  if (!productCode) {
+    throw new Error("کد محصول مشخص نشده است.");
+  }
 
-  if (!response.ok) {
-    if (response.status === 404) {
+  try {
+    const result = await request(
+      `/products/${encodeURIComponent(productCode)}`,
+    );
+
+    const data = getData(result);
+
+    return data ? normalizeProduct(data) : null;
+  } catch (error) {
+    if (error.status === 404) {
       return null;
     }
 
-    throw new Error("خطا در دریافت محصول");
+    throw error;
   }
-
-  const result = await response.json();
-
-  return normalizeProduct(result.data);
 };
 
 // =================================================
@@ -67,21 +148,16 @@ export const getProductByCode = async (productCode) => {
 // =================================================
 
 export const createProduct = async (product) => {
-  const response = await fetch(`${API_URL}/products`, {
+  const result = await request("/products", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(product),
   });
 
-  const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error(result.message || "خطا در ایجاد محصول");
-  }
-
-  return normalizeProduct(result.data);
+  return normalizeProduct(getData(result));
 };
 
 // =================================================
@@ -89,21 +165,16 @@ export const createProduct = async (product) => {
 // =================================================
 
 export const updateProduct = async (productCode, data) => {
-  const response = await fetch(`${API_URL}/products/${productCode}`, {
+  const result = await request(`/products/${encodeURIComponent(productCode)}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(data),
   });
 
-  const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error(result.message || "خطا در ویرایش محصول");
-  }
-
-  return normalizeProduct(result.data);
+  return normalizeProduct(getData(result));
 };
 
 // =================================================
@@ -111,48 +182,41 @@ export const updateProduct = async (productCode, data) => {
 // =================================================
 
 export const deleteProduct = async (productCode) => {
-  const response = await fetch(`${API_URL}/products/${productCode}`, {
+  const result = await request(`/products/${encodeURIComponent(productCode)}`, {
     method: "DELETE",
+    credentials: "include",
   });
 
-  const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error(result.message || "خطا در حذف محصول");
-  }
-
-  return result;
+  return getData(result);
 };
 
-export const uploadProductImage = async (file) => {
-  const formData = new FormData();
+// =================================================
+// POST /api/upload/product-image
+// =================================================
 
+export const uploadProductImage = async (file) => {
+  if (!(file instanceof File)) {
+    throw new Error("فایل تصویر معتبر نیست.");
+  }
+
+  const formData = new FormData();
   formData.append("image", file);
 
-  const response = await fetch(`${API_URL}/upload/product-image`, {
+  const result = await request("/upload/product-image", {
     method: "POST",
+    credentials: "include",
     body: formData,
   });
 
-  const contentType = response.headers.get("content-type") || "";
+  const data = getData(result);
 
-  if (!contentType.includes("application/json")) {
-    const text = await response.text();
-
-    console.error("Upload returned non-JSON response:", text);
-
-    throw new Error("سرور پاسخ نامعتبر برای آپلود تصویر برگرداند.");
-  }
-
-  const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error(result.message || "خطا در آپلود تصویر");
+  if (!data?.url) {
+    throw new Error("آدرس تصویر در پاسخ سرور وجود ندارد.");
   }
 
   return {
-    ...result.data,
-    url: `${API_URL.replace("/api", "")}${result.data.url}`,
+    ...data,
+    url: normalizeImageUrl(data.url),
   };
 };
 
@@ -161,19 +225,22 @@ export const uploadProductImage = async (file) => {
 // =================================================
 
 export const getCategories = async () => {
-  const response = await fetch(`${API_URL}/categories`);
+  const result = await request("/categories");
+  const data = getData(result);
 
-  const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error(result.message || "خطا در دریافت دسته‌بندی‌ها");
+  if (!Array.isArray(data)) {
+    throw new Error("ساختار دسته‌بندی‌ها معتبر نیست.");
   }
 
-  return result.data;
+  return data;
 };
 
+// =================================================
+// POST /api/categories
+// =================================================
+
 export const createCategory = async (data) => {
-  const response = await fetch(`${API_URL}/categories`, {
+  const result = await request("/categories", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -181,11 +248,41 @@ export const createCategory = async (data) => {
     body: JSON.stringify(data),
   });
 
-  const result = await response.json();
+  return getData(result);
+};
 
-  if (!response.ok) {
-    throw new Error(result.message || "خطا در ایجاد دسته‌بندی");
-  }
+// =================================================
+// PATCH /api/categories/:categoryId
+// =================================================
 
-  return result.data;
+export const updateCategory = async (categoryId, data) => {
+  const result = await request(
+    `/categories/${encodeURIComponent(categoryId)}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    },
+  );
+
+  return getData(result);
+};
+
+// =================================================
+// DELETE /api/categories/:categoryId
+// =================================================
+
+export const deleteCategory = async (categoryId, force = false) => {
+  const query = force ? "?force=true" : "";
+
+  const result = await request(
+    `/categories/${encodeURIComponent(categoryId)}${query}`,
+    {
+      method: "DELETE",
+    },
+  );
+
+  return getData(result);
 };

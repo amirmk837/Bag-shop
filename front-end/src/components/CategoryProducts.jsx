@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-import { getProducts } from "../services/api";
+import { getCategories, getProducts } from "../services/api";
 import ProductCard from "../productsTable/ProductCard";
 
 const CategoryProducts = () => {
@@ -19,21 +18,27 @@ const CategoryProducts = () => {
         setLoading(true);
         setError("");
 
-        const allProducts = await getProducts();
+        const [productsData, categoriesData] = await Promise.all([
+          getProducts(),
+          getCategories(),
+        ]);
 
-        const filteredProducts = allProducts.filter(
-          (product) => product.category?.slug === slug,
+        const foundCategory = categoriesData.find((item) => item.slug === slug);
+
+        if (!foundCategory) {
+          setError("دسته‌بندی پیدا نشد");
+          return;
+        }
+
+        const filteredProducts = productsData.filter(
+          (product) => product.category?.id === foundCategory.id,
         );
 
-        setProducts(filteredProducts);
-
-        const foundCategory = filteredProducts[0]?.category || null;
-
         setCategory(foundCategory);
+        setProducts(filteredProducts);
       } catch (error) {
         console.error("Category products error:", error);
-
-        setError("خطا در دریافت محصولات");
+        setError("خطا در دریافت اطلاعات دسته‌بندی");
       } finally {
         setLoading(false);
       }
@@ -59,14 +64,16 @@ const CategoryProducts = () => {
   }
 
   return (
-    <main dir="rtl" className="min-h-screen bg-zinc-900 px-4 py-10">
+    <main dir="rtl" className="min-h-screen px-4 py-10">
       <div className="mx-auto max-w-7xl">
         <div className="mb-10 text-center">
-          <h1 className="text-3xl font-bold text-white">
-            {category?.name || "دسته‌بندی"}
-          </h1>
-
-          <p className="mt-3 text-zinc-400">محصولات این دسته‌بندی</p>
+          {category?.image && (
+            <img
+              src={category.image}
+              alt={category.name}
+              className="mx-auto mb-5 h-32 object-contain"
+            />
+          )}
         </div>
 
         {products.length === 0 ? (

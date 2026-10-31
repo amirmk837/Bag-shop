@@ -1,15 +1,53 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import AdminProductForm from "../components/AdminProductForm";
 import { createProduct } from "../../services/api";
+
+import AdminProductForm from "../components/AdminProductForm";
 
 const AdminProductCreate = () => {
   const navigate = useNavigate();
 
-  const handleSubmit = async (data) => {
-    await createProduct(data);
+  const [saving, setSaving] = useState(false);
 
-    navigate("/admin/products");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  // =================================================
+  // ایجاد محصول
+  // =================================================
+
+  const handleSubmit = async (data) => {
+    try {
+      setSaving(true);
+      setError("");
+      setSuccess("");
+
+      await createProduct({
+        productCode: data.productCode,
+        title: data.title,
+        categoryId: data.categoryId,
+        count: data.count,
+        color: data.color,
+        price: data.price,
+        description: data.description,
+        images: data.images,
+      });
+
+      setSuccess("محصول با موفقیت ایجاد شد.");
+
+      setTimeout(() => {
+        navigate("/admin/products");
+      }, 800);
+    } catch (error) {
+      console.error("Create product error:", error);
+
+      setError(error.message || "خطا در ایجاد محصول");
+
+      throw error;
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -22,7 +60,13 @@ const AdminProductCreate = () => {
         </p>
       </div>
 
-      <AdminProductForm onSubmit={handleSubmit} submitText="ایجاد محصول" />
+      <AdminProductForm
+        onSubmit={handleSubmit}
+        submitText="ایجاد محصول"
+        saving={saving}
+        error={error}
+        success={success}
+      />
     </div>
   );
 };

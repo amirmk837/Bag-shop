@@ -13,6 +13,25 @@ const getInitialForm = (initialValues) => ({
   images: Array.isArray(initialValues?.images) ? initialValues.images : [],
 });
 
+const parseColors = (value) => {
+  if (Array.isArray(value)) {
+    return [
+      ...new Set(value.map((color) => String(color).trim()).filter(Boolean)),
+    ];
+  }
+
+  if (typeof value !== "string") return [];
+
+  return [
+    ...new Set(
+      value
+        .split(/[,،\n|]/)
+        .map((color) => color.trim())
+        .filter(Boolean),
+    ),
+  ];
+};
+
 const AdminProductForm = ({
   initialValues = null,
   onSubmit,
@@ -23,35 +42,82 @@ const AdminProductForm = ({
   success = "",
 }) => {
   const [form, setForm] = useState(() => getInitialForm(initialValues));
-
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
-
+  const [newColor, setNewColor] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState("");
+  const [formError, setFormError] = useState("");
 
   // =================================================
   // دریافت دسته‌بندی‌ها
   // =================================================
 
   useEffect(() => {
+    let ignore = false;
+
     const loadCategories = async () => {
       try {
+        setCategoriesLoading(true);
+        setFormError("");
+
         const data = await getCategories();
 
-        setCategories(data);
+        if (!ignore) {
+          setCategories(data);
+        }
       } catch (error) {
         console.error("Categories error:", error);
 
-        setUploadError("خطا در دریافت دسته‌بندی‌ها");
+        if (!ignore) {
+          setFormError("خطا در دریافت دسته‌بندی‌ها");
+        }
       } finally {
-        setCategoriesLoading(false);
+        if (!ignore) {
+          setCategoriesLoading(false);
+        }
       }
     };
 
     loadCategories();
+
+    return () => {
+      ignore = true;
+    };
   }, []);
 
+  const addColor = () => {
+    const color = newColor.trim();
+
+    if (!color) return;
+
+    const colors = parseColors(form.color);
+
+    if (colors.some((item) => item === color)) {
+      setFormError("این رنگ قبلاً اضافه شده است.");
+      return;
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      color: [...colors, color].join("، "),
+    }));
+
+    setNewColor("");
+    setFormError("");
+  };
+
+  const removeColor = (colorToRemove) => {
+    const colors = parseColors(form.color).filter(
+      (color) => color !== colorToRemove,
+    );
+
+    setForm((prev) => ({
+      ...prev,
+      color: colors.join("، "),
+    }));
+
+    setFormError("");
+  };
   // =================================================
   // تغییر فیلد
   // =================================================
@@ -63,6 +129,8 @@ const AdminProductForm = ({
       ...prev,
       [name]: value,
     }));
+
+    setFormError("");
   };
 
   // =================================================
@@ -78,7 +146,7 @@ const AdminProductForm = ({
 
     try {
       setUploading(true);
-      setUploadError("");
+      setFormError("");
 
       const uploadedImages = [];
 
@@ -95,7 +163,7 @@ const AdminProductForm = ({
     } catch (error) {
       console.error("Image upload error:", error);
 
-      setUploadError(error.message || "خطا در آپلود تصویر");
+      setFormError(error.message || "خطا در آپلود تصویر");
     } finally {
       setUploading(false);
       event.target.value = "";
@@ -117,26 +185,58 @@ const AdminProductForm = ({
   // Submit
   // =================================================
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    onSubmit({
-      productCode: form.productCode.trim(),
+    setFormError("");
 
-      title: form.title.trim(),
+    const productCode = form.productCode.trim();
+    const title = form.title.trim();
+    const categoryId = Number(form.categoryId);
+    const count = Number(form.count);
+    const price = Number(form.price);
 
-      categoryId: Number(form.categoryId),
+    if (!productCode) {
+      setFormError("کد محصول الزامی است.");
+      return;
+    }
 
-      count: Number(form.count),
+    if (!title) {
+      setFormError("عنوان محصول الزامی است.");
+      return;
+    }
 
+    if (!Number.isInteger(categoryId) || categoryId <= 0) {
+      setFormError("دسته‌بندی محصول را انتخاب کنید.");
+      return;
+    }
+
+    if (!Number.isInteger(count) || count < 0) {
+      setFormError("موجودی محصول نامعتبر است.");
+      return;
+    }
+
+    if (!Number.isFinite(price) || price < 0) {
+      setFormError("قیمت محصول نامعتبر است.");
+      return;
+    }
+
+    const data = {
+      productCode,
+      title,
+      categoryId,
+      count,
       color: form.color.trim() || null,
-
-      price: Number(form.price),
-
+      price,
       description: form.description.trim() || null,
-
       images: form.images.filter(Boolean),
-    });
+    };
+
+    try {
+      await onSubmit(data);
+    } catch (error) {
+      setFormError(error.message || "خطا در ذخیره محصول");
+    }
   };
 
   return (
@@ -153,19 +253,40 @@ const AdminProductForm = ({
       "
     >
       {error && (
-        <div className="mb-6 rounded-xl border border-red-900/50 bg-red-950/30 p-4 text-sm text-red-400">
+        <div
+          className="
+          mb-6 rounded-xl
+          border border-red-900/50
+          bg-red-950/30
+          p-4 text-sm text-red-400
+        "
+        >
           {error}
         </div>
       )}
 
-      {uploadError && (
-        <div className="mb-6 rounded-xl border border-red-900/50 bg-red-950/30 p-4 text-sm text-red-400">
-          {uploadError}
+      {formError && (
+        <div
+          className="
+          mb-6 rounded-xl
+          border border-red-900/50
+          bg-red-950/30
+          p-4 text-sm text-red-400
+        "
+        >
+          {formError}
         </div>
       )}
 
       {success && (
-        <div className="mb-6 rounded-xl border border-emerald-900/50 bg-emerald-950/30 p-4 text-sm text-emerald-400">
+        <div
+          className="
+          mb-6 rounded-xl
+          border border-emerald-900/50
+          bg-emerald-950/30
+          p-4 text-sm text-emerald-400
+        "
+        >
           {success}
         </div>
       )}
@@ -183,18 +304,15 @@ const AdminProductForm = ({
             disabled={Boolean(initialValues?.productCode)}
             required
             className="
-              w-full
-              rounded-xl
-              border
-              border-zinc-700
+              w-full rounded-xl
+              border border-zinc-700
               bg-zinc-950
-              px-4
-              py-3
+              px-4 py-3
               text-white
               outline-none
+              focus:border-zinc-400
               disabled:bg-zinc-800
               disabled:text-zinc-500
-              focus:border-zinc-400
             "
           />
         </div>
@@ -210,10 +328,13 @@ const AdminProductForm = ({
             onChange={handleChange}
             required
             className="
-              w-full rounded-xl border
-              border-zinc-700 bg-zinc-950
-              px-4 py-3 text-white
-              outline-none focus:border-zinc-400
+              w-full rounded-xl
+              border border-zinc-700
+              bg-zinc-950
+              px-4 py-3
+              text-white
+              outline-none
+              focus:border-zinc-400
             "
           />
         </div>
@@ -230,10 +351,14 @@ const AdminProductForm = ({
             required
             disabled={categoriesLoading}
             className="
-              w-full rounded-xl border
-              border-zinc-700 bg-zinc-950
-              px-4 py-3 text-white
-              outline-none focus:border-zinc-400
+              w-full rounded-xl
+              border border-zinc-700
+              bg-zinc-950
+              px-4 py-3
+              text-white
+              outline-none
+              focus:border-zinc-400
+              disabled:opacity-50
             "
           >
             <option value="">
@@ -263,30 +388,91 @@ const AdminProductForm = ({
             onChange={handleChange}
             required
             className="
-              w-full rounded-xl border
-              border-zinc-700 bg-zinc-950
-              px-4 py-3 text-white
-              outline-none focus:border-zinc-400
+              w-full rounded-xl
+              border border-zinc-700
+              bg-zinc-950
+              px-4 py-3
+              text-white
+              outline-none
+              focus:border-zinc-400
             "
           />
         </div>
-
-        {/* رنگ */}
+        {/* رنگ‌های محصول */}
 
         <div>
-          <label className="mb-2 block text-sm text-zinc-300">رنگ</label>
+          <label className="mb-2 block text-sm text-zinc-300">
+            رنگ‌های محصول
+          </label>
 
-          <input
-            name="color"
-            value={form.color}
-            onChange={handleChange}
-            className="
-              w-full rounded-xl border
-              border-zinc-700 bg-zinc-950
-              px-4 py-3 text-white
-              outline-none focus:border-zinc-400
-            "
-          />
+          <div className="flex gap-2">
+            <input
+              value={newColor}
+              onChange={(event) => setNewColor(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  addColor();
+                }
+              }}
+              placeholder="مثلاً مشکی"
+              className="
+        min-w-0 flex-1 rounded-xl
+        border border-zinc-700
+        bg-zinc-950 px-4 py-3
+        text-white outline-none
+        focus:border-zinc-400
+      "
+            />
+
+            <button
+              type="button"
+              onClick={addColor}
+              className="
+        rounded-xl bg-zinc-700
+        px-4 py-3 text-sm font-bold
+        text-white transition
+        hover:bg-zinc-600
+      "
+            >
+              افزودن
+            </button>
+          </div>
+
+          <p className="mt-2 text-xs text-zinc-500">
+            هر رنگ را جداگانه اضافه کن.
+          </p>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            {parseColors(form.color).map((color) => (
+              <span
+                key={color}
+                className="
+          inline-flex items-center gap-2
+          rounded-lg border border-zinc-700
+          bg-zinc-800 px-3 py-2
+          text-sm text-zinc-200
+        "
+              >
+                {color}
+
+                <button
+                  type="button"
+                  onClick={() => removeColor(color)}
+                  aria-label={`حذف رنگ ${color}`}
+                  className="font-bold text-red-400 hover:text-red-300"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+
+            {parseColors(form.color).length === 0 && (
+              <span className="text-sm text-zinc-500">
+                هنوز رنگی اضافه نشده است.
+              </span>
+            )}
+          </div>
         </div>
 
         {/* قیمت */}
@@ -302,10 +488,13 @@ const AdminProductForm = ({
             onChange={handleChange}
             required
             className="
-              w-full rounded-xl border
-              border-zinc-700 bg-zinc-950
-              px-4 py-3 text-white
-              outline-none focus:border-zinc-400
+              w-full rounded-xl
+              border border-zinc-700
+              bg-zinc-950
+              px-4 py-3
+              text-white
+              outline-none
+              focus:border-zinc-400
             "
           />
         </div>
@@ -321,10 +510,14 @@ const AdminProductForm = ({
             onChange={handleChange}
             rows={5}
             className="
-              w-full resize-y rounded-xl border
-              border-zinc-700 bg-zinc-950
-              px-4 py-3 text-white
-              outline-none focus:border-zinc-400
+              w-full resize-y
+              rounded-xl
+              border border-zinc-700
+              bg-zinc-950
+              px-4 py-3
+              text-white
+              outline-none
+              focus:border-zinc-400
             "
           />
         </div>
@@ -346,12 +539,14 @@ const AdminProductForm = ({
             className="
               flex cursor-pointer
               items-center justify-center
-              rounded-xl border border-dashed
+              rounded-xl
+              border border-dashed
               border-zinc-700
               bg-zinc-950
               px-4 py-6
               text-sm text-zinc-400
-              transition hover:border-zinc-500
+              transition
+              hover:border-zinc-500
             "
           >
             {uploading ? "در حال آپلود..." : "انتخاب تصویر از کامپیوتر"}
@@ -372,32 +567,34 @@ const AdminProductForm = ({
                 <div
                   key={`${image}-${index}`}
                   className="
-                      relative overflow-hidden
-                      rounded-2xl border
-                      border-zinc-800
-                      bg-zinc-950
-                    "
+                    relative overflow-hidden
+                    rounded-2xl
+                    border border-zinc-800
+                    bg-zinc-950
+                  "
                 >
                   <img
                     src={image}
                     alt={`تصویر ${index + 1}`}
                     className="
-                        h-48 w-full
-                        bg-zinc-900
-                        object-contain p-2
-                      "
+                      h-48 w-full
+                      bg-zinc-900
+                      object-contain p-2
+                    "
                   />
 
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
                     className="
-                        absolute right-2 top-2
-                        rounded-lg
-                        bg-red-950/90
-                        px-3 py-2
-                        text-xs text-red-300
-                      "
+                      absolute right-2 top-2
+                      rounded-lg
+                      bg-red-950/90
+                      px-3 py-2
+                      text-xs text-red-300
+                      transition
+                      hover:bg-red-900
+                    "
                   >
                     حذف
                   </button>
@@ -411,17 +608,20 @@ const AdminProductForm = ({
       <div className="mt-8 flex justify-end">
         <button
           type="submit"
-          disabled={loading || saving || uploading}
+          disabled={loading || saving || uploading || categoriesLoading}
           className="
-            rounded-xl bg-white
+            rounded-xl
+            bg-white
             px-6 py-3
-            font-bold text-zinc-900
-            transition hover:bg-zinc-200
+            font-bold
+            text-zinc-900
+            transition
+            hover:bg-zinc-200
             disabled:cursor-not-allowed
             disabled:opacity-50
           "
         >
-          {submitText}
+          {saving ? "در حال ذخیره..." : submitText}
         </button>
       </div>
     </form>
