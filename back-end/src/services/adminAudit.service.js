@@ -3,6 +3,10 @@ import prisma from "../config/prisma.js";
 const ALLOWED_ACTIONS = new Set([
   "PAYMENT_RECONCILIATION",
   "PAYMENT_EXPIRED_UNSENT",
+  "ORDER_STATUS_CHANGED",
+  "ORDER_SHIPPING_UPDATED",
+  "ORDER_DELETED",
+  "ADMIN_LOGIN_FAILED",
 ]);
 
 export const recordAdminAudit = async ({
@@ -42,7 +46,13 @@ export const recordAdminAudit = async ({
 };
 
 
-export const getAdminAuditLogs = async ({ page = 1, pageSize = 25, action } = {}) => {
+export const getAdminAuditLogs = async ({
+  page = 1,
+  pageSize = 25,
+  action,
+  from,
+  to,
+} = {}) => {
   const parsedPage = Number(page);
   const parsedSize = Number(pageSize);
   const currentPage = Number.isSafeInteger(parsedPage) && parsedPage > 0
@@ -60,6 +70,23 @@ export const getAdminAuditLogs = async ({ page = 1, pageSize = 25, action } = {}
       throw error;
     }
     where.action = action;
+  }
+
+  if (from || to) {
+    const fromDate = from ? new Date(from) : null;
+    const toDate = to ? new Date(to) : null;
+    if (
+      (from && Number.isNaN(fromDate.getTime())) ||
+      (to && Number.isNaN(toDate.getTime())) ||
+      (fromDate && toDate && fromDate > toDate)
+    ) {
+      const error = new Error("بازه زمانی سوابق معتبر نیست.");
+      error.status = 400;
+      throw error;
+    }
+    where.createdAt = {};
+    if (fromDate) where.createdAt.gte = fromDate;
+    if (toDate) where.createdAt.lte = toDate;
   }
 
   const [total, items] = await prisma.$transaction([
