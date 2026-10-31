@@ -92,7 +92,8 @@ const StatCard = ({ title, value, description, icon: Icon, tone, to }) => (
     </div>
     <p className="mt-2 break-words text-base font-extrabold leading-6 text-white">{value}</p>
     <p className="mt-0.5 text-[10px] leading-4 text-zinc-500">{description}</p>
-  </div>
+    <span className="mt-1 block text-[9px] text-cyan-300">مشاهده جزئیات ←</span>
+  </Link>
 );
 
 // =========================================
@@ -274,9 +275,10 @@ const StockProductList = ({ products, emptyMessage, lowStock = false }) => (
       </p>
     ) : (
       products.map((product) => (
-        <div
+        <Link
           key={product.id}
-          className="flex items-center justify-between gap-2 rounded-lg border border-zinc-800 bg-zinc-950 px-2.5 py-1.5"
+          to={`/admin/products/${encodeURIComponent(product.productCode)}/edit`}
+          className="flex items-center justify-between gap-2 rounded-lg border border-zinc-800 bg-zinc-950 px-2.5 py-1.5 transition hover:border-cyan-400/40 hover:bg-cyan-950/10"
         >
           <div className="min-w-0">
             <p className="break-words text-xs font-semibold text-white">
@@ -301,7 +303,7 @@ const StockProductList = ({ products, emptyMessage, lowStock = false }) => (
           >
             {lowStock ? "۱ عدد" : "ناموجود"}
           </span>
-        </div>
+        </Link>
       ))
     )}
   </div>
@@ -332,7 +334,7 @@ const BestSellingProducts = ({ products }) => {
           maxQuantity > 0 ? (product.quantitySold / maxQuantity) * 100 : 0;
 
         return (
-          <div key={`${product.productCode}-${product.title}`}>
+          <Link key={`${product.productCode}-${product.title}`} to={`/admin/products/${encodeURIComponent(product.productCode)}/edit`} className="block rounded-md px-1 py-0.5 transition hover:bg-cyan-950/10">
             <div className="mb-0.5 flex items-center justify-between gap-1.5">
               <div className="min-w-0">
                 <p className="break-words text-xs font-semibold text-white">
@@ -364,7 +366,7 @@ const BestSellingProducts = ({ products }) => {
                 style={{ width: `${width}%` }}
               />
             </div>
-          </div>
+          </Link>
         );
       })}
     </div>
@@ -487,7 +489,8 @@ const AdminDashboard = () => {
               description="فروش سفارش‌های واجد شرایط در ماه جاری"
               tone={{ bar: "bg-emerald-400", icon: "bg-emerald-400/10 text-emerald-300" }}
               icon={FiDollarSign}
-            />
+            to="/admin/orders"
+              />
 
             <StatCard
               title="فروش ۱۲ ماه اخیر"
@@ -495,7 +498,8 @@ const AdminDashboard = () => {
               description="مجموع فروش در ۱۲ ماه تقویمی اخیر"
               tone={{ bar: "bg-cyan-400", icon: "bg-cyan-400/10 text-cyan-300" }}
               icon={FiShoppingBag}
-            />
+            to="/admin/orders"
+              />
 
             <StatCard
               title="سفارش‌های فروش"
@@ -503,7 +507,8 @@ const AdminDashboard = () => {
               description="سفارش‌های فروش در ۱۲ ماه اخیر"
               tone={{ bar: "bg-violet-400", icon: "bg-violet-400/10 text-violet-300" }}
               icon={FiUsers}
-            />
+            to="/admin/orders"
+              />
 
             <StatCard
               title="کل محصولات"
@@ -511,7 +516,8 @@ const AdminDashboard = () => {
               description="تعداد محصولات ثبت‌شده در دیتابیس"
               tone={{ bar: "bg-amber-400", icon: "bg-amber-400/10 text-amber-300" }}
               icon={FiPackage}
-            />
+            to="/admin/products"
+              />
 
             <StatCard
               title="کل سفارش‌ها"
@@ -519,7 +525,8 @@ const AdminDashboard = () => {
               description="شامل همه وضعیت‌ها، حتی سفارش‌های لغوشده"
               tone={{ bar: "bg-rose-400", icon: "bg-rose-400/10 text-rose-300" }}
               icon={FiAlertTriangle}
-            />
+            to="/admin/orders"
+              />
           </div>
 
           {/* SALES + ORDERS */}
@@ -528,6 +535,7 @@ const AdminDashboard = () => {
             <div className="min-w-0 lg:col-span-5">
               <Section
                 title="روند فروش"
+                to="/admin/orders"
                 description="۱۲ ماه اخیر؛ فقط سفارش‌های پرداخت‌شده و مراحل بعدی"
               >
                 <SalesChart months={data.monthlySales || []} />
@@ -537,6 +545,7 @@ const AdminDashboard = () => {
             <div className="min-w-0 lg:col-span-7">
               <Section
                 title="آخرین سفارش‌ها"
+                to="/admin/orders"
                 description="سه سفارش ثبت‌شده اخیر، با هر وضعیت"
               >
                 <RecentOrders orders={data.recentOrders || []} />
@@ -550,6 +559,7 @@ const AdminDashboard = () => {
             <div className="min-w-0 lg:col-span-4">
               <Section
                 title="مشتریان برتر"
+                to="/admin/users"
                 description="رتبه‌بندی بر اساس تعداد و مبلغ خرید"
               >
                 <TopCustomers customers={data.topCustomers || []} />
@@ -559,6 +569,7 @@ const AdminDashboard = () => {
             <div className="min-w-0 lg:col-span-8">
               <Section
                 title="پرفروش‌ترین محصولات"
+                to="/admin/products"
                 description="پنج محصول برتر بر اساس تعداد واقعی فروخته‌شده"
               >
                 <BestSellingProducts products={data.bestSellingProducts || []} />
@@ -571,6 +582,7 @@ const AdminDashboard = () => {
           <div className="grid min-w-0 grid-cols-1 items-start gap-2 lg:grid-cols-2">
             <Section
               title="محصولات ناموجود"
+                to="/admin/products"
               description={`تعداد کل ناموجودها: ${formatNumber(stock.outOfStockCount)}`}
             >
               <StockProductList
@@ -589,6 +601,7 @@ const AdminDashboard = () => {
 
             <Section
               title="موجودی بحرانی"
+                to="/admin/products"
               description={`محصولات با دقیقاً یک عدد موجودی: ${formatNumber(stock.lowStockCount)}`}
             >
               <StockProductList
