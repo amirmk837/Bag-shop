@@ -236,15 +236,10 @@ const TopCustomers = ({ customers }) => (
                     {formatNumber(index + 1)}
                   </span>
 
-                  <div className="min-w-0">
-                    <p className="break-words text-xs font-semibold text-white">
-                      {customer.username}
-                    </p>
-
-                    <p className="mt-0.5 text-[10px] text-zinc-500">
-                      {customer.phone || "شماره ثبت نشده"}
-                    </p>
-                  </div>
+                  <Link to="/admin/users" className="min-w-0 rounded-sm hover:text-cyan-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-cyan-400">
+                    <p className="break-words text-xs font-semibold text-white">{customer.username}</p>
+                    <p className="mt-0.5 text-[10px] text-zinc-500">{customer.phone || "شماره ثبت نشده"}</p>
+                  </Link>
                 </div>
               </td>
 
