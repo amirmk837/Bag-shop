@@ -294,7 +294,7 @@ const App = () => {
           : "min-h-screen bg-gradient-to-br from-zinc-900 via-zinc-800 to-black"
       }
     >
-      {!isAdminArea && <Header />
+      {!isAdminArea && <Header />}
 
       <main className="min-h-screen">
         <Routes>
@@ -304,7 +304,7 @@ const App = () => {
         </Routes>
       </main>
 
-      {!isAdminArea && <Footer />
+      {!isAdminArea && <Footer />}
     </div>
   );
 };
