@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getUsers, getUserDetail } from "../../services/adminUserApi";
 import AdminUserModal from "../../components/admin/AdminUserModal";
@@ -134,7 +134,7 @@ const AdminUsers = () => {
   // OPEN USER
   // =========================================
 
-  const openUser = async (userId) => {
+  const openUser = useCallback(async (userId) => {
     try {
       setError("");
 
@@ -144,13 +144,13 @@ const AdminUsers = () => {
     } catch (requestError) {
       setError(requestError.message || "دریافت اطلاعات کاربر ناموفق بود.");
     }
-  };
+  }, []);
 
   // =========================================
   useEffect(() => {
     const userId = searchParams.get("userId");
     if (userId) openUser(userId);
-  }, [searchParams]);
+  }, [searchParams, openUser]);
 
   const closeUser = () => {
     setSelectedUser(null);
