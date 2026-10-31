@@ -95,6 +95,9 @@ const AdminOrders = () => {
   const [notice, setNotice] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [period, setPeriod] = useState(() => searchParams.get("period") || (searchParams.has("from") ? "custom" : "all"));
+  const [from, setFrom] = useState(() => searchParams.get("from") || "");
+  const [to, setTo] = useState(() => searchParams.get("to") || "");
 
   const [modalOpen, setModalOpen] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -124,6 +127,16 @@ const AdminOrders = () => {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
+  useEffect(() => {
+    const nextFrom = searchParams.get("from") || "";
+    const nextTo = searchParams.get("to") || "";
+    const nextPeriod = searchParams.get("period") || (nextFrom && nextTo ? "custom" : "all");
+    setFrom(nextFrom);
+    setTo(nextTo);
+    setPeriod(nextPeriod);
+    setPagination((current) => ({ ...current, page: 1 }));
+  }, [searchParams]);
+
   // دریافت سفارش‌ها
   useEffect(() => {
     let ignore = false;
@@ -138,6 +151,9 @@ const AdminOrders = () => {
           pageSize: pagination.pageSize,
           status,
           search,
+          from,
+          to,
+          period,
         });
 
         if (ignore) return;
@@ -161,7 +177,7 @@ const AdminOrders = () => {
     return () => {
       ignore = true;
     };
-  }, [pagination.page, pagination.pageSize, search, status, refreshKey]);
+  }, [pagination.page, pagination.pageSize, search, status, from, to, period, refreshKey]);
 
   const openOrder = async (orderId) => {
     setModalOpen(true);
@@ -403,7 +419,7 @@ const AdminOrders = () => {
         </div>
       )}
 
-      <div className="mb-6 grid gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 md:grid-cols-[1fr_240px]">
+      <div className="mb-6 grid gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 md:grid-cols-[1fr_220px_220px]">
         <div className="relative">
           <FiSearch className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500" />
           <input
@@ -418,6 +434,22 @@ const AdminOrders = () => {
           />
         </div>
 
+        <select
+          value={period}
+          onChange={(event) => {
+            const value = event.target.value;
+            setPeriod(value); setFrom(""); setTo("");
+            setSearchParams(value === "all" ? {} : { period: value }, { replace: true });
+            setPagination((current) => ({ ...current, page: 1 }));
+          }}
+          className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none"
+        >
+          <option value="month">یک ماه اخیر</option>
+          <option value="3months">سه ماه اخیر</option>
+          <option value="12months">۱۲ ماه اخیر</option>
+          <option value="all">تمام سفارش‌ها</option>
+          {period === "custom" && <option value="custom">ماه انتخاب‌شده در نمودار</option>}
+        </select>
         <select
           value={status}
           onChange={(event) => {
