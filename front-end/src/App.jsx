@@ -283,6 +283,7 @@ const App = () => {
   const location = useLocation();
 
   const isProductPage = location.pathname.startsWith("/product/");
+  const isAdminArea = location.pathname.startsWith("/admin");
 
   return (
     <div
@@ -293,7 +294,7 @@ const App = () => {
           : "min-h-screen bg-gradient-to-br from-zinc-900 via-zinc-800 to-black"
       }
     >
-      <Header />
+      {!isAdminArea && <Header />
 
       <main className="min-h-screen">
         <Routes>
@@ -303,7 +304,7 @@ const App = () => {
         </Routes>
       </main>
 
-      <Footer />
+      {!isAdminArea && <Footer />
     </div>
   );
 };
