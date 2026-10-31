@@ -154,8 +154,9 @@ model Order {
   userId Int
   user   User @relation(fields: [userId], references: [id], onDelete: Restrict)
 
-  status      OrderStatus @default(PENDING)
-  totalAmount Int
+  status          OrderStatus @default(PENDING)
+  totalAmount     Int
+  stockReleasedAt DateTime?
   confirmedAt DateTime?
 
   shippingRecipientName  String?
