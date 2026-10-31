@@ -1,4 +1,4 @@
-import { getUserById, verifyToken } from "../services/auth.service.js";
+import { getAuthUserById, getUserById, verifyToken } from "../services/auth.service.js";
 
 // =========================================
 // READ TOKEN FROM COOKIE
@@ -47,19 +47,31 @@ export const requireAuth = async (req, res, next) => {
       });
     }
 
-    const user = await getUserById(userId);
+    const authUser = await getAuthUserById(userId);
 
-    if (!user) {
+    if (!authUser) {
       return res.status(401).json({
         message: "کاربر پیدا نشد.",
       });
     }
 
     // کاربر حذف منطقی یا غیرفعال شده
-    if (!user.isActive || user.deletedAt) {
+    if (!authUser.isActive || authUser.deletedAt) {
       return res.status(401).json({
         message: "حساب کاربری شما غیرفعال شده است.",
       });
+    }
+
+    const tokenVersion = Number(payload?.tokenVersion);
+    if (!Number.isSafeInteger(tokenVersion) || tokenVersion < 0 || tokenVersion !== authUser.tokenVersion) {
+      return res.status(401).json({
+        message: "نشست شما معتبر نیست؛ دوباره وارد شوید.",
+      });
+    }
+
+    const user = await getUserById(userId);
+    if (!user) {
+      return res.status(401).json({ message: "کاربر پیدا نشد." });
     }
 
     // Responses behind authentication can contain personal or order data.
