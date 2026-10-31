@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import { config } from "./src/config/env.js";
 import productRoutes from "./src/routes/product.routes.js";
-import testRoutes from "./src/routes/test.routes.js";
 import uploadRoutes from "./src/routes/upload.routes.js";
 import categoryRoutes from "./src/routes/category.routes.js";
 import authRoutes from "./src/routes/auth.routes.js";
@@ -22,7 +21,6 @@ import { securityHeaders } from "./src/middlewares/securityHeaders.middleware.js
 import { requireHttpsInProduction } from "./src/middlewares/https.middleware.js";
 
 const app = express();
-
 const PORT = config.PORT;
 
 // =========================================
@@ -65,7 +63,6 @@ app.get("/", (_req, res) => {
 // API ROUTES
 // =========================================
 
-app.use("/api", testRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/categories", categoryRoutes);
@@ -84,7 +81,8 @@ app.use("/api/shipping-methods", shippingMethodRoutes);
 app.use("/api/banners", bannerRoutes);
 
 // ثبت سفارش توسط مشتری
-app.use("/api/orders", orderRoutes); 
+app.use("/api/orders", orderRoutes);
+
 // =========================================
 // STATIC FILES
 // =========================================
