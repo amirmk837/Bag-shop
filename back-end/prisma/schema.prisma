@@ -248,6 +248,7 @@ model PaymentSettings {
 
 enum PaymentStatus {
   CREATED
+  REQUESTING
   REQUESTED
   PAID
   FAILED
