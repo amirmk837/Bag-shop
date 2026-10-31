@@ -72,10 +72,15 @@ export const updateUserController = async (req, res) => {
       user: updatedUser,
     });
   } catch (error) {
-    console.error("UPDATE USER ERROR:", error);
+    console.error("UPDATE USER ERROR:", {
+      errorType: error?.name || "Error",
+      code: error?.code || null,
+    });
 
-    return res.status(400).json({
-      message: error.message || "بروزرسانی کاربر ناموفق بود.",
+    return res.status(error?.code === "P2034" ? 409 : 400).json({
+      message: error?.code === "P2034"
+        ? "درخواست هم‌زمان دیگری در حال تغییر اطلاعات است؛ دوباره تلاش کنید."
+        : error.message || "بروزرسانی کاربر ناموفق بود.",
     });
   }
 };
@@ -91,10 +96,15 @@ export const deleteUserController = async (req, res) => {
       user: deletedUser,
     });
   } catch (error) {
-    console.error("DELETE USER ERROR:", error);
+    console.error("DELETE USER ERROR:", {
+      errorType: error?.name || "Error",
+      code: error?.code || null,
+    });
 
-    return res.status(400).json({
-      message: error.message || "حذف کاربر ناموفق بود.",
+    return res.status(error?.code === "P2034" ? 409 : 400).json({
+      message: error?.code === "P2034"
+        ? "درخواست هم‌زمان دیگری در حال تغییر اطلاعات است؛ دوباره تلاش کنید."
+        : error.message || "حذف کاربر ناموفق بود.",
     });
   }
 };
