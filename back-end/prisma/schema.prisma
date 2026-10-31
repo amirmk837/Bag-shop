@@ -302,6 +302,7 @@ enum AdminAuditAction {
   ORDER_STATUS_CHANGED
   ORDER_SHIPPING_UPDATED
   ORDER_DELETED
+  ADMIN_LOGIN_FAILED
 }
 
 model AdminAuditLog {
