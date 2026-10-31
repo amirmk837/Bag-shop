@@ -294,3 +294,24 @@ model ShippingMethod {
 
   @@index([isActive])
 }
+
+enum AdminAuditAction {
+  PAYMENT_RECONCILIATION
+  PAYMENT_EXPIRED_UNSENT
+}
+
+model AdminAuditLog {
+  id          Int              @id @default(autoincrement())
+  adminId     Int
+  admin       User             @relation(fields: [adminId], references: [id], onDelete: Restrict)
+  action      AdminAuditAction
+  targetType  String
+  targetId    Int
+  orderId     Int?
+  details     Json?
+  createdAt   DateTime         @default(now())
+
+  @@index([adminId, createdAt])
+  @@index([targetType, targetId, createdAt])
+  @@index([orderId, createdAt])
+}
