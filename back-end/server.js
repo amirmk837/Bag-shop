@@ -92,6 +92,41 @@ app.use("/api/orders", orderRoutes);
 app.use("/uploads", express.static("public/uploads"));
 
 // =========================================
+// NOT FOUND + CENTRAL ERROR HANDLING
+// =========================================
+
+app.use((req, res) => {
+  return res.status(404).json({
+    success: false,
+    message: "مسیر درخواستی پیدا نشد.",
+  });
+});
+
+app.use((error, req, res, next) => {
+  if (res.headersSent) return next(error);
+
+  console.error("Unhandled API error:", {
+    method: req.method,
+    path: req.originalUrl,
+    message: error?.message,
+  });
+
+  const statusCode =
+    Number.isInteger(error?.statusCode) &&
+    error.statusCode >= 400 &&
+    error.statusCode < 500
+      ? error.statusCode
+      : 500;
+
+  return res.status(statusCode).json({
+    success: false,
+    message: statusCode === 500
+      ? "خطای داخلی سرور رخ داد. لطفاً بعداً دوباره تلاش کنید."
+      : "درخواست نامعتبر است.",
+  });
+});
+
+// =========================================
 // START SERVER
 // =========================================
 
