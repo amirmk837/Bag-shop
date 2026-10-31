@@ -21,6 +21,8 @@ const schema = z.object({
   ),
   FRONTEND_ORIGINS: z.string().min(1),
   TRUST_PROXY: booleanFromEnv.default(false),
+  ZARINPAL_SANDBOX: booleanFromEnv.default(false),
+  PAYMENT_CALLBACK_URL: z.string().trim().default(""),
 });
 
 const parsed = schema.safeParse(process.env);
@@ -30,6 +32,36 @@ if (!parsed.success) {
 }
 
 const env = parsed.data;
+
+if (env.PAYMENT_CALLBACK_URL) {
+  let callbackUrl;
+  try {
+    callbackUrl = new URL(env.PAYMENT_CALLBACK_URL);
+  } catch {
+    throw new Error("PAYMENT_CALLBACK_URL must be a valid absolute URL.");
+  }
+
+  const isLocalhost =
+    callbackUrl.hostname === "localhost" ||
+    callbackUrl.hostname === "127.0.0.1";
+
+  const isAllowedLocalSandbox =
+    env.ZARINPAL_SANDBOX && isLocalhost && callbackUrl.protocol === "http:";
+
+  if (
+    callbackUrl.username ||
+    callbackUrl.password ||
+    callbackUrl.hash ||
+    (callbackUrl.protocol !== "https:" && !isAllowedLocalSandbox)
+  ) {
+    throw new Error("PAYMENT_CALLBACK_URL must use HTTPS (HTTP is allowed only for localhost sandbox).");
+  }
+}
+
+if (env.NODE_ENV === "production" && env.ZARINPAL_SANDBOX) {
+  throw new Error("ZARINPAL_SANDBOX must be disabled in production.");
+}
+
 const origins = env.FRONTEND_ORIGINS.split(",").map((value) => value.trim()).filter(Boolean);
 if (origins.length === 0) throw new Error("FRONTEND_ORIGINS must contain at least one origin.");
 
