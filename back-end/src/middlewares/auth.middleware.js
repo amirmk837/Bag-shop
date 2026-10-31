@@ -7,21 +7,25 @@ import { getAuthUserById, getUserById, verifyToken } from "../services/auth.serv
 const getTokenFromCookie = (req) => {
   const cookieHeader = req.headers.cookie;
 
-  if (!cookieHeader) {
+  if (!cookieHeader) return null;
+
+  const authCookies = cookieHeader
+    .split(";")
+    .map((cookie) => cookie.trim())
+    .filter((cookie) => cookie.startsWith("auth_token="));
+
+  // Duplicate authentication cookies are ambiguous and must be rejected.
+  if (authCookies.length !== 1) return null;
+
+  const rawToken = authCookies[0].slice("auth_token=".length);
+  if (!rawToken) return null;
+
+  try {
+    return decodeURIComponent(rawToken);
+  } catch {
+    // A malformed cookie is an unauthenticated request, not a server error.
     return null;
   }
-
-  const cookies = cookieHeader.split(";");
-
-  const authCookie = cookies.find((cookie) =>
-    cookie.trim().startsWith("auth_token="),
-  );
-
-  if (!authCookie) {
-    return null;
-  }
-
-  return decodeURIComponent(authCookie.trim().slice("auth_token=".length));
 };
 
 // =========================================
@@ -55,7 +59,6 @@ export const requireAuth = async (req, res, next) => {
       });
     }
 
-    // کاربر حذف منطقی یا غیرفعال شده
     if (!authUser.isActive || authUser.deletedAt) {
       return res.status(401).json({
         message: "حساب کاربری شما غیرفعال شده است.",
@@ -63,7 +66,11 @@ export const requireAuth = async (req, res, next) => {
     }
 
     const tokenVersion = Number(payload?.tokenVersion);
-    if (!Number.isSafeInteger(tokenVersion) || tokenVersion < 0 || tokenVersion !== authUser.tokenVersion) {
+    if (
+      !Number.isSafeInteger(tokenVersion) ||
+      tokenVersion < 0 ||
+      tokenVersion !== authUser.tokenVersion
+    ) {
       return res.status(401).json({
         message: "نشست شما معتبر نیست؛ دوباره وارد شوید.",
       });
@@ -71,16 +78,16 @@ export const requireAuth = async (req, res, next) => {
 
     const user = await getUserById(userId);
     if (!user) {
-      return res.status(401).json({ message: "کاربر پیدا نشد." });
+      return res.status(401).json({
+        message: "کاربر پیدا نشد.",
+      });
     }
 
-    // Responses behind authentication can contain personal or order data.
     res.setHeader("Cache-Control", "no-store, private");
     res.setHeader("Pragma", "no-cache");
 
     req.user = user;
-
-    next();
+    return next();
   } catch (error) {
     if (
       error?.name === "JsonWebTokenError" ||
@@ -113,7 +120,7 @@ export const requireAdmin = (req, res, next) => {
     });
   }
 
-  next();
+  return next();
 };
 
 // =========================================
