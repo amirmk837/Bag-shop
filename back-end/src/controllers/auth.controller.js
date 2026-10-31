@@ -18,7 +18,17 @@ const getCookieOptions = () => ({
 
 const COOKIE_MAX_AGE = 24 * 60 * 60 * 1000;
 
-const toPublicUser = (user) => ({ id: user.id, username: user.username, phone: user.phone, role: user.role, permissions: user.permissions, isActive: user.isActive, deletedAt: user.deletedAt, createdAt: user.createdAt, updatedAt: user.updatedAt });
+const toPublicUser = (user) => ({
+  id: user.id,
+  username: user.username,
+  phone: user.phone,
+  role: user.role,
+  permissions: user.permissions,
+  isActive: user.isActive,
+  deletedAt: user.deletedAt,
+  createdAt: user.createdAt,
+  updatedAt: user.updatedAt,
+});
 
 // =========================================
 // LOGIN
@@ -26,7 +36,7 @@ const toPublicUser = (user) => ({ id: user.id, username: user.username, phone: u
 
 export const loginController = async (req, res) => {
   try {
-    const { identifier, password } = req.body;
+    const { identifier, password } = req.body ?? {};
 
     if (!identifier || !password) {
       return res.status(400).json({
@@ -34,7 +44,6 @@ export const loginController = async (req, res) => {
       });
     }
 
-    // loginUser خود User را برمی‌گرداند
     const user = await loginUser(identifier, password);
 
     if (!user) {
@@ -43,7 +52,6 @@ export const loginController = async (req, res) => {
       });
     }
 
-    // ساخت JWT بعد از تأیید رمز
     const token = createAuthToken(user);
 
     res.cookie(COOKIE_NAME, token, {
@@ -62,7 +70,9 @@ export const loginController = async (req, res) => {
       try {
         await auditFailedAdminLogin(req.body?.identifier);
       } catch (auditError) {
-        console.error("ADMIN LOGIN AUDIT ERROR:", { errorType: auditError?.name || "Error" });
+        console.error("ADMIN LOGIN AUDIT ERROR:", {
+          errorType: auditError?.name || "Error",
+        });
       }
     }
 
@@ -80,11 +90,13 @@ export const loginController = async (req, res) => {
   }
 };
 
+// =========================================
 // REGISTER
 // =========================================
+
 export const registerController = async (req, res) => {
   try {
-    const { username, phone, password } = req.body;
+    const { username, phone, password } = req.body ?? {};
 
     if (!username || !phone || !password) {
       return res.status(400).json({
@@ -112,16 +124,33 @@ export const registerController = async (req, res) => {
       user: toPublicUser(user),
     });
   } catch (error) {
-    console.error("Register controller error:", error);
+    const status = Number.isInteger(error?.status) ? error.status : 500;
 
-    return res.status(error.status || 400).json({
-      message: error.message || "خطا در ساخت حساب کاربری.",
+    if (status >= 500) {
+      console.error("REGISTER CONTROLLER ERROR:", {
+        errorType: error?.name || "Error",
+        code: error?.code,
+      });
+    }
+
+    if (error?.code === "P2002") {
+      return res.status(409).json({
+        message: "نام کاربری یا شماره تماس قبلاً ثبت شده است.",
+      });
+    }
+
+    return res.status(status).json({
+      message: status >= 400 && status < 500
+        ? error.message
+        : "ثبت‌نام در حال حاضر امکان‌پذیر نیست؛ دوباره تلاش کنید.",
     });
   }
 };
 
+// =========================================
 // ME
 // =========================================
+
 export const meController = async (req, res) => {
   try {
     const user = await getUserById(req.user.id);
@@ -136,7 +165,9 @@ export const meController = async (req, res) => {
       user: toPublicUser(user),
     });
   } catch (error) {
-    console.error("Me controller error:", error);
+    console.error("Me controller error:", {
+      errorType: error?.name || "Error",
+    });
 
     return res.status(500).json({
       message: "خطا در دریافت اطلاعات کاربر.",
@@ -144,14 +175,20 @@ export const meController = async (req, res) => {
   }
 };
 
+// =========================================
 // LOGOUT
 // =========================================
+
 export const logoutController = async (req, res) => {
   try {
     await invalidateUserTokens(req.user.id);
   } catch (error) {
-    console.error("LOGOUT CONTROLLER ERROR:", { errorType: error?.name || "Error" });
-    return res.status(500).json({ message: "خروج امن انجام نشد؛ دوباره تلاش کنید." });
+    console.error("LOGOUT CONTROLLER ERROR:", {
+      errorType: error?.name || "Error",
+    });
+    return res.status(500).json({
+      message: "خروج امن انجام نشد؛ دوباره تلاش کنید.",
+    });
   }
 
   res.clearCookie(COOKIE_NAME, getCookieOptions());
