@@ -9,8 +9,8 @@ import prisma from "../config/prisma.js";
 const getJwtSecret = () => {
   const secret = process.env.JWT_SECRET;
 
-  if (!secret) {
-    throw new Error("JWT_SECRET در فایل env تنظیم نشده است.");
+  if (typeof secret !== "string" || Buffer.byteLength(secret, "utf8") < 32) {
+    throw new Error("JWT_SECRET باید حداقل ۳۲ بایت باشد.");
   }
 
   return secret;
@@ -100,9 +100,12 @@ export const loginUser = async (identifier, password) => {
   if (
     typeof identifier !== "string" ||
     typeof password !== "string" ||
-    !identifier.trim()
+    !identifier.trim() ||
+    !password
   ) {
-    throw new Error("نام کاربری یا شماره موبایل و رمز عبور الزامی است.");
+    const error = new Error("نام کاربری یا شماره موبایل و رمز عبور الزامی است.");
+    error.status = 400;
+    throw error;
   }
 
   const normalizedIdentifier = identifier.trim();
@@ -127,17 +130,23 @@ export const loginUser = async (identifier, password) => {
   });
 
   if (!user) {
-    throw new Error("اطلاعات ورود نادرست است.");
+    const error = new Error("اطلاعات ورود نادرست است.");
+    error.status = 401;
+    throw error;
   }
 
   if (!user.isActive || user.deletedAt) {
-    throw new Error("این حساب کاربری غیرفعال شده است.");
+    const error = new Error("اطلاعات ورود نادرست است.");
+    error.status = 401;
+    throw error;
   }
 
   const passwordMatches = await bcrypt.compare(password, user.passwordHash);
 
   if (!passwordMatches) {
-    throw new Error("اطلاعات ورود نادرست است.");
+    const error = new Error("اطلاعات ورود نادرست است.");
+    error.status = 401;
+    throw error;
   }
 
   return user;
