@@ -588,3 +588,60 @@ export const updateAdminOrderShipping = async (
     include: orderInclude,
   });
 };
+
+
+// بستن امن پرداخت CREATED که هنوز به مرحله ارسال درخواست درگاه نرسیده است.
+export const expireUnsentPayment = async (paymentId, adminId) => {
+  const id = parsePositiveInt(paymentId);
+  if (!id) throw createOrderError(400, "شناسه تراکنش معتبر نیست.");
+
+  return prisma.$transaction(async (tx) => {
+    const payment = await tx.payment.findUnique({
+      where: { id },
+      include: {
+        order: {
+          include: { items: true },
+        },
+      },
+    });
+
+    if (!payment) throw createOrderError(404, "تراکنش پرداخت پیدا نشد.");
+
+    if (
+      payment.status !== "CREATED" ||
+      payment.authority ||
+      payment.order.status !== "PENDING"
+    ) {
+      throw createOrderError(
+        409,
+        "فقط پرداخت CREATED بدون شناسه درگاه و سفارش PENDING قابل بستن است.",
+      );
+    }
+
+    const minimumAgeMs = 15 * 60 * 1000;
+    if (Date.now() - payment.createdAt.getTime() < minimumAgeMs) {
+      throw createOrderError(
+        409,
+        "برای جلوگیری از تداخل با شروع پرداخت، باید حداقل ۱۵ دقیقه از ایجاد تراکنش گذشته باشد.",
+      );
+    }
+
+    const claimed = await tx.payment.updateMany({
+      where: { id, status: "CREATED", authority: null },
+      data: { status: "FAILED" },
+    });
+
+    if (claimed.count !== 1) {
+      throw createOrderError(409, "وضعیت تراکنش هم‌زمان تغییر کرده است.");
+    }
+
+    await releaseOrderStockOnce(tx, payment.order);
+
+    await tx.order.updateMany({
+      where: { id: payment.orderId, status: "PENDING" },
+      data: { status: "CANCELLED" },
+    });
+
+    return { paymentId: id, orderId: payment.orderId, status: "FAILED" };
+  }, { isolationLevel: "Serializable" });
+};
