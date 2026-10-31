@@ -109,7 +109,7 @@ export const updateAdminOrderShippingController = async (req, res) => {
     const order = await updateAdminOrderShipping(req.params.id, {
       shippingMethod: req.body?.shippingMethod,
       trackingCode: req.body?.trackingCode,
-    });
+    }, req.user.id);
 
     return res.status(200).json({
       message: "اطلاعات ارسال سفارش با موفقیت ثبت شد.",
