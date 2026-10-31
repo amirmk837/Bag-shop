@@ -102,65 +102,27 @@ const StatCard = ({ title, value, description, icon: Icon, tone, to }) => (
 
 const SalesChart = ({ months }) => {
   const maxSales = Math.max(...months.map((month) => Number(month.total) || 0), 0);
-
-  if (months.length === 0) {
-    return (
-      <p className="py-2 text-center text-xs text-zinc-500">
-        اطلاعات فروش برای نمایش وجود ندارد.
-      </p>
-    );
-  }
-
+  if (!months.length) return <p className="py-2 text-center text-xs text-zinc-500">اطلاعات فروش برای نمایش وجود ندارد.</p>;
   return (
     <div>
       <div className="mb-4 flex items-end justify-between gap-2">
-        <div>
-          <p className="text-xs text-zinc-500">مجموع فروش ۱۲ ماه</p>
-          <p className="mt-1 text-lg font-black text-white">
-            {formatPrice(months.reduce((sum, month) => sum + Number(month.total || 0), 0))}
-          </p>
-        </div>
-        <span className="rounded-lg bg-zinc-800 px-2 py-1 text-[10px] text-zinc-400">
-          ماهانه
-        </span>
+        <div><p className="text-xs text-zinc-500">مجموع فروش ۱۲ ماه شمسی</p><p className="mt-1 text-lg font-black text-white">{formatPrice(months.reduce((sum, month) => sum + Number(month.total || 0), 0))}</p></div>
+        <span className="rounded-lg bg-zinc-800 px-2 py-1 text-[10px] text-zinc-400">ماهانه</span>
       </div>
-
       <div dir="ltr" className="grid h-28 grid-cols-12 items-end gap-1 border-b border-zinc-800 pb-2">
         {months.map((month) => {
-          const total = Number(month.total) || 0;
-          const height = maxSales > 0 ? (total / maxSales) * 100 : 0;
-
-          return (
-            <div
-              key={month.key}
-              className="flex h-full min-w-0 flex-col items-center justify-end"
-              title={`${month.label}: ${formatPrice(total)} · ${formatNumber(month.orderCount)} سفارش`}
-            >
-              <div className="flex h-full w-full items-end justify-center">
-                <div
-                  className="w-full max-w-4 rounded-t-sm bg-gradient-to-t from-cyan-500 to-teal-300 transition-all duration-300 hover:from-cyan-300 hover:to-emerald-200"
-                  style={{
-                    height: `${height}%`,
-                    minHeight: total > 0 ? "3px" : "0",
-                  }}
-                />
-              </div>
-              <span dir="rtl" className="mt-2 text-[9px] leading-3 text-zinc-500">
-                {month.label}
-              </span>
-            </div>
-          );
+          const total=Number(month.total)||0; const height=maxSales>0?(total/maxSales)*100:0;
+          const params=new URLSearchParams({from:month.start,to:month.end,period:"custom"});
+          return <Link key={month.key} to={"/admin/orders?"+params.toString()} title={month.label+" · "+formatPrice(total)+" · "+formatNumber(month.orderCount)+" سفارش"} className="flex h-full min-w-0 flex-col items-center justify-end rounded-sm outline-none focus-visible:ring-1 focus-visible:ring-cyan-400">
+            <div className="flex h-full w-full items-end justify-center"><div className="w-full max-w-4 rounded-t-sm bg-gradient-to-t from-cyan-500 to-teal-300 transition-all duration-300 hover:from-cyan-300 hover:to-emerald-200" style={{height:height+"%",minHeight:total>0?"3px":"0"}} /></div>
+            <span dir="rtl" className="mt-2 text-[9px] leading-3 text-zinc-500">{month.label}</span>
+          </Link>;
         })}
       </div>
-
-      <div className="mt-3 flex items-center justify-between text-[11px] text-zinc-500">
-        <span>کمترین فروش</span>
-        <span>بیشترین فروش</span>
-      </div>
+      <div className="mt-3 flex items-center justify-between text-[11px] text-zinc-500"><span>کمترین فروش</span><span>بیشترین فروش</span></div>
     </div>
   );
 };
-
 // =========================================
 // RECENT ORDERS
 // =========================================
@@ -236,7 +198,7 @@ const TopCustomers = ({ customers }) => (
                     {formatNumber(index + 1)}
                   </span>
 
-                  <Link to="/admin/users" className="min-w-0 rounded-sm hover:text-cyan-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-cyan-400">
+                  <Link to={"/admin/users?userId="+encodeURIComponent(customer.userId)} className="min-w-0 rounded-sm hover:text-cyan-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-cyan-400">
                     <p className="break-words text-xs font-semibold text-white">{customer.username}</p>
                     <p className="mt-0.5 text-[10px] text-zinc-500">{customer.phone || "شماره ثبت نشده"}</p>
                   </Link>
