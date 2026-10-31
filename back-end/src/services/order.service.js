@@ -150,7 +150,8 @@ export const createCustomerOrder = async (userId, shippingMethodId) => {
           if (
             !Number.isSafeInteger(shippingCost) ||
             shippingCost < 0 ||
-            !validateAmount(totalAmount)
+            !validateAmount(totalAmount) ||
+            totalAmount > Math.floor(MAX_DATABASE_INT / 10)
           ) {
             throw createOrderError(400, "مبلغ نهایی سفارش معتبر نیست.");
           }
@@ -424,7 +425,8 @@ export const createProductShippingTestOrder = async (
           if (
             !Number.isSafeInteger(shippingCost) ||
             shippingCost < 0 ||
-            !validateAmount(totalAmount)
+            !validateAmount(totalAmount) ||
+            totalAmount > Math.floor(MAX_DATABASE_INT / 10)
           ) {
             throw createOrderError(400, "مبلغ نهایی سفارش معتبر نیست.");
           }
