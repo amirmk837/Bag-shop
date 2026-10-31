@@ -2,6 +2,7 @@ import express from "express";
 
 import {
   getPaymentReconciliationQueueController,
+  getAdminAuditLogsController,
   expireUnsentPaymentController,
   reconcileRequestedPaymentController,
   deleteAdminOrderController,
@@ -19,6 +20,7 @@ router.use(requireAuth, requireAdmin);
 
 router.get("/", getAdminOrdersController);
 router.get("/payment-reconciliation", getPaymentReconciliationQueueController);
+router.get("/audit-logs", getAdminAuditLogsController);
 router.post("/payment-reconciliation/:paymentId/verify", reconcileRequestedPaymentController);
 router.post("/payment-reconciliation/:paymentId/expire-unsent", expireUnsentPaymentController);
 router.get("/:id", getAdminOrderDetailController);
