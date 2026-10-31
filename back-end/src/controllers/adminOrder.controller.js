@@ -1,10 +1,38 @@
 import {
+  getPaymentReconciliationQueue,
   deleteAdminOrder,
   getAdminOrderDetail,
   getAdminOrders,
   updateAdminOrderStatus,
   updateAdminOrderShipping,
 } from "../services/adminOrder.service.js";
+
+// =========================================
+// GET PAYMENT RECONCILIATION QUEUE
+// =========================================
+
+export const getPaymentReconciliationQueueController = async (req, res) => {
+  try {
+    const result = await getPaymentReconciliationQueue({
+      page: req.query.page,
+      pageSize: req.query.pageSize,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "پرداخت‌های نیازمند بررسی دریافت شدند.",
+      ...result,
+    });
+  } catch (error) {
+    console.error("GET PAYMENT RECONCILIATION QUEUE ERROR:", {
+      errorType: error?.name || "Error",
+    });
+    return res.status(error.status || 500).json({
+      success: false,
+      message: error.status ? error.message : "خطا در دریافت فهرست پرداخت‌ها.",
+    });
+  }
+};
 
 // =========================================
 // GET ORDERS
