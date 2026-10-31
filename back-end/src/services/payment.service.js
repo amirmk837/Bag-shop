@@ -142,7 +142,7 @@ const createOrderAndPayment = async (userId, shippingMethodId, merchantId) => {
             where: {
               provider: "ZARINPAL",
               status: {
-                in: ["CREATED", "REQUESTED"],
+                in: ["CREATED", "REQUESTING", "REQUESTED"],
               },
               order: {
                 userId,
@@ -231,6 +231,16 @@ export const startCustomerPayment = async (userId, shippingMethodId) => {
     merchantId,
   );
 
+  const requestStarted = await prisma.payment.updateMany({
+    where: { id: payment.id, status: "CREATED" },
+    data: { status: "REQUESTING" },
+  });
+
+  if (requestStarted.count !== 1) {
+    console.error("PAYMENT_REQUEST_STATE_CONFLICT", { paymentId: payment.id, orderId: order.id });
+    throw createPaymentError(409, "وضعیت درخواست پرداخت تغییر کرده است؛ بررسی دستی لازم است.");
+  }
+
   try {
     const result = await requestZarinpalPayment({
       merchantId,
@@ -256,7 +266,7 @@ export const startCustomerPayment = async (userId, shippingMethodId) => {
     const updatedPayment = await prisma.payment.updateMany({
       where: {
         id: payment.id,
-        status: "CREATED",
+        status: "REQUESTING",
         authority: null,
       },
       data: {
@@ -279,10 +289,10 @@ export const startCustomerPayment = async (userId, shippingMethodId) => {
       paymentUrl: result.paymentUrl,
     };
   } catch (error) {
-    console.error("ZARINPAL REQUEST OR SAVE ERROR:", {
+    console.error("ZARINPAL_REQUEST_REQUIRES_RECONCILIATION", {
       orderId: order.id,
       paymentId: payment.id,
-      message: error?.message,
+      errorType: error?.name || "Error",
     });
 
     throw createPaymentError(
