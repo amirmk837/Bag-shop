@@ -1,3 +1,5 @@
+import { reconcileRequestedPaymentById } from "../services/paymentCallback.service.js";
+
 import {
   getPaymentReconciliationQueue,
   deleteAdminOrder,
@@ -137,6 +139,30 @@ export const deleteAdminOrderController = async (req, res) => {
 
     return res.status(error.status || 500).json({
       message: error.status ? error.message : "خطا در حذف سفارش.",
+    });
+  }
+};
+
+
+// VERIFY REQUESTED PAYMENT FROM ADMIN PANEL
+export const reconcileRequestedPaymentController = async (req, res) => {
+  try {
+    const result = await reconcileRequestedPaymentById(req.params.paymentId);
+    return res.status(200).json({
+      success: true,
+      message: "وضعیت پرداخت با پاسخ تأیید زرین‌پال بررسی شد.",
+      data: result,
+    });
+  } catch (error) {
+    const status = Number.isInteger(error?.status) ? error.status : 500;
+    if (status >= 500) {
+      console.error("ADMIN PAYMENT RECONCILIATION ERROR:", {
+        errorType: error?.name || "Error",
+      });
+    }
+    return res.status(status).json({
+      success: false,
+      message: status >= 500 ? "بررسی پرداخت ناموفق بود؛ وضعیت سفارش حفظ شده است." : error.message,
     });
   }
 };
