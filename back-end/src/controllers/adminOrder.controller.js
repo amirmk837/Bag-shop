@@ -85,7 +85,7 @@ export const getAdminOrderDetailController = async (req, res) => {
 
 export const updateAdminOrderStatusController = async (req, res) => {
   try {
-    const order = await updateAdminOrderStatus(req.params.id, req.body?.status);
+    const order = await updateAdminOrderStatus(req.params.id, req.body?.status, req.user.id);
 
     return res.status(200).json({
       message: "وضعیت سفارش با موفقیت تغییر کرد.",
@@ -130,7 +130,7 @@ export const updateAdminOrderShippingController = async (req, res) => {
 
 export const deleteAdminOrderController = async (req, res) => {
   try {
-    const result = await deleteAdminOrder(req.params.id);
+    const result = await deleteAdminOrder(req.params.id, req.user.id);
 
     return res.status(200).json({
       message: "سفارش با موفقیت حذف شد.",
