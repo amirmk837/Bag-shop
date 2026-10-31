@@ -1,4 +1,5 @@
 import { reconcileRequestedPaymentById } from "../services/paymentCallback.service.js";
+import { getAdminAuditLogs } from "../services/adminAudit.service.js";
 
 import {
   getPaymentReconciliationQueue,
@@ -188,6 +189,27 @@ export const expireUnsentPaymentController = async (req, res) => {
     return res.status(status).json({
       success: false,
       message: status >= 500 ? "بستن تراکنش ناموفق بود؛ وضعیت سفارش حفظ شده است." : error.message,
+    });
+  }
+};
+
+
+export const getAdminAuditLogsController = async (req, res) => {
+  try {
+    const result = await getAdminAuditLogs({
+      page: req.query.page,
+      pageSize: req.query.pageSize,
+      action: req.query.action,
+    });
+    return res.status(200).json({ success: true, ...result });
+  } catch (error) {
+    const status = Number.isInteger(error?.status) ? error.status : 500;
+    if (status >= 500) {
+      console.error("GET ADMIN AUDIT LOGS ERROR:", { errorType: error?.name || "Error" });
+    }
+    return res.status(status).json({
+      success: false,
+      message: status >= 500 ? "دریافت سوابق مدیریتی ناموفق بود." : error.message,
     });
   }
 };
