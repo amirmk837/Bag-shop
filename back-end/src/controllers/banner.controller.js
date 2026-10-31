@@ -61,6 +61,10 @@ export const createBannerController = async (req, res) => {
     const mobileFile = req.files?.mobileImage?.[0];
 
     if (!desktopFile || !mobileFile) {
+      await Promise.all(
+        uploadedFiles.map((file) => unlink(file.path).catch(() => {})),
+      );
+
       return res.status(400).json({
         message: "تصویر دسکتاپ و موبایل هر دو الزامی هستند.",
       });
