@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import "dotenv/config";
+import { config } from "./src/config/env.js";
 import productRoutes from "./src/routes/product.routes.js";
 import testRoutes from "./src/routes/test.routes.js";
 import uploadRoutes from "./src/routes/upload.routes.js";
@@ -19,22 +19,22 @@ import adminShippingMethodRoutes from "./src/routes/adminShippingMethod.routes.j
 import shippingMethodRoutes from "./src/routes/shippingMethod.routes.js";
 import { csrfProtection } from "./src/middlewares/csrf.middleware.js";
 import { securityHeaders } from "./src/middlewares/securityHeaders.middleware.js";
+import { requireHttpsInProduction } from "./src/middlewares/https.middleware.js";
 
 const app = express();
 
-const PORT = process.env.PORT || 5000;
+const PORT = config.PORT;
 
 // =========================================
 // MIDDLEWARE
 // =========================================
 
 app.disable("x-powered-by");
+if (config.TRUST_PROXY) app.set("trust proxy", 1);
+app.use(requireHttpsInProduction);
 app.use(securityHeaders);
 
-const allowedFrontendOrigins = (process.env.FRONTEND_ORIGINS || "http://localhost:5173")
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+const allowedFrontendOrigins = config.FRONTEND_ORIGINS;
 
 app.use(
   cors({
@@ -50,7 +50,7 @@ app.use(
   }),
 );
 
-app.use(express.json({ limit: "1mb" }));
+app.use(express.json({ limit: "1mb", strict: true }));
 app.use("/api", csrfProtection);
 
 // =========================================
@@ -132,5 +132,5 @@ app.use((error, req, res, next) => {
 // =========================================
 
 app.listen(PORT, () => {
-  console.log(`Backend server is running on http://localhost:${PORT}`);
+  console.log(`Backend server is listening on port ${PORT} (${config.NODE_ENV}).`);
 });
