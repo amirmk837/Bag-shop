@@ -1,7 +1,9 @@
+import { config } from "../config/env.js";
+
 const API_BASE = "https://payment.zarinpal.com/pg/v4/payment";
 const SANDBOX_API_BASE = "https://sandbox.zarinpal.com/pg/v4/payment";
 
-const isSandbox = () => process.env.ZARINPAL_SANDBOX === "true";
+const isSandbox = () => config.ZARINPAL_SANDBOX;
 
 const getApiBase = () => (isSandbox() ? SANDBOX_API_BASE : API_BASE);
 
