@@ -197,6 +197,30 @@ const findOrderProduct = async (tx, item) => {
   });
 };
 
+// آزادسازی موجودی فقط یک‌بار برای هر چرخه رزرو سفارش
+const releaseOrderStockOnce = async (tx, order) => {
+  const claimed = await tx.order.updateMany({
+    where: { id: order.id, stockReleasedAt: null },
+    data: { stockReleasedAt: new Date() },
+  });
+
+  if (claimed.count !== 1) {
+    throw createOrderError(409, "موجودی این سفارش قبلاً آزاد شده یا وضعیت آن تغییر کرده است.");
+  }
+
+  for (const item of order.items) {
+    const product = await findOrderProduct(tx, item);
+    if (!product) {
+      throw createOrderError(409, "محصول «" + item.title + "» پیدا نشد؛ آزادسازی موجودی کامل نشد.");
+    }
+    await releaseStock(tx, {
+      productId: product.id,
+      color: item.color || "",
+      quantity: item.quantity,
+    });
+  }
+};
+
 // =========================================
 // UPDATE ORDER STATUS
 // =========================================
@@ -320,6 +344,7 @@ export const updateAdminOrderStatus = async (orderId, nextStatus) => {
                   : undefined,
             shippedAt: nextStatus === "SHIPPED" ? new Date() : undefined,
             deliveredAt: nextStatus === "DELIVERED" ? new Date() : undefined,
+            stockReleasedAt: order.status === "CANCELLED" && nextStatus === "PENDING" ? null : undefined,
           };
 
           const updated = await tx.order.updateMany({
@@ -337,24 +362,9 @@ export const updateAdminOrderStatus = async (orderId, nextStatus) => {
             );
           }
 
-          // لغو سفارش: آزادسازی موجودی
+          // لغو سفارش: ثبت و آزادسازی اتمیک و یک‌باره موجودی
           if (nextStatus === "CANCELLED") {
-            for (const item of order.items) {
-              const product = await findOrderProduct(tx, item);
-
-              if (!product) {
-                throw createOrderError(
-                  409,
-                  `محصول «${item.title}» پیدا نشد؛ موجودی قابل بازگرداندن نیست.`,
-                );
-              }
-
-              await releaseStock(tx, {
-                productId: product.id,
-                color: item.color || "",
-                quantity: item.quantity,
-              });
-            }
+            await releaseOrderStockOnce(tx, order);
           }
 
           return tx.order.findUnique({
@@ -432,24 +442,9 @@ export const deleteAdminOrder = async (orderId) => {
         );
       }
 
-      // سفارش لغوشده قبلاً موجودی را آزاد کرده است.
+      // سفارش لغوشده قبلاً موجودی را آزاد کرده؛ سایر سفارش‌ها فقط یک‌بار آزاد می‌شوند.
       if (order.status !== "CANCELLED") {
-        for (const item of order.items) {
-          const product = await findOrderProduct(tx, item);
-
-          if (!product) {
-            throw createOrderError(
-              409,
-              `محصول «${item.title}» پیدا نشد؛ حذف سفارش متوقف شد.`,
-            );
-          }
-
-          await releaseStock(tx, {
-            productId: product.id,
-            color: item.color || "",
-            quantity: item.quantity,
-          });
-        }
+        await releaseOrderStockOnce(tx, order);
       }
 
       await tx.order.delete({
