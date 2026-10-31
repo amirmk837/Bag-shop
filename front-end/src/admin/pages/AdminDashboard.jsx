@@ -111,84 +111,62 @@ const StatCard = ({ title, value, description, icon: Icon }) => (
 // =========================================
 
 const SalesChart = ({ months }) => {
-  const maxSales = Math.max(...months.map((month) => month.total), 0);
+  const maxSales = Math.max(...months.map((month) => Number(month.total) || 0), 0);
+
+  if (months.length === 0) {
+    return (
+      <p className="py-8 text-center text-sm text-zinc-500">
+        اطلاعات فروش برای نمایش وجود ندارد.
+      </p>
+    );
+  }
 
   return (
     <div>
-      {months.length === 0 ? (
-        <p className="py-12 text-center text-zinc-500">
-          اطلاعات فروش برای نمایش وجود ندارد.
-        </p>
-      ) : (
-        <>
-          {/* BAR CHART */}
+      <div className="mb-4 flex items-end justify-between gap-2">
+        <div>
+          <p className="text-xs text-zinc-500">مجموع فروش ۱۲ ماه</p>
+          <p className="mt-1 text-lg font-black text-white">
+            {formatPrice(months.reduce((sum, month) => sum + Number(month.total || 0), 0))}
+          </p>
+        </div>
+        <span className="rounded-lg bg-zinc-800 px-2 py-1 text-[10px] text-zinc-400">
+          ماهانه
+        </span>
+      </div>
 
-          <div className="overflow-x-auto pb-3">
-            <div dir="ltr" className="grid min-w-[700px] grid-cols-12 gap-3">
-              {months.map((month) => {
-                const height =
-                  maxSales > 0 ? (month.total / maxSales) * 100 : 0;
+      <div dir="ltr" className="grid h-36 grid-cols-12 items-end gap-1.5 border-b border-zinc-800 pb-2">
+        {months.map((month) => {
+          const total = Number(month.total) || 0;
+          const height = maxSales > 0 ? (total / maxSales) * 100 : 0;
 
-                return (
-                  <div
-                    key={month.key}
-                    className="flex min-w-0 flex-col items-center"
-                    title={`${month.label}: ${formatPrice(month.total)}`}
-                  >
-                    <div className="flex h-44 w-full items-end justify-center border-b border-zinc-800">
-                      <div
-                        className="
-                          w-7 max-w-full rounded-t-md
-                          bg-zinc-300 transition-all
-                          hover:bg-white sm:w-9
-                        "
-                        style={{
-                          height: `${height}%`,
-                          minHeight: month.total > 0 ? "4px" : "0",
-                        }}
-                      />
-                    </div>
-
-                    <span
-                      dir="rtl"
-                      className="mt-3 whitespace-nowrap text-xs text-zinc-400"
-                    >
-                      {month.label}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* MONTHLY TOTALS */}
-
-          <div className="mt-6 border-t border-zinc-800 pt-5">
-            <h4 className="mb-4 text-sm font-bold text-zinc-300">
-              جمع فروش هر ماه
-            </h4>
-
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              {months.map((month) => (
+          return (
+            <div
+              key={month.key}
+              className="flex h-full min-w-0 flex-col items-center justify-end"
+              title={`${month.label}: ${formatPrice(total)} · ${formatNumber(month.orderCount)} سفارش`}
+            >
+              <div className="flex h-full w-full items-end justify-center">
                 <div
-                  key={month.key}
-                  className="rounded-xl border border-zinc-800 bg-zinc-950 p-3"
-                >
-                  <p className="text-xs text-zinc-500">{month.label}</p>
-
-                  <p className="mt-2 break-words text-sm font-bold text-white">
-                    {formatPrice(month.total)}
-                  </p>
-
-                  <p className="mt-1 text-xs text-zinc-600">
-                    {formatNumber(month.orderCount)} سفارش فروش
-                  </p>
-                </div>
-              ))}
+                  className="w-full max-w-4 rounded-t-sm bg-cyan-300/80 transition-all duration-300 hover:bg-cyan-200"
+                  style={{
+                    height: `${height}%`,
+                    minHeight: total > 0 ? "3px" : "0",
+                  }}
+                />
+              </div>
+              <span dir="rtl" className="mt-2 text-[9px] leading-3 text-zinc-500">
+                {month.label}
+              </span>
             </div>
-          </div>
-        </>
-      )}
+          );
+        })}
+      </div>
+
+      <div className="mt-3 flex items-center justify-between text-[11px] text-zinc-500">
+        <span>کمترین فروش</span>
+        <span>بیشترین فروش</span>
+      </div>
     </div>
   );
 };
@@ -575,32 +553,34 @@ const AdminDashboard = () => {
             />
           </div>
 
-          {/* SALES */}
+          {/* SALES CHART + RECENT ORDERS */}
+
+          <div className="grid min-w-0 gap-6 xl:grid-cols-3">
+            <Section
+              title="روند فروش"
+              description="۱۲ ماه اخیر؛ فقط سفارش‌های پرداخت‌شده و مراحل بعدی"
+            >
+              <SalesChart months={data.monthlySales || []} />
+            </Section>
+
+            <div className="min-w-0 xl:col-span-2">
+              <Section
+                title="آخرین سفارش‌ها"
+                description="سه سفارش ثبت‌شده اخیر، با هر وضعیت"
+              >
+                <RecentOrders orders={data.recentOrders || []} />
+              </Section>
+            </div>
+          </div>
+
+          {/* TOP CUSTOMERS */}
 
           <Section
-            title="نمودار فروش ۱۲ ماه اخیر"
-            description="فقط سفارش‌های پرداخت‌شده یا تأییدشده و مراحل بعدی فروش محاسبه می‌شوند."
+            title="مشتریان برتر"
+            description="رتبه‌بندی بر اساس تعداد خرید؛ مبلغ کل خرید نیز نمایش داده می‌شود."
           >
-            <SalesChart months={data.monthlySales || []} />
+            <TopCustomers customers={data.topCustomers || []} />
           </Section>
-
-          {/* RECENT ORDERS + CUSTOMERS */}
-
-          <div className="grid min-w-0 gap-6 xl:grid-cols-2">
-            <Section
-              title="آخرین سفارش‌ها"
-              description="سه سفارش ثبت‌شده اخیر، با هر وضعیت"
-            >
-              <RecentOrders orders={data.recentOrders || []} />
-            </Section>
-
-            <Section
-              title="مشتریان برتر"
-              description="رتبه‌بندی بر اساس تعداد خرید؛ مبلغ کل خرید نیز نمایش داده می‌شود."
-            >
-              <TopCustomers customers={data.topCustomers || []} />
-            </Section>
-          </div>
 
           {/* STOCK */}
 
