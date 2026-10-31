@@ -3,6 +3,7 @@ import {
   getUserById,
   loginUser,
   registerUser,
+  auditFailedAdminLogin,
 } from "../services/auth.service.js";
 
 const COOKIE_NAME = "auth_token";
@@ -52,7 +53,11 @@ export const loginController = async (req, res) => {
       user,
     });
   } catch (error) {
-    console.error("Login controller error:", error);
+    try {
+      await auditFailedAdminLogin(req.body?.identifier);
+    } catch (auditError) {
+      console.error("ADMIN LOGIN AUDIT ERROR:", { errorType: auditError?.name || "Error" });
+    }
 
     return res.status(401).json({
       message: error.message || "اطلاعات ورود صحیح نیست.",
