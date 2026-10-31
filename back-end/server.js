@@ -17,6 +17,7 @@ import paymentSettingsRoutes from "./src/routes/paymentSettings.routes.js";
 import paymentRoutes from "./src/routes/payment.routes.js";
 import adminShippingMethodRoutes from "./src/routes/adminShippingMethod.routes.js";
 import shippingMethodRoutes from "./src/routes/shippingMethod.routes.js";
+import { csrfProtection } from "./src/middlewares/csrf.middleware.js";
 
 const app = express();
 
@@ -26,14 +27,27 @@ const PORT = process.env.PORT || 5000;
 // MIDDLEWARE
 // =========================================
 
+const allowedFrontendOrigins = (process.env.FRONTEND_ORIGINS || "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin(origin, callback) {
+      if (!origin || allowedFrontendOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("CORS origin is not allowed"));
+    },
     credentials: true,
+    methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
+app.use("/api", csrfProtection);
 
 // =========================================
 // ROOT
