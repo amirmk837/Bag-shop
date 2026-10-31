@@ -79,18 +79,20 @@ export const zarinpalCallbackController = async (req, res) => {
   try {
     const authority =
       typeof req.query.Authority === "string" ? req.query.Authority.trim() : "";
+    const callbackStatus =
+      typeof req.query.Status === "string" ? req.query.Status.trim() : "";
 
     if (!authority) {
       return redirectToResult(res, "error");
     }
 
-    const result = await handleZarinpalCallback({ authority });
+    const result = await handleZarinpalCallback({ authority, callbackStatus });
 
     return redirectToResult(res, result.status, result.orderId);
   } catch (error) {
     console.error("ZARINPAL CALLBACK ERROR:", {
-      message: error?.message,
-      status: error?.status,
+      errorType: error?.name || "Error",
+      status: error?.status || 500,
     });
 
     try {

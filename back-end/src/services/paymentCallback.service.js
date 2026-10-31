@@ -27,12 +27,21 @@ const runSerializableTransaction = async (callback) => {
   throw fail(503, "تراکنش پرداخت تکمیل نشد؛ وضعیت سفارش را بررسی کنید.");
 };
 
-export const handleZarinpalCallback = async ({ authority }) => {
+export const handleZarinpalCallback = async ({ authority, callbackStatus }) => {
   if (typeof authority !== "string" || !authority.trim()) {
     throw fail(400, "شناسه پرداخت معتبر نیست.");
   }
 
   const normalizedAuthority = authority.trim();
+
+  // Status برگشتی فقط برای تشخیص مسیر callback است؛
+  // وضعیت پرداخت صرفاً با Verify معتبر می‌شود.
+  if (callbackStatus !== "OK") {
+    throw fail(
+      409,
+      "درگاه پرداخت را موفق اعلام نکرده است؛ وضعیت سفارش و موجودی برای بررسی حفظ شده‌اند.",
+    );
+  }
 
   const payment = await prisma.payment.findUnique({
     where: { authority: normalizedAuthority },
