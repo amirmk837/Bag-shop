@@ -9,59 +9,25 @@ const SALES_STATUSES = [
   "DELIVERED",
 ];
 
-const getMonthKey = (date) => {
-  const year = date.getUTCFullYear();
-  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
-
-  return `${year}-${month}`;
+const persianFormatter = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {timeZone:"Asia/Tehran",year:"numeric",month:"numeric",day:"numeric"});
+const persianMonthFormatter = new Intl.DateTimeFormat("fa-IR-u-ca-persian", {timeZone:"Asia/Tehran",month:"long"});
+const persianParts = (date) => Object.fromEntries(persianFormatter.formatToParts(date).map(({type,value})=>[type,value]));
+const persianKey = (date) => { const p=persianParts(date); return String(p.year).replace(/\D/g,"")+"-"+String(p.month).replace(/\D/g,"").padStart(2,"0"); };
+const tehranMidnight = (y,m,d) => new Date(Date.UTC(y,m-1,d)-210*60000);
+const buildPersianMonths = (now) => {
+ const map=new Map(); const cursor=new Date(now.getTime()-410*86400000); const limit=new Date(now.getTime()+40*86400000);
+ while(cursor<=limit){
+  const probe=new Date(Date.UTC(cursor.getUTCFullYear(),cursor.getUTCMonth(),cursor.getUTCDate(),12)); const p=persianParts(probe);
+  const key=String(p.year).replace(/\D/g,"")+"-"+String(p.month).replace(/\D/g,"").padStart(2,"0");
+  if(String(p.day).replace(/\D/g,"")==="1"&&!map.has(key)){
+   const g=Object.fromEntries(new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Tehran",year:"numeric",month:"numeric",day:"numeric"}).formatToParts(probe).map(({type,value})=>[type,value]));
+   map.set(key,{key,label:persianMonthFormatter.format(probe),start:tehranMidnight(Number(g.year),Number(g.month),Number(g.day)),total:0,orderCount:0});
+  } cursor.setUTCDate(cursor.getUTCDate()+1);
+ }
+ const months=[...map.values()].filter(x=>x.start<=now).sort((a,b)=>a.start-b.start).slice(-12);
+ return months.map((m,i)=>({...m,end:i<months.length-1?months[i+1].start:new Date(now.getTime()+86400000)}));
 };
-
-const getMonthLabel = (date) =>
-  date.toLocaleDateString("fa-IR-u-ca-gregory", {
-    month: "short",
-  });
-
-// =========================================
-// DASHBOARD ANALYTICS
-// =========================================
-
-export const getAdminDashboard = async () => {
-  const now = new Date();
-
-  // بازه شامل ماه جاری و ۱۱ ماه قبل است.
-  const currentMonthStart = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1),
-  );
-
-  const firstMonthStart = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 11, 1),
-  );
-
-  const nextMonthStart = new Date(
-    Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1),
-  );
-
-  // ساخت ۱۲ ماه، حتی اگر فروش یک ماه صفر باشد.
-  const monthlySales = [];
-
-  for (let offset = 0; offset < 12; offset += 1) {
-    const date = new Date(
-      Date.UTC(
-        firstMonthStart.getUTCFullYear(),
-        firstMonthStart.getUTCMonth() + offset,
-        1,
-      ),
-    );
-
-    monthlySales.push({
-      key: getMonthKey(date),
-      label: getMonthLabel(date),
-      total: 0,
-      orderCount: 0,
-    });
-  }
-
-  const monthlySalesMap = new Map(
+const monthlySalesMap = new Map(
     monthlySales.map((month) => [month.key, month]),
   );
 
@@ -230,7 +196,7 @@ export const getAdminDashboard = async () => {
   // =========================================
 
   for (const order of monthlyOrders) {
-    const key = getMonthKey(order.createdAt);
+    const key = persianKey(order.createdAt);
     const month = monthlySalesMap.get(key);
 
     if (!month) continue;
@@ -325,4 +291,8 @@ export const getAdminDashboard = async () => {
 
     bestSellingProducts,
   };
-};
+};  const monthlySales = buildPersianMonths(now);
+  const firstMonthStart = monthlySales[0].start;
+  const nextMonthStart = monthlySales[monthlySales.length - 1].end;
+
+
