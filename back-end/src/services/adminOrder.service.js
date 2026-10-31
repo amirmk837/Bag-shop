@@ -600,7 +600,7 @@ export const updateAdminOrderShipping = async (
 
 
 // بستن امن پرداخت CREATED که هنوز به مرحله ارسال درخواست درگاه نرسیده است.
-export const expireUnsentPayment = async (paymentId) => {
+export const expireUnsentPayment = async (paymentId, adminId) => {
   const id = parsePositiveInt(paymentId);
   if (!id) throw createOrderError(400, "شناسه تراکنش معتبر نیست.");
 
@@ -654,6 +654,22 @@ export const expireUnsentPayment = async (paymentId) => {
     if (cancelledOrder.count !== 1) {
       throw createOrderError(409, "وضعیت سفارش هم‌زمان تغییر کرده است؛ عملیات بازگردانی شد.");
     }
+
+    const normalizedAdminId = Number(adminId);
+    if (!Number.isSafeInteger(normalizedAdminId) || normalizedAdminId < 1) {
+      throw createOrderError(401, "شناسه مدیر معتبر نیست.");
+    }
+
+    await tx.adminAuditLog.create({
+      data: {
+        adminId: normalizedAdminId,
+        action: "PAYMENT_EXPIRED_UNSENT",
+        targetType: "PAYMENT",
+        targetId: id,
+        orderId: payment.orderId,
+        details: { paymentStatus: "FAILED" },
+      },
+    });
 
     return { paymentId: id, orderId: payment.orderId, status: "FAILED" };
   }, { isolationLevel: "Serializable" });
