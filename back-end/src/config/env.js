@@ -2,7 +2,12 @@ import "dotenv/config";
 import { z } from "zod";
 
 const booleanFromEnv = z.preprocess(
-  (value) => value === "true" || value === "1",
+  (value) => {
+    if (value === undefined) return undefined;
+    if (value === "true" || value === "1") return true;
+    if (value === "false" || value === "0") return false;
+    return value;
+  },
   z.boolean(),
 );
 
@@ -30,17 +35,25 @@ if (origins.length === 0) throw new Error("FRONTEND_ORIGINS must contain at leas
 
 for (const origin of origins) {
   let parsedOrigin;
-  try { parsedOrigin = new URL(origin); } catch {
+  try {
+    parsedOrigin = new URL(origin);
+  } catch {
     throw new Error("FRONTEND_ORIGINS contains an invalid URL origin.");
   }
-  if (parsedOrigin.origin !== origin || parsedOrigin.pathname !== "/" || parsedOrigin.search || parsedOrigin.hash) {
+
+  if (
+    parsedOrigin.origin !== origin ||
+    parsedOrigin.pathname !== "/" ||
+    parsedOrigin.search ||
+    parsedOrigin.hash
+  ) {
     throw new Error("Each FRONTEND_ORIGINS entry must be an origin only, without path, query, or fragment.");
   }
+
   if (env.NODE_ENV === "production" && parsedOrigin.protocol !== "https:") {
     throw new Error("Every FRONTEND_ORIGINS entry must use HTTPS in production.");
   }
 }
-
 
 export const config = Object.freeze({
   ...env,
