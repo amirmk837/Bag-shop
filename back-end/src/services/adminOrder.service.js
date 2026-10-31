@@ -234,6 +234,25 @@ export const updateAdminOrderStatus = async (orderId, nextStatus) => {
             );
           }
 
+          // تراکنش در حال انجام را نمی‌توان با لغو سفارش بی‌اثر کرد؛
+          // ممکن است پرداخت در درگاه انجام شده باشد و callback هنوز نرسیده باشد.
+          if (order.status === "PENDING" && nextStatus === "CANCELLED") {
+            const inFlightPayment = await tx.payment.findFirst({
+              where: {
+                orderId: order.id,
+                status: { in: ["CREATED", "REQUESTED"] },
+              },
+              select: { id: true },
+            });
+
+            if (inFlightPayment) {
+              throw createOrderError(
+                409,
+                "برای این سفارش تراکنش پرداخت تعیین‌تکلیف‌نشده وجود دارد؛ تا بررسی قطعی وضعیت درگاه، لغو سفارش و آزادسازی موجودی مجاز نیست.",
+              );
+            }
+          }
+
           if (
             nextStatus === "SHIPPED" &&
             (!order.shippingMethod?.trim() || !order.trackingCode?.trim())
@@ -375,6 +394,22 @@ export const deleteAdminOrder = async (orderId) => {
         throw createOrderError(
           409,
           "سفارش پرداخت‌شده، ارسال‌شده یا تحویل‌شده قابل حذف دائمی نیست.",
+        );
+      }
+
+      // حتی سفارش PENDING نیز در صورت داشتن تراکنش پرداخت نباید حذف شود.
+      const relatedPayment = await tx.payment.findFirst({
+        where: {
+          orderId: order.id,
+          status: { in: ["CREATED", "REQUESTED", "PAID"] },
+        },
+        select: { id: true, status: true },
+      });
+
+      if (relatedPayment) {
+        throw createOrderError(
+          409,
+          "این سفارش دارای تراکنش پرداخت است و حذف دائمی آن مجاز نیست.",
         );
       }
 

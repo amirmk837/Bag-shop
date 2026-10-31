@@ -5,6 +5,7 @@ import {
   createShippingTestOrder,
   createProductShippingTestOrder,
 } from "../services/order.service.js";
+import { getCustomerPaymentStatus } from "../services/paymentStatus.service.js";
 
 import { getCustomerPaymentStatus } from "../services/paymentStatus.service.js";
 
