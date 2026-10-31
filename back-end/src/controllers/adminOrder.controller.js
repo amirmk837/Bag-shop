@@ -49,6 +49,9 @@ export const getAdminOrdersController = async (req, res) => {
       pageSize: req.query.pageSize,
       status: req.query.status,
       search: req.query.search,
+      from: req.query.from,
+      to: req.query.to,
+      period: req.query.period,
     });
 
     return res.status(200).json(result);
