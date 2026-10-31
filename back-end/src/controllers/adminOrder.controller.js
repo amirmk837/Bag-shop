@@ -2,6 +2,7 @@ import { reconcileRequestedPaymentById } from "../services/paymentCallback.servi
 
 import {
   getPaymentReconciliationQueue,
+  expireUnsentPayment,
   deleteAdminOrder,
   getAdminOrderDetail,
   getAdminOrders,
@@ -163,6 +164,30 @@ export const reconcileRequestedPaymentController = async (req, res) => {
     return res.status(status).json({
       success: false,
       message: status >= 500 ? "بررسی پرداخت ناموفق بود؛ وضعیت سفارش حفظ شده است." : error.message,
+    });
+  }
+};
+
+
+// EXPIRE A STALE PAYMENT THAT WAS NEVER SENT TO THE GATEWAY
+export const expireUnsentPaymentController = async (req, res) => {
+  try {
+    const result = await expireUnsentPayment(req.params.paymentId);
+    return res.status(200).json({
+      success: true,
+      message: "تراکنش ارسال‌نشده بسته و موجودی سفارش آزاد شد.",
+      data: result,
+    });
+  } catch (error) {
+    const status = Number.isInteger(error?.status) ? error.status : 500;
+    if (status >= 500) {
+      console.error("EXPIRE UNSENT PAYMENT ERROR:", {
+        errorType: error?.name || "Error",
+      });
+    }
+    return res.status(status).json({
+      success: false,
+      message: status >= 500 ? "بستن تراکنش ناموفق بود؛ وضعیت سفارش حفظ شده است." : error.message,
     });
   }
 };
