@@ -68,6 +68,7 @@ model User {
   role         UserRole @default(USER)
 
   permissions UserPermission[]
+  auditLogs   AdminAuditLog[]
 
   isActive  Boolean   @default(true)
   deletedAt DateTime?
