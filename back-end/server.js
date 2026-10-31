@@ -18,6 +18,7 @@ import paymentRoutes from "./src/routes/payment.routes.js";
 import adminShippingMethodRoutes from "./src/routes/adminShippingMethod.routes.js";
 import shippingMethodRoutes from "./src/routes/shippingMethod.routes.js";
 import { csrfProtection } from "./src/middlewares/csrf.middleware.js";
+import { securityHeaders } from "./src/middlewares/securityHeaders.middleware.js";
 
 const app = express();
 
@@ -26,6 +27,9 @@ const PORT = process.env.PORT || 5000;
 // =========================================
 // MIDDLEWARE
 // =========================================
+
+app.disable("x-powered-by");
+app.use(securityHeaders);
 
 const allowedFrontendOrigins = (process.env.FRONTEND_ORIGINS || "http://localhost:5173")
   .split(",")
