@@ -1,5 +1,4 @@
 import { reconcileRequestedPaymentById } from "../services/paymentCallback.service.js";
-import { recordAdminAudit } from "../services/adminAudit.service.js";
 
 import {
   getPaymentReconciliationQueue,
@@ -149,8 +148,7 @@ export const deleteAdminOrderController = async (req, res) => {
 // VERIFY REQUESTED PAYMENT FROM ADMIN PANEL
 export const reconcileRequestedPaymentController = async (req, res) => {
   try {
-    const result = await reconcileRequestedPaymentById(req.params.paymentId);
-    await recordAdminAudit({ adminId: req.user.id, action: "PAYMENT_RECONCILIATION", targetType: "PAYMENT", targetId: Number(req.params.paymentId), orderId: result.orderId, details: { result: result.status } });
+    const result = await reconcileRequestedPaymentById(req.params.paymentId, req.user.id);
     return res.status(200).json({
       success: true,
       message: "وضعیت پرداخت با پاسخ تأیید زرین‌پال بررسی شد.",
@@ -174,8 +172,7 @@ export const reconcileRequestedPaymentController = async (req, res) => {
 // EXPIRE A STALE PAYMENT THAT WAS NEVER SENT TO THE GATEWAY
 export const expireUnsentPaymentController = async (req, res) => {
   try {
-    const result = await expireUnsentPayment(req.params.paymentId);
-    await recordAdminAudit({ adminId: req.user.id, action: "PAYMENT_EXPIRED_UNSENT", targetType: "PAYMENT", targetId: result.paymentId, orderId: result.orderId, details: { paymentStatus: result.status } });
+    const result = await expireUnsentPayment(req.params.paymentId, req.user.id);
     return res.status(200).json({
       success: true,
       message: "تراکنش ارسال‌نشده بسته و موجودی سفارش آزاد شد.",
