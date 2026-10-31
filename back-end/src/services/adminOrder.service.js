@@ -240,7 +240,7 @@ export const updateAdminOrderStatus = async (orderId, nextStatus) => {
             const inFlightPayment = await tx.payment.findFirst({
               where: {
                 orderId: order.id,
-                status: { in: ["CREATED", "REQUESTED"] },
+                status: { in: ["CREATED", "REQUESTING", "REQUESTED"] },
               },
               select: { id: true },
             });
@@ -401,7 +401,7 @@ export const deleteAdminOrder = async (orderId) => {
       const relatedPayment = await tx.payment.findFirst({
         where: {
           orderId: order.id,
-          status: { in: ["CREATED", "REQUESTED", "PAID"] },
+          status: { in: ["CREATED", "REQUESTING", "REQUESTED", "PAID"] },
         },
         select: { id: true, status: true },
       });

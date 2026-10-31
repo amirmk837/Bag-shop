@@ -100,7 +100,7 @@ export const handleZarinpalCallback = async ({ authority }) => {
     console.error("ZARINPAL VERIFY ERROR:", {
       paymentId: payment.id,
       orderId: payment.orderId,
-      message: error?.message,
+      errorType: error?.name || "Error",
     });
 
     throw fail(503, "نتیجه تأیید پرداخت مشخص نیست؛ سفارش لغو نشده است.");
