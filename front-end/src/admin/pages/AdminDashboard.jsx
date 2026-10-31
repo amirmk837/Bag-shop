@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import {
   FiAlertTriangle,
@@ -56,7 +57,7 @@ const STATUS_CLASSES = {
 // SHARED COMPONENTS
 // =========================================
 
-const Section = ({ title, description, children }) => (
+const Section = ({ title, description, children, to }) => (
   <section className="h-fit min-w-0 rounded-xl border border-white/[0.07] bg-[#151923] p-2.5 shadow-sm">
     <div className="mb-1.5 flex items-center gap-1.5">
       <span className="h-4 w-1 shrink-0 rounded-full bg-cyan-400" />
@@ -64,6 +65,7 @@ const Section = ({ title, description, children }) => (
         <h3 className="text-xs font-bold text-zinc-100">{title}</h3>
         {description && <p className="mt-0 text-[9px] leading-3 text-zinc-500">{description}</p>}
       </div>
+      {to && <Link to={to} className="mr-auto shrink-0 text-[10px] font-semibold text-cyan-300 hover:text-cyan-200">مشاهده همه</Link>}
     </div>
     {children}
   </section>
@@ -81,8 +83,8 @@ const OrderStatus = ({ status }) => (
   </span>
 );
 
-const StatCard = ({ title, value, description, icon: Icon, tone }) => (
-  <div className="relative min-w-0 overflow-hidden rounded-2xl border border-white/[0.07] bg-[#151923] p-3 transition hover:border-white/15">
+const StatCard = ({ title, value, description, icon: Icon, tone, to }) => (
+  <Link to={to} className="relative block min-w-0 overflow-hidden rounded-2xl border border-white/[0.07]] bg-[#151923] p-3 transition hover:border-white/15">
     <div className={`absolute inset-x-0 top-0 h-[2px] ${tone.bar}`} />
     <div className="flex items-center justify-between gap-2">
       <p className="text-xs font-medium text-zinc-400">{title}</p>
@@ -176,8 +178,9 @@ const RecentOrders = ({ orders }) => (
         );
 
         return (
-          <div
+          <Link
             key={order.id}
+            to={"/admin/orders?orderId=" + encodeURIComponent(order.id)}
             className="rounded-lg border border-white/[0.06] bg-[#10151f] px-2 py-1.5 transition hover:border-cyan-400/20"
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -189,7 +192,7 @@ const RecentOrders = ({ orders }) => (
                 <p className="mt-0.5 text-xs text-zinc-400">
                   {order.user?.username || "کاربر حذف‌شده"}
                 </p>
-              </div>
+              </Link>
 
               <OrderStatus status={order.status} />
             </div>
