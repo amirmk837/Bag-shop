@@ -41,9 +41,6 @@ for (const origin of origins) {
   }
 }
 
-if (env.NODE_ENV === "production" && env.TRUST_PROXY !== true) {
-  throw new Error("TRUST_PROXY=true must be configured in production behind a trusted HTTPS reverse proxy.");
-}
 
 export const config = Object.freeze({
   ...env,
