@@ -27,7 +27,7 @@ const runSerializableTransaction = async (callback) => {
   throw fail(503, "تراکنش پرداخت تکمیل نشد؛ وضعیت سفارش را بررسی کنید.");
 };
 
-export const handleZarinpalCallback = async ({ authority, callbackStatus }) => {
+export const handleZarinpalCallback = async ({ authority, callbackStatus, auditAdminId = null }) => {
   if (typeof authority !== "string" || !authority.trim()) {
     throw fail(400, "شناسه پرداخت معتبر نیست.");
   }
@@ -193,6 +193,19 @@ export const handleZarinpalCallback = async ({ authority, callbackStatus }) => {
       },
     });
 
+    if (auditAdminId !== null) {
+      await tx.adminAuditLog.create({
+        data: {
+          adminId: Number(auditAdminId),
+          action: "PAYMENT_RECONCILIATION",
+          targetType: "PAYMENT",
+          targetId: currentPayment.id,
+          orderId: currentPayment.orderId,
+          details: { result: "success" },
+        },
+      });
+    }
+
     return {
       status: "success",
       orderId: currentPayment.orderId,
@@ -203,7 +216,7 @@ export const handleZarinpalCallback = async ({ authority, callbackStatus }) => {
 
 
 // بررسی مجدد پرداخت REQUESTED از پنل مدیریت؛ فقط Verify درگاه مرجع تصمیم است.
-export const reconcileRequestedPaymentById = async (paymentId) => {
+export const reconcileRequestedPaymentById = async (paymentId, adminId) => {
   const id = Number(paymentId);
 
   if (!Number.isSafeInteger(id) || id < 1) {
@@ -226,8 +239,14 @@ export const reconcileRequestedPaymentById = async (paymentId) => {
     );
   }
 
+  const normalizedAdminId = Number(adminId);
+  if (!Number.isSafeInteger(normalizedAdminId) || normalizedAdminId < 1) {
+    throw fail(401, "شناسه مدیر معتبر نیست.");
+  }
+
   return handleZarinpalCallback({
     authority: payment.authority,
     callbackStatus: "OK",
+    auditAdminId: normalizedAdminId,
   });
 };
