@@ -7,6 +7,8 @@ const ALLOWED_ACTIONS = new Set([
   "ORDER_SHIPPING_UPDATED",
   "ORDER_DELETED",
   "ADMIN_LOGIN_FAILED",
+  "USER_UPDATED",
+  "USER_SOFT_DELETED",
 ]);
 
 export const recordAdminAudit = async ({
