@@ -1,7 +1,7 @@
 import Footer from "./layouts/footer/Footer";
 import Header from "./layouts/header/Header";
 
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import Content from "./layouts/content/Content";
 import ProductInfo from "./pages/productInfo/ProductInfo";
@@ -271,6 +271,18 @@ const routes = [
           <AdminShippingMethods />
         </AdminLayout>
       </ProtectedRoute>
+    ),
+  },
+  {
+    path: "*",
+    element: (
+      <div dir="rtl" className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4 text-center text-white">
+        <p className="text-2xl font-black">صفحه پیدا نشد</p>
+        <p className="text-sm text-zinc-400">آدرس واردشده معتبر نیست یا این صفحه وجود ندارد.</p>
+        <Link to="/" className="rounded-xl bg-cyan-500 px-5 py-2.5 text-sm font-bold text-slate-950 transition hover:bg-cyan-400">
+          بازگشت به فروشگاه
+        </Link>
+      </div>
     ),
   },
 ];
