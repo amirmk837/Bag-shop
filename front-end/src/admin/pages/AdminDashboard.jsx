@@ -446,7 +446,7 @@ const AdminDashboard = () => {
               description="فروش سفارش‌های واجد شرایط در ماه جاری"
               tone={{ bar: "bg-emerald-400", icon: "bg-emerald-400/10 text-emerald-300" }}
               icon={FiDollarSign}
-            to="/admin/orders"
+            to="/admin/orders?period=month"
               />
 
             <StatCard
@@ -455,7 +455,7 @@ const AdminDashboard = () => {
               description="مجموع فروش در ۱۲ ماه تقویمی اخیر"
               tone={{ bar: "bg-cyan-400", icon: "bg-cyan-400/10 text-cyan-300" }}
               icon={FiShoppingBag}
-            to="/admin/orders"
+            to="/admin/orders?period=12months"
               />
 
             <StatCard
@@ -464,7 +464,7 @@ const AdminDashboard = () => {
               description="سفارش‌های فروش در ۱۲ ماه اخیر"
               tone={{ bar: "bg-violet-400", icon: "bg-violet-400/10 text-violet-300" }}
               icon={FiUsers}
-            to="/admin/orders"
+            to="/admin/orders?period=12months"
               />
 
             <StatCard
@@ -482,7 +482,7 @@ const AdminDashboard = () => {
               description="شامل همه وضعیت‌ها، حتی سفارش‌های لغوشده"
               tone={{ bar: "bg-rose-400", icon: "bg-rose-400/10 text-rose-300" }}
               icon={FiAlertTriangle}
-            to="/admin/orders"
+            to="/admin/orders?period=all"
               />
           </div>
 
@@ -492,7 +492,7 @@ const AdminDashboard = () => {
             <div className="min-w-0 lg:col-span-5">
               <Section
                 title="روند فروش"
-                to="/admin/orders"
+                to="/admin/orders?period=12months"
                 description="۱۲ ماه اخیر؛ فقط سفارش‌های پرداخت‌شده و مراحل بعدی"
               >
                 <SalesChart months={data.monthlySales || []} />
