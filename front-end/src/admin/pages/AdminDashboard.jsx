@@ -58,11 +58,11 @@ const STATUS_CLASSES = {
 
 const Section = ({ title, description, children }) => (
   <section className="min-w-0 rounded-2xl border border-white/[0.07] bg-[#151923] p-3 shadow-sm sm:p-3.5">
-    <div className="mb-3 flex items-center gap-2">
+    <div className="mb-2 flex items-center gap-2">
       <span className="h-4 w-1 shrink-0 rounded-full bg-cyan-400" />
       <div className="min-w-0">
-        <h3 className="text-sm font-bold text-zinc-100">{title}</h3>
-        {description && <p className="mt-0.5 text-[11px] leading-4 text-zinc-500">{description}</p>}
+        <h3 className="text-[13px] font-bold text-zinc-100">{title}</h3>
+        {description && <p className="mt-0.5 text-[10px] leading-4 text-zinc-500">{description}</p>}
       </div>
     </div>
     {children}
@@ -163,7 +163,7 @@ const SalesChart = ({ months }) => {
 // =========================================
 
 const RecentOrders = ({ orders }) => (
-  <div className="space-y-3">
+  <div className="space-y-1.5">
     {orders.length === 0 ? (
       <p className="py-8 text-center text-sm text-zinc-500">
         هنوز سفارشی ثبت نشده است.
@@ -178,15 +178,15 @@ const RecentOrders = ({ orders }) => (
         return (
           <div
             key={order.id}
-            className="rounded-lg border border-white/[0.06] bg-[#10151f] p-2.5 transition hover:border-cyan-400/20"
+            className="rounded-lg border border-white/[0.06] bg-[#10151f] px-2.5 py-2 transition hover:border-cyan-400/20"
           >
-            <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <p className="font-bold text-white">
+                <p className="text-xs font-bold text-white">
                   سفارش #{formatNumber(order.id)}
                 </p>
 
-                <p className="mt-1 text-sm text-zinc-400">
+                <p className="mt-0.5 text-xs text-zinc-400">
                   {order.user?.username || "کاربر حذف‌شده"}
                 </p>
               </div>
@@ -194,21 +194,21 @@ const RecentOrders = ({ orders }) => (
               <OrderStatus status={order.status} />
             </div>
 
-            <div className="mt-2 flex flex-wrap items-end justify-between gap-2 border-t border-zinc-800 pt-2">
+            <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 border-t border-zinc-800 pt-1.5">
               <div>
-                <p className="text-xs text-zinc-500">تاریخ ثبت</p>
+                <p className="text-[10px] text-zinc-500">تاریخ ثبت</p>
 
-                <p className="mt-1 text-sm text-zinc-300">
+                <p className="mt-0.5 text-xs text-zinc-300">
                   {formatDate(order.createdAt)}
                 </p>
               </div>
 
               <div className="text-left">
-                <p className="font-bold text-white">
+                <p className="text-xs font-bold text-white">
                   {formatPrice(order.totalAmount)}
                 </p>
 
-                <p className="mt-1 text-xs text-zinc-500">
+                <p className="mt-0.5 text-[10px] text-zinc-500">
                   {formatNumber(itemCount)} عدد کالا
                 </p>
               </div>
@@ -231,12 +231,12 @@ const TopCustomers = ({ customers }) => (
         هنوز خرید تأییدشده‌ای برای رتبه‌بندی وجود ندارد.
       </p>
     ) : (
-      <table className="w-full min-w-[440px] text-right">
+      <table className="w-full min-w-[390px] text-right">
         <thead>
           <tr className="border-b border-zinc-800 text-xs text-zinc-500">
-            <th className="pb-3 pl-3">مشتری</th>
-            <th className="px-3 pb-3">تعداد خرید</th>
-            <th className="pb-3 pr-3">مجموع خرید</th>
+            <th className="pb-2 pl-2 text-[10px]">مشتری</th>
+            <th className="px-2 pb-2 text-[10px]">تعداد خرید</th>
+            <th className="pb-2 pr-2 text-[10px]">مجموع خرید</th>
           </tr>
         </thead>
 
@@ -246,29 +246,29 @@ const TopCustomers = ({ customers }) => (
               key={customer.userId}
               className="border-b border-zinc-800/70 last:border-0"
             >
-              <td className="py-2.5 pl-3">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-800 text-xs font-bold">
+              <td className="py-1.5 pl-2">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-zinc-800 text-[10px] font-bold">
                     {formatNumber(index + 1)}
                   </span>
 
                   <div className="min-w-0">
-                    <p className="break-words text-sm font-semibold text-white">
+                    <p className="break-words text-xs font-semibold text-white">
                       {customer.username}
                     </p>
 
-                    <p className="mt-1 text-xs text-zinc-500">
+                    <p className="mt-0.5 text-[10px] text-zinc-500">
                       {customer.phone || "شماره ثبت نشده"}
                     </p>
                   </div>
                 </div>
               </td>
 
-              <td className="whitespace-nowrap px-3 py-2.5 text-sm text-zinc-300">
+              <td className="whitespace-nowrap px-2 py-1.5 text-[11px] text-zinc-300">
                 {formatNumber(customer.orderCount)} سفارش
               </td>
 
-              <td className="whitespace-nowrap py-2.5 pr-3 text-sm font-bold text-white">
+              <td className="whitespace-nowrap py-1.5 pr-2 text-[11px] font-bold text-white">
                 {formatPrice(customer.totalSpent)}
               </td>
             </tr>
@@ -284,23 +284,23 @@ const TopCustomers = ({ customers }) => (
 // =========================================
 
 const StockProductList = ({ products, emptyMessage, lowStock = false }) => (
-  <div className="space-y-3">
+  <div className="space-y-1.5">
     {products.length === 0 ? (
-      <p className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-sm leading-6 text-zinc-500">
+      <p className="rounded-lg border border-zinc-800 bg-zinc-950 p-2.5 text-xs leading-5 text-zinc-500">
         {emptyMessage}
       </p>
     ) : (
       products.map((product) => (
         <div
           key={product.id}
-          className="flex items-center justify-between gap-3 rounded-xl border border-zinc-800 bg-zinc-950 p-3"
+          className="flex items-center justify-between gap-2 rounded-lg border border-zinc-800 bg-zinc-950 px-2.5 py-1.5"
         >
           <div className="min-w-0">
-            <p className="break-words text-sm font-semibold text-white">
+            <p className="break-words text-xs font-semibold text-white">
               {product.title || product.productCode}
             </p>
 
-            <p className="mt-1 text-xs text-zinc-500">
+            <p className="mt-0.5 text-[10px] text-zinc-500">
               {product.brand || "بدون برند"} · {product.productCode}
             </p>
           </div>
@@ -343,30 +343,30 @@ const BestSellingProducts = ({ products }) => {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {products.map((product, index) => {
         const width =
           maxQuantity > 0 ? (product.quantitySold / maxQuantity) * 100 : 0;
 
         return (
           <div key={`${product.productCode}-${product.title}`}>
-            <div className="mb-2 flex items-start justify-between gap-3">
+            <div className="mb-1 flex items-center justify-between gap-2">
               <div className="min-w-0">
-                <p className="break-words text-sm font-semibold text-white">
+                <p className="break-words text-xs font-semibold text-white">
                   {formatNumber(index + 1)}. {product.title}
                 </p>
 
-                <p className="mt-1 text-xs text-zinc-500">
+                <p className="mt-0.5 text-[10px] text-zinc-500">
                   کد: {product.productCode}
                 </p>
               </div>
 
               <div className="shrink-0 text-left">
-                <p className="text-sm font-bold text-white">
+                <p className="text-xs font-bold text-white">
                   {formatNumber(product.quantitySold)} عدد
                 </p>
 
-                <p className="mt-1 text-xs text-zinc-500">
+                <p className="mt-0.5 text-[10px] text-zinc-500">
                   {formatPrice(product.revenue)}
                 </p>
               </div>
@@ -374,7 +374,7 @@ const BestSellingProducts = ({ products }) => {
 
             <div
               dir="ltr"
-              className="h-1.5 overflow-hidden rounded-full bg-zinc-800"
+              className="h-1 overflow-hidden rounded-full bg-zinc-800"
             >
               <div
                 className="h-full rounded-full bg-gradient-to-l from-cyan-500 to-emerald-300 transition-all"
