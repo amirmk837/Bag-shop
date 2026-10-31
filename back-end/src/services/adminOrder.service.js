@@ -183,7 +183,7 @@ export const getPaymentReconciliationQueue = async ({ page = 1, pageSize = 20 } 
   const currentPage = parsePositiveInt(page, 1, 100000);
   const currentPageSize = parsePositiveInt(pageSize, 20, 100);
   const where = {
-    status: { in: ["REQUESTING", "REQUESTED"] },
+    status: { in: ["CREATED", "REQUESTING", "REQUESTED"] },
     order: { status: "PENDING" },
   };
 
@@ -217,15 +217,24 @@ export const getPaymentReconciliationQueue = async ({ page = 1, pageSize = 20 } 
   ]);
 
   return {
-    items: payments.map((payment) => ({
-      ...payment,
-      reconciliationHint:
-        payment.status === "REQUESTING"
-          ? "REQUEST_RESULT_UNKNOWN_NO_AUTHORITY_SAVED"
-          : "AWAITING_CALLBACK_OR_VERIFICATION",
-      hasAuthority: Boolean(payment.authority),
-      authority: undefined,
-    })),
+    items: payments.map((payment) => {
+      const { authority, ...safePayment } = payment;
+      const isOldEnough =
+        Date.now() - payment.createdAt.getTime() >= 15 * 60 * 1000;
+
+      return {
+        ...safePayment,
+        reconciliationHint:
+          payment.status === "CREATED"
+            ? "NOT_SENT_TO_GATEWAY_YET"
+            : payment.status === "REQUESTING"
+              ? "REQUEST_RESULT_UNKNOWN_NO_AUTHORITY_SAVED"
+              : "AWAITING_CALLBACK_OR_VERIFICATION",
+        hasAuthority: Boolean(authority),
+        canExpireUnsent:
+          payment.status === "CREATED" && !authority && isOldEnough,
+      };
+    }),
     pagination: {
       page: currentPage,
       pageSize: currentPageSize,
