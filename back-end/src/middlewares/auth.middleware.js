@@ -62,6 +62,10 @@ export const requireAuth = async (req, res, next) => {
       });
     }
 
+    // Responses behind authentication can contain personal or order data.
+    res.setHeader("Cache-Control", "no-store, private");
+    res.setHeader("Pragma", "no-cache");
+
     req.user = user;
 
     next();
