@@ -234,6 +234,25 @@ export const updateAdminOrderStatus = async (orderId, nextStatus) => {
             );
           }
 
+          // سفارش دارای پرداخت موفق تا زمان پیاده‌سازی بازپرداخت نباید لغو شود؛
+          // آزادسازی موجودی بدون بازپرداخت می‌تواند باعث زیان مالی و فروش مجدد کالا شود.
+          if (nextStatus === "CANCELLED") {
+            const successfulPayment = await tx.payment.findFirst({
+              where: {
+                orderId: order.id,
+                status: "PAID",
+              },
+              select: { id: true },
+            });
+
+            if (successfulPayment) {
+              throw createOrderError(
+                409,
+                "این سفارش پرداخت موفق دارد؛ تا زمان ثبت و تأیید بازپرداخت، لغو سفارش و آزادسازی موجودی مجاز نیست.",
+              );
+            }
+          }
+
           // تراکنش در حال انجام را نمی‌توان با لغو سفارش بی‌اثر کرد؛
           // ممکن است پرداخت در درگاه انجام شده باشد و callback هنوز نرسیده باشد.
           if (order.status === "PENDING" && nextStatus === "CANCELLED") {
