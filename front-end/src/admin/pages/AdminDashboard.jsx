@@ -57,12 +57,12 @@ const STATUS_CLASSES = {
 // =========================================
 
 const Section = ({ title, description, children }) => (
-  <section className="min-w-0 rounded-2xl border border-white/[0.07] bg-[#151923] p-4 shadow-[0_12px_35px_rgba(0,0,0,0.12)] sm:p-5">
-    <div className="mb-4 flex items-start gap-3">
-      <span className="mt-1 h-5 w-1 shrink-0 rounded-full bg-cyan-400" />
+  <section className="min-w-0 rounded-2xl border border-white/[0.07] bg-[#151923] p-3 shadow-sm sm:p-3.5">
+    <div className="mb-3 flex items-center gap-2">
+      <span className="h-4 w-1 shrink-0 rounded-full bg-cyan-400" />
       <div className="min-w-0">
-        <h3 className="text-base font-bold text-zinc-100">{title}</h3>
-        {description && <p className="mt-1 text-xs leading-5 text-zinc-500">{description}</p>}
+        <h3 className="text-sm font-bold text-zinc-100">{title}</h3>
+        {description && <p className="mt-0.5 text-[11px] leading-4 text-zinc-500">{description}</p>}
       </div>
     </div>
     {children}
@@ -82,14 +82,14 @@ const OrderStatus = ({ status }) => (
 );
 
 const StatCard = ({ title, value, description, icon: Icon, tone }) => (
-  <div className="relative min-w-0 overflow-hidden rounded-2xl border border-white/[0.07] bg-[#151923] p-4 transition hover:-translate-y-0.5 hover:border-white/15">
+  <div className="relative min-w-0 overflow-hidden rounded-2xl border border-white/[0.07] bg-[#151923] p-3 transition hover:border-white/15">
     <div className={`absolute inset-x-0 top-0 h-[2px] ${tone.bar}`} />
     <div className="flex items-center justify-between gap-2">
       <p className="text-xs font-medium text-zinc-400">{title}</p>
-      <div className={`shrink-0 rounded-xl p-2.5 ${tone.icon}`}><Icon size={18} /></div>
+      <div className={`shrink-0 rounded-lg p-1.5 ${tone.icon}`}><Icon size={15} /></div>
     </div>
-    <p className="mt-4 break-words text-lg font-black leading-8 text-white sm:text-xl">{value}</p>
-    <p className="mt-1 text-[11px] leading-5 text-zinc-500">{description}</p>
+    <p className="mt-2 break-words text-base font-extrabold leading-6 text-white">{value}</p>
+    <p className="mt-0.5 text-[10px] leading-4 text-zinc-500">{description}</p>
   </div>
 );
 
@@ -122,7 +122,7 @@ const SalesChart = ({ months }) => {
         </span>
       </div>
 
-      <div dir="ltr" className="grid h-36 grid-cols-12 items-end gap-1.5 border-b border-zinc-800 pb-2">
+      <div dir="ltr" className="grid h-28 grid-cols-12 items-end gap-1 border-b border-zinc-800 pb-2">
         {months.map((month) => {
           const total = Number(month.total) || 0;
           const height = maxSales > 0 ? (total / maxSales) * 100 : 0;
@@ -178,7 +178,7 @@ const RecentOrders = ({ orders }) => (
         return (
           <div
             key={order.id}
-            className="rounded-xl border border-white/[0.06] bg-[#10151f] p-3.5 transition hover:border-cyan-400/20"
+            className="rounded-lg border border-white/[0.06] bg-[#10151f] p-2.5 transition hover:border-cyan-400/20"
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
@@ -194,7 +194,7 @@ const RecentOrders = ({ orders }) => (
               <OrderStatus status={order.status} />
             </div>
 
-            <div className="mt-4 flex flex-wrap items-end justify-between gap-3 border-t border-zinc-800 pt-3">
+            <div className="mt-2 flex flex-wrap items-end justify-between gap-2 border-t border-zinc-800 pt-2">
               <div>
                 <p className="text-xs text-zinc-500">تاریخ ثبت</p>
 
@@ -246,9 +246,9 @@ const TopCustomers = ({ customers }) => (
               key={customer.userId}
               className="border-b border-zinc-800/70 last:border-0"
             >
-              <td className="py-4 pl-3">
+              <td className="py-2.5 pl-3">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-zinc-800 text-xs font-bold">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-800 text-xs font-bold">
                     {formatNumber(index + 1)}
                   </span>
 
@@ -264,11 +264,11 @@ const TopCustomers = ({ customers }) => (
                 </div>
               </td>
 
-              <td className="whitespace-nowrap px-3 py-4 text-sm text-zinc-300">
+              <td className="whitespace-nowrap px-3 py-2.5 text-sm text-zinc-300">
                 {formatNumber(customer.orderCount)} سفارش
               </td>
 
-              <td className="whitespace-nowrap py-4 pr-3 text-sm font-bold text-white">
+              <td className="whitespace-nowrap py-2.5 pr-3 text-sm font-bold text-white">
                 {formatPrice(customer.totalSpent)}
               </td>
             </tr>
@@ -343,7 +343,7 @@ const BestSellingProducts = ({ products }) => {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-3">
       {products.map((product, index) => {
         const width =
           maxQuantity > 0 ? (product.quantitySold / maxQuantity) * 100 : 0;
@@ -374,7 +374,7 @@ const BestSellingProducts = ({ products }) => {
 
             <div
               dir="ltr"
-              className="h-2 overflow-hidden rounded-full bg-zinc-800"
+              className="h-1.5 overflow-hidden rounded-full bg-zinc-800"
             >
               <div
                 className="h-full rounded-full bg-gradient-to-l from-cyan-500 to-emerald-300 transition-all"
@@ -453,7 +453,7 @@ const AdminDashboard = () => {
   const stock = data?.stock || {};
 
   return (
-    <div dir="rtl" className="space-y-5 text-white">
+    <div dir="rtl" className="space-y-3 text-white">
       {/* HEADER */}
 
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
@@ -497,7 +497,7 @@ const AdminDashboard = () => {
         <>
           {/* SUMMARY CARDS */}
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-5">
             <StatCard
               title="فروش ماه جاری"
               value={formatPrice(summary.currentMonthSales)}
@@ -541,7 +541,7 @@ const AdminDashboard = () => {
 
           {/* SALES CHART + RECENT ORDERS */}
 
-          <div className="grid min-w-0 gap-6 xl:grid-cols-3">
+          <div className="grid min-w-0 gap-3 xl:grid-cols-3">
             <Section
               title="روند فروش"
               description="۱۲ ماه اخیر؛ فقط سفارش‌های پرداخت‌شده و مراحل بعدی"
@@ -570,7 +570,7 @@ const AdminDashboard = () => {
 
           {/* STOCK */}
 
-          <div className="grid min-w-0 gap-6 xl:grid-cols-2">
+          <div className="grid min-w-0 gap-3 xl:grid-cols-2">
             <Section
               title="محصولات ناموجود"
               description={`تعداد کل ناموجودها: ${formatNumber(stock.outOfStockCount)}`}
