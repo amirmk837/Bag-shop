@@ -3,6 +3,7 @@ import multer from "multer";
 import path from "node:path";
 import fs from "node:fs";
 import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
+import { validateUploadedImages } from "../middlewares/validateImage.middleware.js";
 
 const router = express.Router();
 
@@ -64,6 +65,7 @@ router.post(
   requireAuth,
   requireAdmin,
   upload.single("image"),
+  validateUploadedImages,
   (req, res) => {
     if (!req.file) {
       return res.status(400).json({
