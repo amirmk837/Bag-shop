@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { getUsers, getUserDetail } from "../../services/adminUserApi";
 import AdminUserModal from "../../components/admin/AdminUserModal";
 
@@ -15,6 +16,7 @@ const formatDate = (date) => {
 const formatPrice = (value) => Number(value || 0).toLocaleString("fa-IR");
 
 const AdminUsers = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [users, setUsers] = useState([]);
 
   const [pagination, setPagination] = useState({
@@ -145,6 +147,15 @@ const AdminUsers = () => {
   };
 
   // =========================================
+  useEffect(() => {
+    const userId = searchParams.get("userId");
+    if (userId) openUser(userId);
+  }, [searchParams]);
+
+  const closeUser = () => {
+    setSelectedUser(null);
+    if (searchParams.has("userId")) setSearchParams({}, { replace: true });
+  };
   // AFTER UPDATE / DELETE
   // =========================================
 
@@ -430,7 +441,7 @@ const AdminUsers = () => {
         <AdminUserModal
           key={selectedUser.user.id}
           data={selectedUser}
-          onClose={() => setSelectedUser(null)}
+          onClose={closeUser}
           onChanged={handleUsersChanged}
         />
       )}
