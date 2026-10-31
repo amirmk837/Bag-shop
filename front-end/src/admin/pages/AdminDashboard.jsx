@@ -84,7 +84,7 @@ const OrderStatus = ({ status }) => (
 );
 
 const StatCard = ({ title, value, description, icon: Icon, tone, to }) => (
-  <Link to={to} className="relative block min-w-0 overflow-hidden rounded-2xl border border-white/[0.07]] bg-[#151923] p-3 transition hover:border-white/15">
+  <Link to={to} className="relative block min-w-0 overflow-hidden rounded-2xl border border-white/[0.07] bg-[#151923] p-3 transition hover:border-white/15">
     <div className={`absolute inset-x-0 top-0 h-[2px] ${tone.bar}`} />
     <div className="flex items-center justify-between gap-2">
       <p className="text-xs font-medium text-zinc-400">{title}</p>
@@ -167,56 +167,36 @@ const SalesChart = ({ months }) => {
 const RecentOrders = ({ orders }) => (
   <div className="space-y-1">
     {orders.length === 0 ? (
-      <p className="py-8 text-center text-sm text-zinc-500">
-        هنوز سفارشی ثبت نشده است.
-      </p>
+      <p className="py-8 text-center text-sm text-zinc-500">هنوز سفارشی ثبت نشده است.</p>
     ) : (
       orders.map((order) => {
         const itemCount = (order.items || []).reduce(
-          (total, item) => total + Number(item.quantity || 0),
-          0,
+          (total, item) => total + Number(item.quantity || 0), 0,
         );
-
         return (
           <Link
             key={order.id}
             to={"/admin/orders?orderId=" + encodeURIComponent(order.id)}
-            className="rounded-lg border border-white/[0.06] bg-[#10151f] px-2 py-1.5 transition hover:border-cyan-400/20"
+            className="block rounded-lg border border-white/[0.06] bg-[#10151f] px-2 py-1.5 transition hover:border-cyan-400/40 hover:bg-cyan-950/10"
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <p className="text-xs font-bold text-white">
-                  سفارش #{formatNumber(order.id)}
-                </p>
-
-                <p className="mt-0.5 text-xs text-zinc-400">
-                  {order.user?.username || "کاربر حذف‌شده"}
-                </p>
-              </Link>
-
+                <p className="text-xs font-bold text-white">سفارش #{formatNumber(order.id)}</p>
+                <p className="mt-0.5 text-xs text-zinc-400">{order.user?.username || "کاربر حذف‌شده"}</p>
+              </div>
               <OrderStatus status={order.status} />
             </div>
-
             <div className="mt-1 flex flex-wrap items-center justify-between gap-1.5 border-t border-zinc-800 pt-1">
               <div>
                 <p className="text-[10px] text-zinc-500">تاریخ ثبت</p>
-
-                <p className="mt-0.5 text-xs text-zinc-300">
-                  {formatDate(order.createdAt)}
-                </p>
+                <p className="mt-0.5 text-xs text-zinc-300">{formatDate(order.createdAt)}</p>
               </div>
-
               <div className="text-left">
-                <p className="text-xs font-bold text-white">
-                  {formatPrice(order.totalAmount)}
-                </p>
-
-                <p className="mt-0.5 text-[10px] text-zinc-500">
-                  {formatNumber(itemCount)} عدد کالا
-                </p>
+                <p className="text-xs font-bold text-white">{formatPrice(order.totalAmount)}</p>
+                <p className="mt-0.5 text-[10px] text-zinc-500">{formatNumber(itemCount)} عدد کالا</p>
               </div>
             </div>
-          </div>
+          </Link>
         );
       })
     )}
