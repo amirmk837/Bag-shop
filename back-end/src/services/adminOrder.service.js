@@ -294,7 +294,7 @@ const releaseOrderStockOnce = async (tx, order) => {
 // UPDATE ORDER STATUS
 // =========================================
 
-export const updateAdminOrderStatus = async (orderId, nextStatus) => {
+export const updateAdminOrderStatus = async (orderId, nextStatus, adminId) => {
   const id = parsePositiveInt(orderId);
 
   if (!id) {
@@ -436,6 +436,17 @@ export const updateAdminOrderStatus = async (orderId, nextStatus) => {
             await releaseOrderStockOnce(tx, order);
           }
 
+          await tx.adminAuditLog.create({
+            data: {
+              adminId: Number(adminId),
+              action: "ORDER_STATUS_CHANGED",
+              targetType: "ORDER",
+              targetId: id,
+              orderId: id,
+              details: { from: order.status, to: nextStatus },
+            },
+          });
+
           return tx.order.findUnique({
             where: { id },
             include: orderInclude,
@@ -459,7 +470,7 @@ export const updateAdminOrderStatus = async (orderId, nextStatus) => {
 // DELETE ORDER PERMANENTLY
 // =========================================
 
-export const deleteAdminOrder = async (orderId) => {
+export const deleteAdminOrder = async (orderId, adminId) => {
   const id = Number(orderId);
 
   if (!Number.isSafeInteger(id) || id < 1) {
@@ -515,6 +526,17 @@ export const deleteAdminOrder = async (orderId) => {
       if (order.status !== "CANCELLED") {
         await releaseOrderStockOnce(tx, order);
       }
+
+      await tx.adminAuditLog.create({
+        data: {
+          adminId: Number(adminId),
+          action: "ORDER_DELETED",
+          targetType: "ORDER",
+          targetId: order.id,
+          orderId: order.id,
+          details: { previousStatus: order.status },
+        },
+      });
 
       await tx.order.delete({
         where: { id: order.id },
