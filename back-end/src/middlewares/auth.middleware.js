@@ -70,10 +70,22 @@ export const requireAuth = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error("AUTH MIDDLEWARE ERROR:", error);
+    if (
+      error?.name === "JsonWebTokenError" ||
+      error?.name === "TokenExpiredError" ||
+      error?.name === "NotBeforeError"
+    ) {
+      return res.status(401).json({
+        message: "احراز هویت نامعتبر یا منقضی شده است.",
+      });
+    }
 
-    return res.status(401).json({
-      message: "احراز هویت نامعتبر یا منقضی شده است.",
+    console.error("AUTH MIDDLEWARE ERROR:", {
+      errorType: error?.name || "Error",
+    });
+
+    return res.status(500).json({
+      message: "بررسی وضعیت ورود در حال حاضر امکان‌پذیر نیست.",
     });
   }
 };
