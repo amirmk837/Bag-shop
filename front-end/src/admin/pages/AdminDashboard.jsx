@@ -284,7 +284,7 @@ const TopCustomers = ({ customers }) => (
 // =========================================
 
 const StockProductList = ({ products, emptyMessage, lowStock = false }) => (
-  <div className="space-y-1.5">
+  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
     {products.length === 0 ? (
       <p className="rounded-md border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-[10px] leading-4 text-zinc-500">
         {emptyMessage}
@@ -539,17 +539,19 @@ const AdminDashboard = () => {
             />
           </div>
 
-          {/* SALES CHART + RECENT ORDERS */}
+          {/* SALES + ORDERS */}
 
-          <div className="grid min-w-0 items-start gap-2 xl:grid-cols-3">
-            <Section
-              title="روند فروش"
-              description="۱۲ ماه اخیر؛ فقط سفارش‌های پرداخت‌شده و مراحل بعدی"
-            >
-              <SalesChart months={data.monthlySales || []} />
-            </Section>
+          <div className="grid min-w-0 grid-cols-1 items-start gap-2 lg:grid-cols-12">
+            <div className="min-w-0 lg:col-span-5">
+              <Section
+                title="روند فروش"
+                description="۱۲ ماه اخیر؛ فقط سفارش‌های پرداخت‌شده و مراحل بعدی"
+              >
+                <SalesChart months={data.monthlySales || []} />
+              </Section>
+            </div>
 
-            <div className="min-w-0 xl:col-span-2">
+            <div className="min-w-0 lg:col-span-7">
               <Section
                 title="آخرین سفارش‌ها"
                 description="سه سفارش ثبت‌شده اخیر، با هر وضعیت"
@@ -559,18 +561,31 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          {/* TOP CUSTOMERS */}
+          {/* CUSTOMERS + BEST SELLERS */}
 
-          <Section
-            title="مشتریان برتر"
-            description="رتبه‌بندی بر اساس تعداد خرید؛ مبلغ کل خرید نیز نمایش داده می‌شود."
-          >
-            <TopCustomers customers={data.topCustomers || []} />
-          </Section>
+          <div className="grid min-w-0 grid-cols-1 items-start gap-2 lg:grid-cols-12">
+            <div className="min-w-0 lg:col-span-4">
+              <Section
+                title="مشتریان برتر"
+                description="رتبه‌بندی بر اساس تعداد و مبلغ خرید"
+              >
+                <TopCustomers customers={data.topCustomers || []} />
+              </Section>
+            </div>
 
-          {/* STOCK */}
+            <div className="min-w-0 lg:col-span-8">
+              <Section
+                title="پرفروش‌ترین محصولات"
+                description="پنج محصول برتر بر اساس تعداد واقعی فروخته‌شده"
+              >
+                <BestSellingProducts products={data.bestSellingProducts || []} />
+              </Section>
+            </div>
+          </div>
 
-          <div className="grid min-w-0 items-start gap-2 xl:grid-cols-2">
+          {/* STOCK OVERVIEW */}
+
+          <div className="grid min-w-0 grid-cols-1 items-start gap-2 lg:grid-cols-2">
             <Section
               title="محصولات ناموجود"
               description={`تعداد کل ناموجودها: ${formatNumber(stock.outOfStockCount)}`}
@@ -582,7 +597,7 @@ const AdminDashboard = () => {
 
               {stock.outOfStockCount >
                 (stock.outOfStockProducts || []).length && (
-                <p className="mt-3 text-xs text-zinc-500">
+                <p className="mt-2 text-[10px] text-zinc-500">
                   شش محصول اخیر نمایش داده می‌شوند؛ برای دیدن بقیه، بخش محصولات
                   را باز کن.
                 </p>
@@ -600,22 +615,13 @@ const AdminDashboard = () => {
               />
 
               {stock.lowStockCount > (stock.lowStockProducts || []).length && (
-                <p className="mt-3 text-xs text-zinc-500">
+                <p className="mt-2 text-[10px] text-zinc-500">
                   شش محصول اخیر نمایش داده می‌شوند؛ برای دیدن بقیه، بخش محصولات
                   را باز کن.
                 </p>
               )}
             </Section>
           </div>
-
-          {/* BEST SELLERS */}
-
-          <Section
-            title="پرفروش‌ترین محصولات"
-            description="پنج محصول برتر بر اساس تعداد واقعی فروخته‌شده؛ مبلغ فروش هر محصول هم نمایش داده می‌شود."
-          >
-            <BestSellingProducts products={data.bestSellingProducts || []} />
-          </Section>
         </>
       )}
     </div>
