@@ -40,3 +40,55 @@ export const recordAdminAudit = async ({
     select: { id: true, action: true, createdAt: true },
   });
 };
+
+
+export const getAdminAuditLogs = async ({ page = 1, pageSize = 25, action } = {}) => {
+  const parsedPage = Number(page);
+  const parsedSize = Number(pageSize);
+  const currentPage = Number.isSafeInteger(parsedPage) && parsedPage > 0
+    ? Math.min(parsedPage, 100000)
+    : 1;
+  const currentPageSize = Number.isSafeInteger(parsedSize) && parsedSize > 0
+    ? Math.min(parsedSize, 100)
+    : 25;
+
+  const where = {};
+  if (action) {
+    if (!ALLOWED_ACTIONS.has(action)) {
+      const error = new Error("نوع رویداد معتبر نیست.");
+      error.status = 400;
+      throw error;
+    }
+    where.action = action;
+  }
+
+  const [total, items] = await prisma.$transaction([
+    prisma.adminAuditLog.count({ where }),
+    prisma.adminAuditLog.findMany({
+      where,
+      select: {
+        id: true,
+        action: true,
+        targetType: true,
+        targetId: true,
+        orderId: true,
+        details: true,
+        createdAt: true,
+        admin: { select: { id: true, username: true } },
+      },
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+      skip: (currentPage - 1) * currentPageSize,
+      take: currentPageSize,
+    }),
+  ]);
+
+  return {
+    items,
+    pagination: {
+      page: currentPage,
+      pageSize: currentPageSize,
+      total,
+      totalPages: Math.ceil(total / currentPageSize),
+    },
+  };
+};
