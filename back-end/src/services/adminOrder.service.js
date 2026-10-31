@@ -591,7 +591,7 @@ export const updateAdminOrderShipping = async (
 
 
 // بستن امن پرداخت CREATED که هنوز به مرحله ارسال درخواست درگاه نرسیده است.
-export const expireUnsentPayment = async (paymentId, adminId) => {
+export const expireUnsentPayment = async (paymentId) => {
   const id = parsePositiveInt(paymentId);
   if (!id) throw createOrderError(400, "شناسه تراکنش معتبر نیست.");
 
@@ -637,10 +637,14 @@ export const expireUnsentPayment = async (paymentId, adminId) => {
 
     await releaseOrderStockOnce(tx, payment.order);
 
-    await tx.order.updateMany({
+    const cancelledOrder = await tx.order.updateMany({
       where: { id: payment.orderId, status: "PENDING" },
       data: { status: "CANCELLED" },
     });
+
+    if (cancelledOrder.count !== 1) {
+      throw createOrderError(409, "وضعیت سفارش هم‌زمان تغییر کرده است؛ عملیات بازگردانی شد.");
+    }
 
     return { paymentId: id, orderId: payment.orderId, status: "FAILED" };
   }, { isolationLevel: "Serializable" });
