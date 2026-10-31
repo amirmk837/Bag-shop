@@ -57,15 +57,14 @@ const STATUS_CLASSES = {
 // =========================================
 
 const Section = ({ title, description, children }) => (
-  <section className="min-w-0 rounded-2xl border border-zinc-800 bg-zinc-900 p-5 sm:p-6">
-    <div className="mb-5">
-      <h3 className="text-lg font-bold text-white">{title}</h3>
-
-      {description && (
-        <p className="mt-1 text-sm leading-6 text-zinc-500">{description}</p>
-      )}
+  <section className="min-w-0 rounded-2xl border border-white/[0.07] bg-[#151923] p-4 shadow-[0_12px_35px_rgba(0,0,0,0.12)] sm:p-5">
+    <div className="mb-4 flex items-start gap-3">
+      <span className="mt-1 h-5 w-1 shrink-0 rounded-full bg-cyan-400" />
+      <div className="min-w-0">
+        <h3 className="text-base font-bold text-zinc-100">{title}</h3>
+        {description && <p className="mt-1 text-xs leading-5 text-zinc-500">{description}</p>}
+      </div>
     </div>
-
     {children}
   </section>
 );
@@ -82,27 +81,15 @@ const OrderStatus = ({ status }) => (
   </span>
 );
 
-const StatCard = ({ title, value, description, icon: Icon }) => (
-  <div
-    className="
-      min-w-0 rounded-2xl border border-zinc-800
-      bg-zinc-900 p-5 transition
-      hover:border-zinc-700
-    "
-  >
-    <div className="flex items-center justify-between gap-3">
-      <p className="text-sm text-zinc-400">{title}</p>
-
-      <div className="shrink-0 rounded-xl bg-zinc-800 p-3 text-zinc-200">
-        <Icon size={20} />
-      </div>
+const StatCard = ({ title, value, description, icon: Icon, tone }) => (
+  <div className="relative min-w-0 overflow-hidden rounded-2xl border border-white/[0.07] bg-[#151923] p-4 transition hover:-translate-y-0.5 hover:border-white/15">
+    <div className={`absolute inset-x-0 top-0 h-[2px] ${tone.bar}`} />
+    <div className="flex items-center justify-between gap-2">
+      <p className="text-xs font-medium text-zinc-400">{title}</p>
+      <div className={`shrink-0 rounded-xl p-2.5 ${tone.icon}`}><Icon size={18} /></div>
     </div>
-
-    <p className="mt-5 break-words text-xl font-black text-white sm:text-2xl">
-      {value}
-    </p>
-
-    <p className="mt-2 text-xs leading-5 text-zinc-500">{description}</p>
+    <p className="mt-4 break-words text-lg font-black leading-8 text-white sm:text-xl">{value}</p>
+    <p className="mt-1 text-[11px] leading-5 text-zinc-500">{description}</p>
   </div>
 );
 
@@ -148,7 +135,7 @@ const SalesChart = ({ months }) => {
             >
               <div className="flex h-full w-full items-end justify-center">
                 <div
-                  className="w-full max-w-4 rounded-t-sm bg-cyan-300/80 transition-all duration-300 hover:bg-cyan-200"
+                  className="w-full max-w-4 rounded-t-sm bg-gradient-to-t from-cyan-500 to-teal-300 transition-all duration-300 hover:from-cyan-300 hover:to-emerald-200"
                   style={{
                     height: `${height}%`,
                     minHeight: total > 0 ? "3px" : "0",
@@ -191,7 +178,7 @@ const RecentOrders = ({ orders }) => (
         return (
           <div
             key={order.id}
-            className="rounded-xl border border-zinc-800 bg-zinc-950 p-4"
+            className="rounded-xl border border-white/[0.06] bg-[#10151f] p-3.5 transition hover:border-cyan-400/20"
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
@@ -390,7 +377,7 @@ const BestSellingProducts = ({ products }) => {
               className="h-2 overflow-hidden rounded-full bg-zinc-800"
             >
               <div
-                className="h-full rounded-full bg-zinc-300 transition-all"
+                className="h-full rounded-full bg-gradient-to-l from-cyan-500 to-emerald-300 transition-all"
                 style={{ width: `${width}%` }}
               />
             </div>
@@ -466,12 +453,12 @@ const AdminDashboard = () => {
   const stock = data?.stock || {};
 
   return (
-    <div dir="rtl" className="space-y-6 text-white">
+    <div dir="rtl" className="space-y-5 text-white">
       {/* HEADER */}
 
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h2 className="text-2xl font-black">داشبورد مدیریت</h2>
+          <h2 className="text-xl font-black tracking-tight text-white">داشبورد مدیریت</h2>
 
           <p className="mt-2 text-sm leading-6 text-zinc-400">
             نمای کلی از فروش، سفارش‌ها، مشتریان و موجودی فروشگاه
@@ -482,13 +469,7 @@ const AdminDashboard = () => {
           type="button"
           onClick={() => setRefreshKey((current) => current + 1)}
           disabled={loading}
-          className="
-            inline-flex items-center justify-center gap-2
-            rounded-xl border border-zinc-700
-            bg-zinc-900 px-4 py-3 text-sm
-            transition hover:bg-zinc-800
-            disabled:cursor-not-allowed disabled:opacity-50
-          "
+          className="inline-flex items-center justify-center gap-2 rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-2.5 text-xs font-semibold text-cyan-200 transition hover:bg-cyan-400/15 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <FiRefreshCw className={loading ? "animate-spin" : ""} />
 
@@ -516,11 +497,12 @@ const AdminDashboard = () => {
         <>
           {/* SUMMARY CARDS */}
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
             <StatCard
               title="فروش ماه جاری"
               value={formatPrice(summary.currentMonthSales)}
               description="فروش سفارش‌های واجد شرایط در ماه جاری"
+              tone={{ bar: "bg-emerald-400", icon: "bg-emerald-400/10 text-emerald-300" }}
               icon={FiDollarSign}
             />
 
@@ -528,6 +510,7 @@ const AdminDashboard = () => {
               title="فروش ۱۲ ماه اخیر"
               value={formatPrice(summary.salesLast12Months)}
               description="مجموع فروش در ۱۲ ماه تقویمی اخیر"
+              tone={{ bar: "bg-cyan-400", icon: "bg-cyan-400/10 text-cyan-300" }}
               icon={FiShoppingBag}
             />
 
@@ -535,6 +518,7 @@ const AdminDashboard = () => {
               title="سفارش‌های فروش"
               value={formatNumber(summary.salesOrderCountLast12Months)}
               description="سفارش‌های فروش در ۱۲ ماه اخیر"
+              tone={{ bar: "bg-violet-400", icon: "bg-violet-400/10 text-violet-300" }}
               icon={FiUsers}
             />
 
@@ -542,6 +526,7 @@ const AdminDashboard = () => {
               title="کل محصولات"
               value={formatNumber(summary.totalProducts)}
               description="تعداد محصولات ثبت‌شده در دیتابیس"
+              tone={{ bar: "bg-amber-400", icon: "bg-amber-400/10 text-amber-300" }}
               icon={FiPackage}
             />
 
@@ -549,6 +534,7 @@ const AdminDashboard = () => {
               title="کل سفارش‌ها"
               value={formatNumber(summary.totalOrders)}
               description="شامل همه وضعیت‌ها، حتی سفارش‌های لغوشده"
+              tone={{ bar: "bg-rose-400", icon: "bg-rose-400/10 text-rose-300" }}
               icon={FiAlertTriangle}
             />
           </div>
