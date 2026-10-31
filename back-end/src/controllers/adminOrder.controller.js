@@ -200,6 +200,8 @@ export const getAdminAuditLogsController = async (req, res) => {
       page: req.query.page,
       pageSize: req.query.pageSize,
       action: req.query.action,
+      from: req.query.from,
+      to: req.query.to,
     });
     return res.status(200).json({ success: true, ...result });
   } catch (error) {
