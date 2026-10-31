@@ -1,4 +1,5 @@
 import prisma from "../config/prisma.js";
+import { config } from "../config/env.js";
 import { createCustomerOrderInTransaction } from "./order.service.js";
 import { requestZarinpalPayment } from "./zarinpal.service.js";
 
@@ -84,11 +85,11 @@ const getPaymentSettings = async () => {
   let callbackUrl;
 
   try {
-    if (!process.env.PAYMENT_CALLBACK_URL?.trim()) {
+    if (!config.PAYMENT_CALLBACK_URL) {
       throw new Error("Callback URL is missing.");
     }
 
-    callbackUrl = new URL(process.env.PAYMENT_CALLBACK_URL);
+    callbackUrl = new URL(config.PAYMENT_CALLBACK_URL);
   } catch {
     throw createPaymentError(503, "آدرس بازگشت پرداخت معتبر نیست.");
   }
@@ -99,7 +100,7 @@ const getPaymentSettings = async () => {
 
   if (
     callbackUrl.protocol !== "https:" &&
-    !(process.env.ZARINPAL_SANDBOX === "true" &&
+    !(config.ZARINPAL_SANDBOX &&
       isLocalhost &&
       callbackUrl.protocol === "http:")
   ) {
