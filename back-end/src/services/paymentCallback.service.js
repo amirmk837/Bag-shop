@@ -200,3 +200,34 @@ export const handleZarinpalCallback = async ({ authority, callbackStatus }) => {
     };
   });
 };
+
+
+// بررسی مجدد پرداخت REQUESTED از پنل مدیریت؛ فقط Verify درگاه مرجع تصمیم است.
+export const reconcileRequestedPaymentById = async (paymentId) => {
+  const id = Number(paymentId);
+
+  if (!Number.isSafeInteger(id) || id < 1) {
+    throw fail(400, "شناسه تراکنش معتبر نیست.");
+  }
+
+  const payment = await prisma.payment.findUnique({
+    where: { id },
+    select: { id: true, authority: true, status: true },
+  });
+
+  if (!payment) {
+    throw fail(404, "تراکنش پرداخت پیدا نشد.");
+  }
+
+  if (payment.status !== "REQUESTED" || !payment.authority) {
+    throw fail(
+      409,
+      "فقط تراکنش REQUESTED دارای شناسه درگاه قابل بررسی خودکار است. تراکنش REQUESTING باید جداگانه بررسی شود.",
+    );
+  }
+
+  return handleZarinpalCallback({
+    authority: payment.authority,
+    callbackStatus: "OK",
+  });
+};
