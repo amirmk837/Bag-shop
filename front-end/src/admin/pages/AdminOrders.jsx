@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { FiRefreshCw, FiSearch, FiTrash2 } from "react-icons/fi";
 
@@ -135,7 +135,7 @@ const AdminOrders = () => {
     setTo(nextTo);
     setPeriod(nextPeriod);
     setPagination((current) => ({ ...current, page: 1 }));
-  }, [searchParams]);
+  }, [searchParams, openOrder]);
 
   // دریافت سفارش‌ها
   useEffect(() => {
@@ -179,7 +179,7 @@ const AdminOrders = () => {
     };
   }, [pagination.page, pagination.pageSize, search, status, from, to, period, refreshKey]);
 
-  const openOrder = async (orderId) => {
+  const openOrder = useCallback(async (orderId) => {
     setModalOpen(true);
     setSelectedOrder(null);
     setStatusDraft("");
@@ -200,7 +200,7 @@ const AdminOrders = () => {
     } finally {
       setDetailLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     const orderId = searchParams.get("orderId");
