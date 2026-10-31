@@ -555,6 +555,7 @@ export const deleteAdminOrder = async (orderId, adminId) => {
 export const updateAdminOrderShipping = async (
   orderId,
   { shippingMethod, trackingCode } = {},
+  adminId,
 ) => {
   const id = parsePositiveInt(orderId);
 
@@ -580,44 +581,49 @@ export const updateAdminOrderShipping = async (
     );
   }
 
-  const order = await prisma.order.findUnique({
-    where: { id },
-    select: { id: true, status: true },
-  });
-
-  if (!order) {
-    throw createOrderError(404, "سفارش پیدا نشد.");
+  const normalizedAdminId = Number(adminId);
+  if (!Number.isSafeInteger(normalizedAdminId) || normalizedAdminId < 1) {
+    throw createOrderError(401, "شناسه مدیر معتبر نیست.");
   }
 
-  if (order.status !== "PROCESSING") {
-    throw createOrderError(
-      400,
-      "اطلاعات ارسال فقط برای سفارش در حال پردازش قابل ثبت است.",
-    );
-  }
+  return prisma.$transaction(async (tx) => {
+    const order = await tx.order.findUnique({
+      where: { id },
+      select: { id: true, status: true, shippingMethod: true, trackingCode: true },
+    });
 
-  const result = await prisma.order.updateMany({
-    where: {
-      id,
-      status: "PROCESSING",
-    },
-    data: {
-      shippingMethod: method,
-      trackingCode: tracking,
-    },
-  });
+    if (!order) throw createOrderError(404, "سفارش پیدا نشد.");
+    if (order.status !== "PROCESSING") {
+      throw createOrderError(400, "اطلاعات ارسال فقط برای سفارش در حال پردازش قابل ثبت است.");
+    }
 
-  if (result.count !== 1) {
-    throw createOrderError(
-      409,
-      "وضعیت سفارش تغییر کرده است؛ صفحه را تازه‌سازی کنید.",
-    );
-  }
+    const result = await tx.order.updateMany({
+      where: { id, status: "PROCESSING" },
+      data: { shippingMethod: method, trackingCode: tracking },
+    });
 
-  return prisma.order.findUnique({
-    where: { id },
-    include: orderInclude,
-  });
+    if (result.count !== 1) {
+      throw createOrderError(409, "وضعیت سفارش تغییر کرده است؛ صفحه را تازه‌سازی کنید.");
+    }
+
+    await tx.adminAuditLog.create({
+      data: {
+        adminId: normalizedAdminId,
+        action: "ORDER_SHIPPING_UPDATED",
+        targetType: "ORDER",
+        targetId: id,
+        orderId: id,
+        details: {
+          previousShippingMethod: order.shippingMethod,
+          previousTrackingCode: order.trackingCode,
+          shippingMethod: method,
+          trackingCode: tracking,
+        },
+      },
+    });
+
+    return tx.order.findUnique({ where: { id }, include: orderInclude });
+  }, { isolationLevel: "Serializable" });
 };
 
 
