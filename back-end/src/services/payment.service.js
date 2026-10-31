@@ -59,11 +59,15 @@ const getPaymentSettings = async () => {
     where: { id: 1 },
   });
 
-  if (
-    settings?.provider !== "ZARINPAL" ||
-    typeof settings.merchantId !== "string" ||
-    !settings.merchantId.trim()
-  ) {
+  const merchantId =
+    typeof settings?.merchantId === "string" ? settings.merchantId.trim() : "";
+
+  const isValidMerchantId =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      merchantId,
+    );
+
+  if (settings?.provider !== "ZARINPAL" || !isValidMerchantId) {
     throw createPaymentError(
       503,
       "تنظیمات پذیرنده زرین‌پال معتبر یا کامل نیست.",
@@ -92,13 +96,19 @@ const getPaymentSettings = async () => {
 
   if (
     callbackUrl.protocol !== "https:" &&
-    !(isLocalhost && callbackUrl.protocol === "http:")
+    !(process.env.ZARINPAL_SANDBOX === "true" &&
+      isLocalhost &&
+      callbackUrl.protocol === "http:")
   ) {
     throw createPaymentError(503, "آدرس بازگشت پرداخت باید HTTPS باشد.");
   }
 
+  if (callbackUrl.username || callbackUrl.password || callbackUrl.hash) {
+    throw createPaymentError(503, "آدرس بازگشت پرداخت معتبر نیست.");
+  }
+
   return {
-    merchantId: settings.merchantId.trim(),
+    merchantId,
     callbackUrl: callbackUrl.toString(),
   };
 };
