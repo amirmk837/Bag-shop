@@ -13,6 +13,7 @@ import {
 } from "../controllers/banner.controller.js";
 
 import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
+import { validateUploadedImages } from "../middlewares/validateImage.middleware.js";
 
 const router = express.Router();
 
@@ -91,7 +92,7 @@ router.use(requireAuth, requireAdmin);
 
 router.get("/", getAdminBannersController);
 
-router.post("/", uploadBannerImages, createBannerController);
+router.post("/", uploadBannerImages, validateUploadedImages, createBannerController);
 
 router.patch("/:id", updateBannerController);
 
