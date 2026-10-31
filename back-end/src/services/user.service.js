@@ -347,8 +347,64 @@ export const getUserDetail = async (
 };
 
 // =========================================
-// UPDATE USER
+// UPDATE USER / SOFT DELETE
 // =========================================
+
+const USER_SELECT = {
+  id: true,
+  username: true,
+  phone: true,
+  role: true,
+  permissions: true,
+  isActive: true,
+  deletedAt: true,
+  createdAt: true,
+  updatedAt: true,
+};
+
+const validateUserMutationIds = (targetUserId, actorUserId) => {
+  const targetId = Number(targetUserId);
+  const actorId = Number(actorUserId);
+
+  if (
+    !Number.isSafeInteger(targetId) || targetId < 1 ||
+    !Number.isSafeInteger(actorId) || actorId < 1
+  ) {
+    throw new Error("شناسه کاربر یا مدیر معتبر نیست.");
+  }
+
+  return { targetId, actorId };
+};
+
+const ensureAnotherActiveAdmin = async (tx) => {
+  const activeAdminCount = await tx.user.count({
+    where: {
+      role: "ADMIN",
+      isActive: true,
+      deletedAt: null,
+    },
+  });
+
+  if (activeAdminCount <= 1) {
+    throw new Error("آخرین مدیر فعال سیستم قابل حذف یا تنزل نیست.");
+  }
+};
+
+const runUserAdminTransaction = async (operation) => {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      return await prisma.$transaction(
+        (tx) => operation(tx),
+        { isolationLevel: "Serializable" },
+      );
+    } catch (error) {
+      if (error?.code === "P2034" && attempt < 2) continue;
+      throw error;
+    }
+  }
+
+  throw new Error("عملیات کاربر انجام نشد؛ دوباره تلاش کنید.");
+};
 
 export const updateUser = async ({
   targetUserId,
@@ -357,159 +413,148 @@ export const updateUser = async ({
   permissions,
   isActive,
 }) => {
-  const targetId = Number(targetUserId);
-  const actorId = Number(actorUserId);
+  const { targetId, actorId } = validateUserMutationIds(
+    targetUserId,
+    actorUserId,
+  );
 
-  if (!Number.isInteger(targetId)) {
-    throw new Error("شناسه کاربر نامعتبر است.");
-  }
-
-  const existingUser = await prisma.user.findUnique({
-    where: {
-      id: targetId,
-    },
-  });
-
-  if (!existingUser) {
-    throw new Error("کاربر پیدا نشد.");
-  }
-
-  // جلوگیری از تغییر نقش یا غیرفعال‌کردن حساب خود مدیر
-  if (targetId === actorId && (role !== undefined || isActive !== undefined)) {
-    throw new Error("مدیر نمی‌تواند نقش یا وضعیت حساب خودش را تغییر دهد.");
-  }
-
-  let nextRole = existingUser.role;
-  let nextPermissions = existingUser.permissions;
-  let nextIsActive = existingUser.isActive;
-
-  if (role !== undefined) {
-    if (!VALID_ROLES.includes(role)) {
-      throw new Error("نقش کاربر نامعتبر است.");
-    }
-
-    nextRole = role;
-  }
-
-  if (permissions !== undefined) {
-    nextPermissions = normalizePermissions(permissions);
-  }
-
-  if (isActive !== undefined) {
-    if (typeof isActive !== "boolean") {
-      throw new Error("وضعیت فعال بودن کاربر نامعتبر است.");
-    }
-
-    nextIsActive = isActive;
-  }
-
-  // مدیر نیازی به permission جداگانه ندارد.
-  if (nextRole === "ADMIN") {
-    nextPermissions = [];
-  }
-
-  // جلوگیری از حذف یا تنزل آخرین مدیر فعال
-  const isLosingAdminStatus =
-    existingUser.role === "ADMIN" &&
-    existingUser.isActive &&
-    (nextRole !== "ADMIN" || nextIsActive === false);
-
-  if (isLosingAdminStatus) {
-    const activeAdminCount = await prisma.user.count({
-      where: {
-        role: "ADMIN",
-        isActive: true,
-        deletedAt: null,
-      },
+  return runUserAdminTransaction(async (tx) => {
+    const existingUser = await tx.user.findUnique({
+      where: { id: targetId },
     });
 
-    if (activeAdminCount <= 1) {
-      throw new Error("آخرین مدیر فعال سیستم قابل حذف یا تنزل نیست.");
+    if (!existingUser) throw new Error("کاربر پیدا نشد.");
+
+    if (
+      targetId === actorId &&
+      (role !== undefined || isActive !== undefined)
+    ) {
+      throw new Error("مدیر نمی‌تواند نقش یا وضعیت حساب خودش را تغییر دهد.");
     }
-  }
 
-  const updatedUser = await prisma.user.update({
-    where: {
-      id: targetId,
-    },
-    data: {
-      role: nextRole,
-      permissions: nextPermissions,
-      isActive: nextIsActive,
-      deletedAt: nextIsActive ? null : existingUser.deletedAt || new Date(),
-    },
-    select: {
-      id: true,
-      username: true,
-      phone: true,
-      role: true,
-      permissions: true,
-      isActive: true,
-      deletedAt: true,
-      createdAt: true,
-      updatedAt: true,
-    },
+    let nextRole = existingUser.role;
+    let nextPermissions = existingUser.permissions;
+    let nextIsActive = existingUser.isActive;
+
+    if (role !== undefined) {
+      if (!VALID_ROLES.includes(role)) {
+        throw new Error("نقش کاربر نامعتبر است.");
+      }
+      nextRole = role;
+    }
+
+    if (permissions !== undefined) {
+      nextPermissions = normalizePermissions(permissions);
+    }
+
+    if (isActive !== undefined) {
+      if (typeof isActive !== "boolean") {
+        throw new Error("وضعیت فعال بودن کاربر نامعتبر است.");
+      }
+      nextIsActive = isActive;
+    }
+
+    if (nextRole === "ADMIN") nextPermissions = [];
+
+    const isLosingAdminStatus =
+      existingUser.role === "ADMIN" &&
+      existingUser.isActive &&
+      !existingUser.deletedAt &&
+      (nextRole !== "ADMIN" || !nextIsActive);
+
+    if (isLosingAdminStatus) await ensureAnotherActiveAdmin(tx);
+
+    const updatedUser = await tx.user.update({
+      where: { id: targetId },
+      data: {
+        role: nextRole,
+        permissions: nextPermissions,
+        isActive: nextIsActive,
+        deletedAt: nextIsActive ? null : existingUser.deletedAt || new Date(),
+      },
+      select: USER_SELECT,
+    });
+
+    await tx.adminAuditLog.create({
+      data: {
+        adminId: actorId,
+        action: "USER_UPDATED",
+        targetType: "USER",
+        targetId,
+        details: {
+          before: {
+            role: existingUser.role,
+            permissions: existingUser.permissions,
+            isActive: existingUser.isActive,
+          },
+          after: {
+            role: updatedUser.role,
+            permissions: updatedUser.permissions,
+            isActive: updatedUser.isActive,
+          },
+        },
+      },
+      select: { id: true },
+    });
+
+    return updatedUser;
   });
-
-  return updatedUser;
 };
 
-// =========================================
-// SOFT DELETE USER
-// =========================================
-
 export const softDeleteUser = async (targetUserId, actorUserId) => {
-  const targetId = Number(targetUserId);
-  const actorId = Number(actorUserId);
-
-  if (!Number.isInteger(targetId)) {
-    throw new Error("شناسه کاربر نامعتبر است.");
-  }
+  const { targetId, actorId } = validateUserMutationIds(
+    targetUserId,
+    actorUserId,
+  );
 
   if (targetId === actorId) {
     throw new Error("ادمین نمی‌تواند حساب خودش را حذف کند.");
   }
 
-  const targetUser = await prisma.user.findUnique({
-    where: {
-      id: targetId,
-    },
-  });
+  return runUserAdminTransaction(async (tx) => {
+    const targetUser = await tx.user.findUnique({
+      where: { id: targetId },
+    });
 
-  if (!targetUser) {
-    throw new Error("کاربر پیدا نشد.");
-  }
+    if (!targetUser) throw new Error("کاربر پیدا نشد.");
 
-  if (targetUser.role === "ADMIN" && targetUser.isActive) {
-    const activeAdminCount = await prisma.user.count({
-      where: {
-        role: "ADMIN",
+    if (
+      targetUser.role === "ADMIN" &&
+      targetUser.isActive &&
+      !targetUser.deletedAt
+    ) {
+      await ensureAnotherActiveAdmin(tx);
+    }
+
+    const deletedUser = await tx.user.update({
+      where: { id: targetId },
+      data: {
+        isActive: false,
+        deletedAt: targetUser.deletedAt || new Date(),
+      },
+      select: {
+        id: true,
+        username: true,
+        role: true,
         isActive: true,
-        deletedAt: null,
+        deletedAt: true,
       },
     });
 
-    if (activeAdminCount <= 1) {
-      throw new Error("آخرین مدیر فعال سیستم قابل حذف نیست.");
-    }
-  }
+    await tx.adminAuditLog.create({
+      data: {
+        adminId: actorId,
+        action: "USER_SOFT_DELETED",
+        targetType: "USER",
+        targetId,
+        details: {
+          previousRole: targetUser.role,
+          wasActive: targetUser.isActive,
+        },
+      },
+      select: { id: true },
+    });
 
-  const deletedUser = await prisma.user.update({
-    where: {
-      id: targetId,
-    },
-    data: {
-      isActive: false,
-      deletedAt: new Date(),
-    },
-    select: {
-      id: true,
-      username: true,
-      role: true,
-      isActive: true,
-      deletedAt: true,
-    },
+    return deletedUser;
   });
-
-  return deletedUser;
 };
