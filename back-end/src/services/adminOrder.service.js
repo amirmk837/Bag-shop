@@ -102,13 +102,13 @@ export const getAdminOrders = async ({
     rangeEnd = new Date(to);
     if (!from || !to || Number.isNaN(rangeStart.getTime()) ||
         Number.isNaN(rangeEnd.getTime()) || rangeStart >= rangeEnd ||
-        rangeEnd > new Date(now.getTime() + 86400000)) {
+        rangeEnd > new Date(now.getTime() + 40 * 86400000)) {
       throw createOrderError(400, "بازه زمانی سفارش‌ها معتبر نیست.");
     }
   } else if (["month", "3months", "12months"].includes(period)) {
     const months = period === "month" ? 1 : period === "3months" ? 3 : 12;
     rangeStart = new Date(now);
-    rangeStart.setMonth(rangeStart.getMonth() - months);
+    rangeStart.setUTCMonth(rangeStart.getUTCMonth() - months);
     rangeEnd = now;
   } else if (period !== "all") {
     throw createOrderError(400, "فیلتر زمانی انتخاب‌شده معتبر نیست.");
