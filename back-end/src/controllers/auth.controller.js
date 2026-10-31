@@ -53,13 +53,15 @@ export const loginController = async (req, res) => {
       user,
     });
   } catch (error) {
-    try {
-      await auditFailedAdminLogin(req.body?.identifier);
-    } catch (auditError) {
-      console.error("ADMIN LOGIN AUDIT ERROR:", { errorType: auditError?.name || "Error" });
-    }
-
     const status = Number.isInteger(error?.status) ? error.status : 500;
+
+    if (status === 401) {
+      try {
+        await auditFailedAdminLogin(req.body?.identifier);
+      } catch (auditError) {
+        console.error("ADMIN LOGIN AUDIT ERROR:", { errorType: auditError?.name || "Error" });
+      }
+    }
 
     if (status >= 500) {
       console.error("LOGIN CONTROLLER ERROR:", {
