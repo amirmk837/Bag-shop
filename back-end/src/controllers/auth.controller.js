@@ -59,8 +59,18 @@ export const loginController = async (req, res) => {
       console.error("ADMIN LOGIN AUDIT ERROR:", { errorType: auditError?.name || "Error" });
     }
 
-    return res.status(401).json({
-      message: error.message || "اطلاعات ورود صحیح نیست.",
+    const status = Number.isInteger(error?.status) ? error.status : 500;
+
+    if (status >= 500) {
+      console.error("LOGIN CONTROLLER ERROR:", {
+        errorType: error?.name || "Error",
+      });
+    }
+
+    return res.status(status).json({
+      message: status >= 500
+        ? "ورود در حال حاضر امکان‌پذیر نیست؛ دوباره تلاش کنید."
+        : error.message,
     });
   }
 };
