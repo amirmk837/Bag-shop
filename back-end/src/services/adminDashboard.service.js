@@ -24,8 +24,12 @@ const buildPersianMonths = (now) => {
    map.set(key,{key,label:persianMonthFormatter.format(probe),start:tehranMidnight(Number(g.year),Number(g.month),Number(g.day)),total:0,orderCount:0});
   } cursor.setUTCDate(cursor.getUTCDate()+1);
  }
- const months=[...map.values()].filter(x=>x.start<=now).sort((a,b)=>a.start-b.start).slice(-12);
- return months.map((m,i)=>({...m,end:i<months.length-1?months[i+1].start:new Date(now.getTime()+86400000)}));
+ const allMonths=[...map.values()].sort((a,b)=>a.start-b.start);
+ const visible=allMonths.filter((x)=>x.start<=now).slice(-12);
+ return visible.map((month)=>{
+  const index=allMonths.findIndex((item)=>item.key===month.key);
+  return {...month,end:allMonths[index+1]?.start || new Date(now.getTime()+86400000)};
+ });
 };
 const monthlySalesMap = new Map(
     monthlySales.map((month) => [month.key, month]),
