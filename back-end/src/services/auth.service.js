@@ -22,6 +22,7 @@ export const createAuthToken = (user) => {
       sub: String(user.id),
       role: user.role,
       username: user.username,
+      tokenVersion: Number.isSafeInteger(user.tokenVersion) ? user.tokenVersion : 0,
     },
     getJwtSecret(),
     {
@@ -220,6 +221,21 @@ export const registerUser = async (username, phone, password) => {
 // =========================================
 // CURRENT USER
 // =========================================
+
+export const invalidateUserTokens = async (userId) => {
+  return prisma.user.update({
+    where: { id: Number(userId) },
+    data: { tokenVersion: { increment: 1 } },
+    select: { id: true },
+  });
+};
+
+export const getAuthUserById = async (userId) => {
+  return prisma.user.findUnique({
+    where: { id: Number(userId) },
+    select: { id: true, tokenVersion: true, isActive: true, deletedAt: true },
+  });
+};
 
 export const getUserById = async (userId) => {
   return prisma.user.findUnique({
