@@ -29,13 +29,19 @@ export const getAdminOrders = async ({
   pageSize = 20,
   status = "all",
   search = "",
+  from = "",
+  to = "",
+  period = "all",
 } = {}) => {
   const params = new URLSearchParams({
     page: String(page),
     pageSize: String(pageSize),
     search,
+    period,
   });
 
+  if (from) params.set("from", from);
+  if (to) params.set("to", to);
   if (status !== "all") params.set("status", status);
 
   const data = await request(`${API_URL}/admin/orders?${params.toString()}`);
