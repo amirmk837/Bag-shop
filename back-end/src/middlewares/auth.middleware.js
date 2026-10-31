@@ -40,13 +40,14 @@ export const requireAuth = async (req, res, next) => {
 
     const payload = verifyToken(token);
 
-    if (!payload?.sub) {
+    const userId = Number(payload?.sub);
+    if (!Number.isSafeInteger(userId) || userId < 1) {
       return res.status(401).json({
         message: "توکن نامعتبر یا منقضی شده است.",
       });
     }
 
-    const user = await getUserById(Number(payload.sub));
+    const user = await getUserById(userId);
 
     if (!user) {
       return res.status(401).json({
