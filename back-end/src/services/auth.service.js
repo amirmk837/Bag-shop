@@ -25,13 +25,20 @@ export const createAuthToken = (user) => {
     },
     getJwtSecret(),
     {
+      algorithm: "HS256",
       expiresIn: "24h",
+      issuer: "bag-shop-api",
+      audience: "bag-shop-client",
     },
   );
 };
 
 export const verifyToken = (token) => {
-  return jwt.verify(token, getJwtSecret());
+  return jwt.verify(token, getJwtSecret(), {
+    algorithms: ["HS256"],
+    issuer: "bag-shop-api",
+    audience: "bag-shop-client",
+  });
 };
 
 // =========================================
