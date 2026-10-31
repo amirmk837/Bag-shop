@@ -298,6 +298,9 @@ model ShippingMethod {
 enum AdminAuditAction {
   PAYMENT_RECONCILIATION
   PAYMENT_EXPIRED_UNSENT
+  ORDER_STATUS_CHANGED
+  ORDER_SHIPPING_UPDATED
+  ORDER_DELETED
 }
 
 model AdminAuditLog {
