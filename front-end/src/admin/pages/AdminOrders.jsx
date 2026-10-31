@@ -135,7 +135,7 @@ const AdminOrders = () => {
     setTo(nextTo);
     setPeriod(nextPeriod);
     setPagination((current) => ({ ...current, page: 1 }));
-  }, [searchParams, openOrder]);
+  }, [searchParams]);
 
   // دریافت سفارش‌ها
   useEffect(() => {
