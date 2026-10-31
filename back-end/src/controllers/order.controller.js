@@ -1,10 +1,10 @@
 import { startCustomerPayment } from "../services/payment.service.js";
 import {
-  getCustomerOrderPaymentStatus,
   getCustomerOrders,
   createShippingTestOrder,
   createProductShippingTestOrder,
 } from "../services/order.service.js";
+import { getCustomerPaymentStatus } from "../services/paymentStatus.service.js";
 
 export const createOrderController = async (req, res) => {
   try {
