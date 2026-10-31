@@ -223,3 +223,31 @@ export const getUserById = async (userId) => {
     },
   });
 };
+
+
+// ثبت تلاش ناموفق فقط وقتی شناسه واردشده متعلق به حساب مدیر موجود باشد.
+export const auditFailedAdminLogin = async (identifier) => {
+  if (typeof identifier !== "string" || !identifier.trim()) return;
+
+  const normalizedIdentifier = identifier.trim();
+  const normalizedPhone = normalizePhone(normalizedIdentifier);
+  const conditions = [{ username: normalizedIdentifier }];
+  if (normalizedPhone) conditions.push({ phone: normalizedPhone });
+
+  const admin = await prisma.user.findFirst({
+    where: { OR: conditions, role: "ADMIN" },
+    select: { id: true },
+  });
+
+  if (!admin) return;
+
+  await prisma.adminAuditLog.create({
+    data: {
+      adminId: admin.id,
+      action: "ADMIN_LOGIN_FAILED",
+      targetType: "ADMIN",
+      targetId: admin.id,
+      details: { reason: "INVALID_CREDENTIALS" },
+    },
+  });
+};
