@@ -4,6 +4,7 @@ import path from "node:path";
 import fs from "node:fs";
 import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
 import { validateUploadedImages } from "../middlewares/validateImage.middleware.js";
+import { handleUploadError } from "../middlewares/uploadError.middleware.js";
 
 const router = express.Router();
 
@@ -65,6 +66,7 @@ router.post(
   requireAuth,
   requireAdmin,
   upload.single("image"),
+  handleUploadError,
   validateUploadedImages,
   (req, res) => {
     if (!req.file) {
