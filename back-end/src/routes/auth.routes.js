@@ -21,7 +21,7 @@ const router = express.Router();
 router.post("/login", limitLogin, loginController);
 router.post("/register", limitRegister, registerController);
 router.get("/me", requireAuth, meController);
-router.post("/logout", logoutController);
+router.post("/logout", requireAuth, logoutController);
 
 // آدرس ارسال فقط برای مشتری واردشده
 router.get("/address", requireAuth, requireCustomer, getAddressController);
