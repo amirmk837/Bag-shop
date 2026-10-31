@@ -57,12 +57,12 @@ const STATUS_CLASSES = {
 // =========================================
 
 const Section = ({ title, description, children }) => (
-  <section className="min-w-0 rounded-2xl border border-white/[0.07] bg-[#151923] p-3 shadow-sm sm:p-3.5">
-    <div className="mb-2 flex items-center gap-2">
+  <section className="h-fit min-w-0 rounded-xl border border-white/[0.07] bg-[#151923] p-2.5 shadow-sm">
+    <div className="mb-1.5 flex items-center gap-1.5">
       <span className="h-4 w-1 shrink-0 rounded-full bg-cyan-400" />
       <div className="min-w-0">
-        <h3 className="text-[13px] font-bold text-zinc-100">{title}</h3>
-        {description && <p className="mt-0.5 text-[10px] leading-4 text-zinc-500">{description}</p>}
+        <h3 className="text-xs font-bold text-zinc-100">{title}</h3>
+        {description && <p className="mt-0 text-[9px] leading-3 text-zinc-500">{description}</p>}
       </div>
     </div>
     {children}
@@ -73,7 +73,7 @@ const OrderStatus = ({ status }) => (
   <span
     className={`
       inline-flex whitespace-nowrap rounded-lg
-      px-2.5 py-1.5 text-xs font-bold
+      px-1.5 py-1 text-[10px] font-bold
       ${STATUS_CLASSES[status] || "bg-zinc-800 text-zinc-300"}
     `}
   >
@@ -102,7 +102,7 @@ const SalesChart = ({ months }) => {
 
   if (months.length === 0) {
     return (
-      <p className="py-8 text-center text-sm text-zinc-500">
+      <p className="py-2 text-center text-xs text-zinc-500">
         اطلاعات فروش برای نمایش وجود ندارد.
       </p>
     );
@@ -163,7 +163,7 @@ const SalesChart = ({ months }) => {
 // =========================================
 
 const RecentOrders = ({ orders }) => (
-  <div className="space-y-1.5">
+  <div className="space-y-1">
     {orders.length === 0 ? (
       <p className="py-8 text-center text-sm text-zinc-500">
         هنوز سفارشی ثبت نشده است.
@@ -178,7 +178,7 @@ const RecentOrders = ({ orders }) => (
         return (
           <div
             key={order.id}
-            className="rounded-lg border border-white/[0.06] bg-[#10151f] px-2.5 py-2 transition hover:border-cyan-400/20"
+            className="rounded-lg border border-white/[0.06] bg-[#10151f] px-2 py-1.5 transition hover:border-cyan-400/20"
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
@@ -194,7 +194,7 @@ const RecentOrders = ({ orders }) => (
               <OrderStatus status={order.status} />
             </div>
 
-            <div className="mt-1.5 flex flex-wrap items-center justify-between gap-2 border-t border-zinc-800 pt-1.5">
+            <div className="mt-1 flex flex-wrap items-center justify-between gap-1.5 border-t border-zinc-800 pt-1">
               <div>
                 <p className="text-[10px] text-zinc-500">تاریخ ثبت</p>
 
@@ -246,9 +246,9 @@ const TopCustomers = ({ customers }) => (
               key={customer.userId}
               className="border-b border-zinc-800/70 last:border-0"
             >
-              <td className="py-1.5 pl-2">
+              <td className="py-1 pl-1.5">
                 <div className="flex items-center gap-2">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-zinc-800 text-[10px] font-bold">
+                  <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded bg-zinc-800 text-[9px] font-bold">
                     {formatNumber(index + 1)}
                   </span>
 
@@ -264,11 +264,11 @@ const TopCustomers = ({ customers }) => (
                 </div>
               </td>
 
-              <td className="whitespace-nowrap px-2 py-1.5 text-[11px] text-zinc-300">
+              <td className="whitespace-nowrap px-1.5 py-1 text-[10px] text-zinc-300">
                 {formatNumber(customer.orderCount)} سفارش
               </td>
 
-              <td className="whitespace-nowrap py-1.5 pr-2 text-[11px] font-bold text-white">
+              <td className="whitespace-nowrap py-1 pr-1.5 text-[10px] font-bold text-white">
                 {formatPrice(customer.totalSpent)}
               </td>
             </tr>
@@ -286,7 +286,7 @@ const TopCustomers = ({ customers }) => (
 const StockProductList = ({ products, emptyMessage, lowStock = false }) => (
   <div className="space-y-1.5">
     {products.length === 0 ? (
-      <p className="rounded-lg border border-zinc-800 bg-zinc-950 p-2.5 text-xs leading-5 text-zinc-500">
+      <p className="rounded-md border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-[10px] leading-4 text-zinc-500">
         {emptyMessage}
       </p>
     ) : (
@@ -308,7 +308,7 @@ const StockProductList = ({ products, emptyMessage, lowStock = false }) => (
           <span
             className={`
               shrink-0 whitespace-nowrap rounded-lg
-              px-2.5 py-1.5 text-xs font-bold
+              px-1.5 py-1 text-[10px] font-bold
               ${
                 lowStock
                   ? "bg-amber-950/40 text-amber-300"
@@ -343,14 +343,14 @@ const BestSellingProducts = ({ products }) => {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       {products.map((product, index) => {
         const width =
           maxQuantity > 0 ? (product.quantitySold / maxQuantity) * 100 : 0;
 
         return (
           <div key={`${product.productCode}-${product.title}`}>
-            <div className="mb-1 flex items-center justify-between gap-2">
+            <div className="mb-0.5 flex items-center justify-between gap-1.5">
               <div className="min-w-0">
                 <p className="break-words text-xs font-semibold text-white">
                   {formatNumber(index + 1)}. {product.title}
@@ -374,7 +374,7 @@ const BestSellingProducts = ({ products }) => {
 
             <div
               dir="ltr"
-              className="h-1 overflow-hidden rounded-full bg-zinc-800"
+              className="h-0.5 overflow-hidden rounded-full bg-zinc-800"
             >
               <div
                 className="h-full rounded-full bg-gradient-to-l from-cyan-500 to-emerald-300 transition-all"
@@ -541,7 +541,7 @@ const AdminDashboard = () => {
 
           {/* SALES CHART + RECENT ORDERS */}
 
-          <div className="grid min-w-0 gap-3 xl:grid-cols-3">
+          <div className="grid min-w-0 items-start gap-2 xl:grid-cols-3">
             <Section
               title="روند فروش"
               description="۱۲ ماه اخیر؛ فقط سفارش‌های پرداخت‌شده و مراحل بعدی"
@@ -570,7 +570,7 @@ const AdminDashboard = () => {
 
           {/* STOCK */}
 
-          <div className="grid min-w-0 gap-3 xl:grid-cols-2">
+          <div className="grid min-w-0 items-start gap-2 xl:grid-cols-2">
             <Section
               title="محصولات ناموجود"
               description={`تعداد کل ناموجودها: ${formatNumber(stock.outOfStockCount)}`}
