@@ -4,6 +4,7 @@ import {
   loginUser,
   registerUser,
   auditFailedAdminLogin,
+  invalidateUserTokens,
 } from "../services/auth.service.js";
 
 const COOKIE_NAME = "auth_token";
@@ -16,6 +17,8 @@ const getCookieOptions = () => ({
 });
 
 const COOKIE_MAX_AGE = 24 * 60 * 60 * 1000;
+
+const toPublicUser = (user) => ({ id: user.id, username: user.username, phone: user.phone, role: user.role, permissions: user.permissions, isActive: user.isActive, deletedAt: user.deletedAt, createdAt: user.createdAt, updatedAt: user.updatedAt });
 
 // =========================================
 // LOGIN
@@ -50,7 +53,7 @@ export const loginController = async (req, res) => {
 
     return res.status(200).json({
       message: "ورود با موفقیت انجام شد.",
-      user,
+      user: toPublicUser(user),
     });
   } catch (error) {
     const status = Number.isInteger(error?.status) ? error.status : 500;
@@ -143,7 +146,14 @@ export const meController = async (req, res) => {
 
 // LOGOUT
 // =========================================
-export const logoutController = (req, res) => {
+export const logoutController = async (req, res) => {
+  try {
+    await invalidateUserTokens(req.user.id);
+  } catch (error) {
+    console.error("LOGOUT CONTROLLER ERROR:", { errorType: error?.name || "Error" });
+    return res.status(500).json({ message: "خروج امن انجام نشد؛ دوباره تلاش کنید." });
+  }
+
   res.clearCookie(COOKIE_NAME, getCookieOptions());
 
   return res.status(200).json({
