@@ -1,6 +1,7 @@
 import express from "express";
 
 import {
+  getPaymentReconciliationQueueController,
   deleteAdminOrderController,
   getAdminOrderDetailController,
   getAdminOrdersController,
@@ -15,6 +16,7 @@ const router = express.Router();
 router.use(requireAuth, requireAdmin);
 
 router.get("/", getAdminOrdersController);
+router.get("/payment-reconciliation", getPaymentReconciliationQueueController);
 router.get("/:id", getAdminOrderDetailController);
 
 router.patch("/:id/status", updateAdminOrderStatusController);
