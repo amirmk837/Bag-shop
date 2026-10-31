@@ -109,7 +109,7 @@ export const registerController = async (req, res) => {
 
     return res.status(201).json({
       message: "حساب کاربری با موفقیت ساخته شد.",
-      user,
+      user: toPublicUser(user),
     });
   } catch (error) {
     console.error("Register controller error:", error);
@@ -133,7 +133,7 @@ export const meController = async (req, res) => {
     }
 
     return res.status(200).json({
-      user,
+      user: toPublicUser(user),
     });
   } catch (error) {
     console.error("Me controller error:", error);
