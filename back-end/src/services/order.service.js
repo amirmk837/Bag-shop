@@ -48,10 +48,179 @@ const orderSelect = {
 };
 
 // =========================================
+// CREATE ORDER INSIDE AN EXISTING TRANSACTION
+// =========================================
+
+export const createCustomerOrderInTransaction = async (
+  tx,
+  userId,
+  shippingMethodId,
+  maxTotalAmount = MAX_DATABASE_INT,
+) => {
+  const numericUserId = parsePositiveInt(userId);
+  const numericShippingMethodId = parsePositiveInt(shippingMethodId);
+
+  if (!numericUserId || !numericShippingMethodId) {
+    throw createOrderError(400, "اطلاعات سفارش معتبر نیست.");
+  }
+
+  if (!Number.isSafeInteger(maxTotalAmount) || maxTotalAmount <= 0) {
+    throw createOrderError(400, "سقف مبلغ سفارش معتبر نیست.");
+  }
+
+  const address = await tx.userAddress.findUnique({
+    where: { userId: numericUserId },
+  });
+
+  if (!address) {
+    throw createOrderError(400, "ابتدا آدرس ارسال خود را ذخیره کنید.");
+  }
+
+  const shippingMethod = await tx.shippingMethod.findFirst({
+    where: {
+      id: numericShippingMethodId,
+      isActive: true,
+    },
+  });
+
+  if (!shippingMethod) {
+    throw createOrderError(400, "روش ارسال معتبر یا فعال نیست.");
+  }
+
+  const cart = await tx.cart.findUnique({
+    where: { userId: numericUserId },
+    select: {
+      id: true,
+      items: {
+        select: {
+          productId: true,
+          quantity: true,
+          color: true,
+          product: {
+            select: {
+              id: true,
+              productCode: true,
+              title: true,
+              price: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!cart || cart.items.length === 0) {
+    throw createOrderError(400, "سبد خرید شما خالی است.");
+  }
+
+  let productsTotal = 0;
+
+  const items = cart.items.map((item) => {
+    const product = item.product;
+
+    if (
+      !product ||
+      !Number.isSafeInteger(item.quantity) ||
+      item.quantity < 1 ||
+      !Number.isSafeInteger(product.price) ||
+      product.price < 1
+    ) {
+      throw createOrderError(400, "اطلاعات یکی از اقلام سفارش معتبر نیست.");
+    }
+
+    const subtotal = product.price * item.quantity;
+    productsTotal += subtotal;
+
+    if (!validateAmount(subtotal) || !validateAmount(productsTotal)) {
+      throw createOrderError(400, "مبلغ سفارش بیش از حد مجاز است.");
+    }
+
+    return {
+      productId: product.id,
+      productCode: product.productCode,
+      title: product.title,
+      color: item.color || "",
+      unitPrice: product.price,
+      quantity: item.quantity,
+      subtotal,
+    };
+  });
+
+  const shippingCost = shippingMethod.price;
+  const totalAmount = productsTotal + shippingCost;
+
+  if (
+    !Number.isSafeInteger(shippingCost) ||
+    shippingCost < 0 ||
+    !validateAmount(totalAmount)
+  ) {
+    throw createOrderError(400, "مبلغ نهایی سفارش معتبر نیست.");
+  }
+
+  // کنترل سقف پرداخت قبل از رزرو موجودی
+  if (totalAmount > maxTotalAmount) {
+    throw createOrderError(
+      400,
+      "مبلغ سفارش از سقف مجاز پرداخت آنلاین بیشتر است.",
+    );
+  }
+
+  for (const item of items) {
+    await reserveStock(tx, {
+      productId: item.productId,
+      color: item.color,
+      quantity: item.quantity,
+      title: item.title,
+    });
+  }
+
+  const order = await tx.order.create({
+    data: {
+      userId: numericUserId,
+      status: "PENDING",
+      totalAmount,
+      shippingCost,
+      shippingMethod: shippingMethod.name,
+      shippingMethodId: shippingMethod.id,
+      shippingRecipientName: address.recipientName,
+      shippingRecipientPhone: address.recipientPhone,
+      shippingProvince: address.province,
+      shippingCity: address.city,
+      shippingAddressLine: address.addressLine,
+      shippingPostalCode: address.postalCode,
+      shippingPlateNumber: address.plateNumber,
+      shippingUnitNumber: address.unitNumber,
+      items: {
+        create: items.map((item) => ({
+          product: { connect: { id: item.productId } },
+          productCode: item.productCode,
+          title: item.title,
+          color: item.color,
+          unitPrice: item.unitPrice,
+          quantity: item.quantity,
+          subtotal: item.subtotal,
+        })),
+      },
+    },
+    select: orderSelect,
+  });
+
+  await tx.cartItem.deleteMany({
+    where: { cartId: cart.id },
+  });
+
+  return order;
+};
+
+// =========================================
 // CREATE CUSTOMER ORDER
 // =========================================
 
-export const createCustomerOrder = async (userId, shippingMethodId) => {
+export const createCustomerOrder = async (
+  userId,
+  shippingMethodId,
+  maxTotalAmount = MAX_DATABASE_INT,
+) => {
   const numericUserId = parsePositiveInt(userId);
   const numericShippingMethodId = parsePositiveInt(shippingMethodId);
 
@@ -62,145 +231,13 @@ export const createCustomerOrder = async (userId, shippingMethodId) => {
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       return await prisma.$transaction(
-        async (tx) => {
-          const address = await tx.userAddress.findUnique({
-            where: { userId: numericUserId },
-          });
-
-          if (!address) {
-            throw createOrderError(400, "ابتدا آدرس ارسال خود را ذخیره کنید.");
-          }
-
-          const shippingMethod = await tx.shippingMethod.findFirst({
-            where: {
-              id: numericShippingMethodId,
-              isActive: true,
-            },
-          });
-
-          if (!shippingMethod) {
-            throw createOrderError(400, "روش ارسال معتبر یا فعال نیست.");
-          }
-
-          const cart = await tx.cart.findUnique({
-            where: { userId: numericUserId },
-            select: {
-              id: true,
-              items: {
-                select: {
-                  productId: true,
-                  quantity: true,
-                  color: true,
-                  product: {
-                    select: {
-                      id: true,
-                      productCode: true,
-                      title: true,
-                      price: true,
-                    },
-                  },
-                },
-              },
-            },
-          });
-
-          if (!cart || cart.items.length === 0) {
-            throw createOrderError(400, "سبد خرید شما خالی است.");
-          }
-
-          let productsTotal = 0;
-
-          const items = cart.items.map((item) => {
-            const product = item.product;
-
-            if (
-              !product ||
-              !Number.isSafeInteger(item.quantity) ||
-              item.quantity < 1 ||
-              !Number.isSafeInteger(product.price) ||
-              product.price < 1
-            ) {
-              throw createOrderError(
-                400,
-                "اطلاعات یکی از اقلام سفارش معتبر نیست.",
-              );
-            }
-
-            const subtotal = product.price * item.quantity;
-            productsTotal += subtotal;
-
-            if (!validateAmount(subtotal) || !validateAmount(productsTotal)) {
-              throw createOrderError(400, "مبلغ سفارش بیش از حد مجاز است.");
-            }
-
-            return {
-              productId: product.id,
-              productCode: product.productCode,
-              title: product.title,
-              color: item.color || "",
-              unitPrice: product.price,
-              quantity: item.quantity,
-              subtotal,
-            };
-          });
-
-          const shippingCost = shippingMethod.price;
-          const totalAmount = productsTotal + shippingCost;
-
-          if (
-            !Number.isSafeInteger(shippingCost) ||
-            shippingCost < 0 ||
-            !validateAmount(totalAmount)
-          ) {
-            throw createOrderError(400, "مبلغ نهایی سفارش معتبر نیست.");
-          }
-
-          for (const item of items) {
-            await reserveStock(tx, {
-              productId: item.productId,
-              color: item.color,
-              quantity: item.quantity,
-              title: item.title,
-            });
-          }
-
-          const order = await tx.order.create({
-            data: {
-              userId: numericUserId,
-              status: "PENDING",
-              totalAmount,
-              shippingCost,
-              shippingMethod: shippingMethod.name,
-              shippingMethodId: shippingMethod.id,
-              shippingRecipientName: address.recipientName,
-              shippingRecipientPhone: address.recipientPhone,
-              shippingProvince: address.province,
-              shippingCity: address.city,
-              shippingAddressLine: address.addressLine,
-              shippingPostalCode: address.postalCode,
-              shippingPlateNumber: address.plateNumber,
-              shippingUnitNumber: address.unitNumber,
-              items: {
-                create: items.map((item) => ({
-                  product: { connect: { id: item.productId } },
-                  productCode: item.productCode,
-                  title: item.title,
-                  color: item.color,
-                  unitPrice: item.unitPrice,
-                  quantity: item.quantity,
-                  subtotal: item.subtotal,
-                })),
-              },
-            },
-            select: orderSelect,
-          });
-
-          await tx.cartItem.deleteMany({
-            where: { cartId: cart.id },
-          });
-
-          return order;
-        },
+        async (tx) =>
+          createCustomerOrderInTransaction(
+            tx,
+            numericUserId,
+            numericShippingMethodId,
+            maxTotalAmount,
+          ),
         { isolationLevel: "Serializable" },
       );
     } catch (error) {

@@ -1,10 +1,16 @@
 import { startCustomerPayment } from "../services/payment.service.js";
+
 import {
-  getCustomerOrderPaymentStatus,
   getCustomerOrders,
   createShippingTestOrder,
   createProductShippingTestOrder,
 } from "../services/order.service.js";
+
+import { getCustomerPaymentStatus } from "../services/paymentStatus.service.js";
+
+// =========================================
+// CREATE ORDER / START PAYMENT
+// =========================================
 
 export const createOrderController = async (req, res) => {
   try {
@@ -31,19 +37,27 @@ export const createOrderController = async (req, res) => {
   }
 };
 
+// =========================================
+// CUSTOMER PAYMENT STATUS
+// =========================================
+
 export const getCustomerOrderPaymentStatusController = async (req, res) => {
   try {
     const result = await getCustomerPaymentStatus({
-      userId: req.user.id,
+      userId: Number(req.user.id),
       orderId: Number(req.params.orderId),
     });
 
-    return res.status(200).json({ order: result });
+    return res.status(200).json({
+      order: result,
+    });
   } catch (error) {
     console.error("GET PAYMENT STATUS ERROR:", error);
 
     if (error.status) {
-      return res.status(error.status).json({ message: error.message });
+      return res.status(error.status).json({
+        message: error.message,
+      });
     }
 
     return res.status(500).json({
@@ -52,11 +66,17 @@ export const getCustomerOrderPaymentStatusController = async (req, res) => {
   }
 };
 
+// =========================================
+// CUSTOMER ORDERS
+// =========================================
+
 export const getCustomerOrdersController = async (req, res) => {
   try {
     const orders = await getCustomerOrders(req.user.id);
 
-    return res.status(200).json({ orders });
+    return res.status(200).json({
+      orders,
+    });
   } catch (error) {
     console.error("GET CUSTOMER ORDERS ERROR:", error);
 
@@ -67,6 +87,10 @@ export const getCustomerOrdersController = async (req, res) => {
     });
   }
 };
+
+// =========================================
+// LEGACY SHIPPING TEST
+// =========================================
 
 export const createShippingTestOrderController = async (req, res, next) => {
   try {
@@ -80,6 +104,10 @@ export const createShippingTestOrderController = async (req, res, next) => {
     next(error);
   }
 };
+
+// =========================================
+// PRODUCT SHIPPING TEST
+// =========================================
 
 export const createProductShippingTestOrderController = async (
   req,
