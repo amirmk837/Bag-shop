@@ -18,10 +18,8 @@ const storage = multer.diskStorage({
   },
 
   filename: (_req, file, callback) => {
-    const extension = path.extname(file.originalname);
-
+    const extension = path.extname(file.originalname).toLowerCase();
     const name = `${Date.now()}-${Math.round(Math.random() * 1e9)}${extension}`;
-
     callback(null, name);
   },
 });
@@ -37,7 +35,10 @@ const upload = multer({
       "image/avif",
     ];
 
-    if (!allowedTypes.includes(file.mimetype)) {
+    const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".avif"];
+    const extension = path.extname(file.originalname).toLowerCase();
+
+    if (!allowedTypes.includes(file.mimetype) || !allowedExtensions.includes(extension)) {
       return callback(
         new Error("فقط فایل‌های JPG، PNG، WEBP و AVIF مجاز هستند."),
       );
@@ -48,6 +49,9 @@ const upload = multer({
 
   limits: {
     fileSize: 5 * 1024 * 1024,
+    files: 1,
+    fields: 5,
+    parts: 6,
   },
 });
 
