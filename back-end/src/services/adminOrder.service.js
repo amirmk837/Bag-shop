@@ -85,11 +85,36 @@ export const getAdminOrders = async ({
   pageSize = 20,
   status = "all",
   search = "",
+  from,
+  to,
+  period = "all",
 } = {}) => {
   const currentPage = parsePositiveInt(page, 1, 100000);
   const currentPageSize = parsePositiveInt(pageSize, 20, 100);
 
   const where = {};
+  const now = new Date();
+  let rangeStart = null;
+  let rangeEnd = null;
+
+  if (from || to) {
+    rangeStart = new Date(from);
+    rangeEnd = new Date(to);
+    if (!from || !to || Number.isNaN(rangeStart.getTime()) ||
+        Number.isNaN(rangeEnd.getTime()) || rangeStart >= rangeEnd ||
+        rangeEnd > new Date(now.getTime() + 86400000)) {
+      throw createOrderError(400, "بازه زمانی سفارش‌ها معتبر نیست.");
+    }
+  } else if (["month", "3months", "12months"].includes(period)) {
+    const months = period === "month" ? 1 : period === "3months" ? 3 : 12;
+    rangeStart = new Date(now);
+    rangeStart.setMonth(rangeStart.getMonth() - months);
+    rangeEnd = now;
+  } else if (period !== "all") {
+    throw createOrderError(400, "فیلتر زمانی انتخاب‌شده معتبر نیست.");
+  }
+
+  if (rangeStart && rangeEnd) where.createdAt = { gte: rangeStart, lt: rangeEnd };
 
   if (status && status !== "all") {
     if (!VALID_STATUSES.includes(status)) {
