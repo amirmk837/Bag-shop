@@ -615,9 +615,9 @@ export const updateAdminOrderShipping = async (
         orderId: id,
         details: {
           previousShippingMethod: order.shippingMethod,
-          previousTrackingCode: order.trackingCode,
           shippingMethod: method,
-          trackingCode: tracking,
+          trackingCodeChanged: order.trackingCode !== tracking,
+          trackingCodeLast4: tracking.slice(-4),
         },
       },
     });
