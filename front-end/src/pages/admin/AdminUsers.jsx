@@ -179,7 +179,7 @@ const AdminUsers = () => {
 
       {/* FILTERS */}
 
-      <div className="mb-6 grid gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 lg:grid-cols-[1fr_auto]">
+      <div className="mb-6 grid gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 lg:grid-cols-[minmax(0,1fr)_190px_260px]">
         <input
           value={searchInput}
           onChange={(event) => setSearchInput(event.target.value)}
