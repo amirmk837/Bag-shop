@@ -324,3 +324,16 @@ model AdminAuditLog {
   @@index([targetType, targetId, createdAt])
   @@index([orderId, createdAt])
 }
+
+
+model SiteSettings {
+  id             Int      @id @default(1)
+  storeName      String   @default("فروشگاه کاظمی")
+  logoUrl        String?
+  footerLogoUrl  String?
+  phone          String?
+  headerText     String?
+  footerAbout    String?
+  footerCaption  String?
+  updatedAt      DateTime @updatedAt
+}
