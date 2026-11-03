@@ -124,7 +124,7 @@ const FooterTop = () => {
       {/* لوگو و نام فروشگاه */}
       <a
         href="/"
-        aria-label="صفحه اصلی فروشگاه الماس"
+        aria-label={`صفحه اصلی ${site?.storeName || "فروشگاه کاظمی"}`}
         className="
           group flex items-center justify-center gap-3
           sm:justify-start
