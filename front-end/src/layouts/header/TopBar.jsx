@@ -3,11 +3,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
 import HamburgerMenu from "./HamburgerMenu";
+import { useEffect, useState } from "react";
+import { getSiteSettings } from "../../services/siteSettingsApi";
 
 const TopBar = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const { totalItems } = useCart();
+
+  const [site, setSite] = useState(null);
+  useEffect(() => { getSiteSettings().then(setSite).catch(() => {}); }, []);
 
   const cartCount = Number(totalItems || 0);
   const showCart = !loading && user?.role !== "ADMIN";
@@ -67,7 +72,7 @@ const TopBar = () => {
 
         <Link
           to="/"
-          aria-label="صفحه اصلی فروشگاه کاظمی"
+          aria-label={`صفحه اصلی ${site?.storeName || "فروشگاه کاظمی"}`}
           className="
             absolute left-1/2 top-1/2 flex -translate-x-1/2
             -translate-y-1/2 items-center gap-2 rounded-xl p-1
@@ -77,13 +82,13 @@ const TopBar = () => {
           "
         >
           <img
-            src="/images/brand-logo.svg"
+            src={site?.logoUrl ? `${(import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "")}${site.logoUrl}` : "/images/brand-logo.svg"}
             alt=""
             className="h-10 w-10 object-contain sm:h-12 sm:w-12"
           />
 
           <span className="hidden whitespace-nowrap text-sm font-bold text-white sm:inline md:text-base">
-            فروشگاه کاظمی
+            {site?.storeName || "فروشگاه کاظمی"}
           </span>
         </Link>
       </div>
