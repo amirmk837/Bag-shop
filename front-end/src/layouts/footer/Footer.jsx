@@ -1,7 +1,11 @@
 import FooterTop from "./FooterTop";
 import FooterAbout from "./FooterAbout";
+import { useEffect, useState } from "react";
+import { getSiteSettings } from "../../services/siteSettingsApi";
 
 const Footer = () => {
+  const [site, setSite] = useState(null);
+  useEffect(() => { getSiteSettings().then(setSite).catch(() => {}); }, []);
   return (
     <footer
       dir="rtl"
@@ -23,7 +27,7 @@ const Footer = () => {
 
         <div className="mt-8 border-t border-white/10 pt-5 text-center">
           <p className="text-xs text-zinc-500 sm:text-sm">
-            © فروشگاه الماس — تمامی حقوق محفوظ است.
+            {site?.footerCaption || `© ${site?.storeName || "فروشگاه کاظمی"} — تمامی حقوق محفوظ است.`}
           </p>
         </div>
       </div>

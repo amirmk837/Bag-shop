@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FiPhone } from "react-icons/fi";
 import { FaInstagram, FaTelegramPlane, FaWhatsapp } from "react-icons/fa";
+import { getSiteSettings } from "../../services/siteSettingsApi";
 
 const API_BASE_URL = (
   import.meta.env.VITE_API_URL || "http://localhost:5000/api"
@@ -65,6 +66,9 @@ const SocialIcon = ({ platform }) => {
 
 const FooterTop = () => {
   const [socialLinks, setSocialLinks] = useState([]);
+  const [site, setSite] = useState(null);
+
+  useEffect(() => { getSiteSettings().then(setSite).catch(() => {}); }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -127,8 +131,8 @@ const FooterTop = () => {
         "
       >
         <img
-          src="/images/icon.png"
-          alt="لوگوی فروشگاه الماس"
+          src={site?.footerLogoUrl ? `${(import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "")}${site.footerLogoUrl}` : "/images/icon.png"}
+          alt={`لوگوی ${site?.storeName || "فروشگاه کاظمی"}`}
           className="
             h-12 w-auto object-contain
             transition-transform duration-300
@@ -138,16 +142,16 @@ const FooterTop = () => {
 
         <div>
           <p className="text-lg font-black text-white sm:text-xl">
-            فروشگاه الماس
+            {site?.storeName || "فروشگاه کاظمی"}
           </p>
-          <p className="mt-1 text-xs text-zinc-400">همراه انتخاب بهتر شما</p>
+          <p className="mt-1 text-xs text-zinc-400">{site?.headerText || "همراه انتخاب بهتر شما"}</p>
         </div>
       </a>
 
       {/* شماره تماس */}
       <div className="flex justify-center">
         <a
-          href="tel:09106386819"
+          href={site?.phone ? `tel:${site.phone.replace(/[^0-9+]/g, "")}` : undefined}
           dir="rtl"
           className="
             group flex w-full max-w-xs items-center gap-4
@@ -172,7 +176,7 @@ const FooterTop = () => {
               dir="ltr"
               className="mt-1 block text-base font-bold text-white"
             >
-              09106386819
+              {site?.phone || "شماره تماس ثبت نشده"}
             </span>
           </span>
         </a>

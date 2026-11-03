@@ -19,6 +19,7 @@ import {
   saveAddress,
 } from "../../../back-end/src/services/addressApi";
 import { startPayment } from "../../../back-end/src/services/paymentApi";
+import BackPage from "../components/BackPage";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -446,6 +447,7 @@ export default function Checkout() {
   return (
     <main dir="rtl" className="min-h-screen px-4 py-8 text-white sm:py-12">
       <div className="mx-auto max-w-7xl">
+        <div className="mb-5"><BackPage fallback="/cart" /></div>
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
             <Link

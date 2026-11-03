@@ -4,6 +4,7 @@ import ImageThumbnails from "../../components/ImageThumbnails";
 import ProductImage from "../../productsTable/components/ProductImage";
 import ProductDetails from "./ProductsDetail";
 import { getProductByCode } from "../../services/api";
+import BackPage from "../../components/BackPage";
 
 const ProductInfoes = () => {
   const { id } = useParams();
@@ -98,6 +99,7 @@ const ProductInfoes = () => {
       dir="rtl"
     >
       <div className="mx-auto max-w-6xl">
+        <div className="mb-4"><BackPage fallback="/" /></div>
         <div className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 shadow-2xl sm:rounded-[32px]">
           <div className="grid md:grid-cols-2">
             {/* گالری تصاویر */}

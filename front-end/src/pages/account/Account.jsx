@@ -8,6 +8,7 @@ import {
   saveAddress,
 } from "../../../../back-end/src/services/addressApi";
 import IranLocationPicker from "../../components/address/IranLocationPicker";
+import BackPage from "../../components/BackPage";
 
 const initialValues = {
   recipientName: "",
@@ -184,6 +185,7 @@ const Account = () => {
       className="min-h-screen px-4 py-8 text-white sm:px-6 lg:px-8"
     >
       <div className="mx-auto max-w-4xl">
+        <div className="mb-6"><BackPage fallback="/" /></div>
         <Link
           to="/"
           className="
