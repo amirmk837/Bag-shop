@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import BackPage from "../../components/BackPage";
 import { getCustomerOrders } from "../../../../back-end/src/services/orderApi";
 
 const STATUS_LABELS = {
@@ -142,6 +143,9 @@ export default function MyOrders() {
 
   return (
     <section className="mx-auto min-h-[60vh] max-w-5xl px-4 py-8 text-white">
+      <div className="mb-5">
+        <BackPage fallback="/account" />
+      </div>
       <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">سفارش‌های من</h1>
