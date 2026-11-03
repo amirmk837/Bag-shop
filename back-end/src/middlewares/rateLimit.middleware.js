@@ -1,78 +1,97 @@
-const buckets = new Map();
-const MAX_BUCKETS = 10000;
-const CLEANUP_THRESHOLD = 500;
+import { createHmac } from "node:crypto";
+import prisma from "../config/prisma.js";
+import { config } from "../config/env.js";
+
+let cleanupCounter = 0;
+const CLEANUP_EVERY = 1000;
+
+const hashClientIp = (ip) =>
+  createHmac("sha256", config.JWT_SECRET).update(ip).digest("hex");
 
 export const createRateLimiter = ({
   windowMs,
   max,
+  name = "default",
   message = "تعداد درخواست‌ها بیش از حد مجاز است؛ کمی بعد دوباره تلاش کنید.",
 } = {}) => {
   if (
     !Number.isSafeInteger(windowMs) ||
     windowMs < 1000 ||
     !Number.isSafeInteger(max) ||
-    max < 1
+    max < 1 ||
+    typeof name !== "string" ||
+    !/^[a-zA-Z0-9:_-]{1,80}$/.test(name)
   ) {
     throw new Error("تنظیمات محدودکننده درخواست معتبر نیست.");
   }
 
-  const limiterKey = `${windowMs}:${max}`;
+  const limiterKey = `${name}:${windowMs}:${max}`;
 
-  return (req, res, next) => {
-    const now = Date.now();
+  return async (req, res, next) => {
     const clientIp = req.ip || req.socket?.remoteAddress || "unknown";
-    const key = `${limiterKey}:${clientIp}`;
-    let bucket = buckets.get(key);
+    const key = `${limiterKey}:${hashClientIp(clientIp)}`;
 
-    if (!bucket) {
-      if (buckets.size >= MAX_BUCKETS) {
-        for (const [entryKey, entry] of buckets) {
-          if (entry.expiresAt <= now) buckets.delete(entryKey);
-          if (buckets.size < MAX_BUCKETS * 0.8) break;
-        }
-      }
+    try {
+      // A single atomic PostgreSQL statement guarantees consistent counters
+      // when multiple Node.js instances receive requests concurrently.
+      const [bucket] = await prisma.$queryRaw`
+        INSERT INTO "RateLimitBucket" ("key", "count", "expiresAt", "updatedAt")
+        VALUES (
+          ${key},
+          1,
+          NOW() + (${windowMs} * INTERVAL '1 millisecond'),
+          NOW()
+        )
+        ON CONFLICT ("key") DO UPDATE SET
+          "count" = CASE
+            WHEN "RateLimitBucket"."expiresAt" <= NOW() THEN 1
+            ELSE "RateLimitBucket"."count" + 1
+          END,
+          "expiresAt" = CASE
+            WHEN "RateLimitBucket"."expiresAt" <= NOW()
+              THEN NOW() + (${windowMs} * INTERVAL '1 millisecond')
+            ELSE "RateLimitBucket"."expiresAt"
+          END,
+          "updatedAt" = NOW()
+        RETURNING "count", "expiresAt"
+      `;
 
-      // Never evict an active bucket: doing so would reset a client's limit.
-      if (buckets.size >= MAX_BUCKETS) {
-        return res.status(503).json({
-          success: false,
-          message: "سامانه محدودسازی درخواست موقتاً ظرفیت ندارد؛ بعداً تلاش کنید.",
+      cleanupCounter += 1;
+      if (cleanupCounter >= CLEANUP_EVERY) {
+        cleanupCounter = 0;
+        // Cleanup is best-effort; it must not delay or change the current decision.
+        void prisma.$executeRaw`
+          DELETE FROM "RateLimitBucket"
+          WHERE "expiresAt" < NOW() - INTERVAL '1 day'
+        `.catch((error) => {
+          console.error("Rate-limit bucket cleanup failed:", error?.name || "Error");
         });
       }
 
-      bucket = {
-        startedAt: now,
-        expiresAt: now + windowMs,
-        count: 0,
-      };
-    } else if (now >= bucket.expiresAt) {
-      bucket = {
-        startedAt: now,
-        expiresAt: now + windowMs,
-        count: 0,
-      };
-    }
+      const count = Number(bucket.count);
+      const expiresAt = new Date(bucket.expiresAt);
+      const remainingSeconds = Math.max(
+        1,
+        Math.ceil((expiresAt.getTime() - Date.now()) / 1000),
+      );
 
-    bucket.count += 1;
-    buckets.set(key, bucket);
+      res.setHeader("RateLimit-Limit", String(max));
+      res.setHeader("RateLimit-Remaining", String(Math.max(0, max - count)));
+      res.setHeader("RateLimit-Reset", String(Math.ceil(expiresAt.getTime() / 1000)));
 
-    // Opportunistic cleanup keeps expired entries from accumulating.
-    if (buckets.size > CLEANUP_THRESHOLD) {
-      for (const [entryKey, entry] of buckets) {
-        if (entry.expiresAt <= now) buckets.delete(entryKey);
+      if (count > max) {
+        res.setHeader("Retry-After", String(remainingSeconds));
+        return res.status(429).json({ success: false, message });
       }
+
+      return next();
+    } catch (error) {
+      // Fail closed: if shared storage is unavailable, do not bypass protection.
+      console.error("Shared rate limiter unavailable:", error?.name || "Error");
+      return res.status(503).json({
+        success: false,
+        message: "سامانه امنیتی موقتاً در دسترس نیست؛ کمی بعد دوباره تلاش کنید.",
+      });
     }
-
-    res.setHeader("RateLimit-Limit", String(max));
-    res.setHeader("RateLimit-Remaining", String(Math.max(0, max - bucket.count)));
-    res.setHeader("RateLimit-Reset", String(Math.ceil(bucket.expiresAt / 1000)));
-
-    if (bucket.count > max) {
-      const retryAfter = Math.max(1, Math.ceil((bucket.expiresAt - now) / 1000));
-      res.setHeader("Retry-After", String(retryAfter));
-      return res.status(429).json({ success: false, message });
-    }
-
-    return next();
   };
 };
