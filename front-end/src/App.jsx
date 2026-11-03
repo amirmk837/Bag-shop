@@ -248,6 +248,17 @@ const routes = [
   },
 
   {
+    path: "/admin/site-settings",
+    element: (
+      <ProtectedRoute>
+        <AdminLayout>
+          <AdminSiteSettings />
+        </AdminLayout>
+      </ProtectedRoute>
+    ),
+  },
+
+  {
     path: "/payment/result",
     element: (
       <CustomerOnlyRoute>
