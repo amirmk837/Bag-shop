@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">لوگوی فروشگاه کاظمی</title>
+  <defs>
+    <linearGradient id="bag" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#67e8f9"/>
+      <stop offset="1" stop-color="#0891b2"/>
+    </linearGradient>
+  </defs>
+  <rect x="5" y="5" width="118" height="118" rx="30" fill="#111827" stroke="#334155" stroke-width="3"/>
+  <path d="M34 48h60l-5 57H39z" fill="url(#bag)" stroke="#cffafe" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M47 49V39a17 17 0 0 1 34 0v10" fill="none" stroke="#e0f2fe" stroke-width="6" stroke-linecap="round"/>
+  <path d="M48 70h32M64 65v24" stroke="#164e63" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="64" cy="96" r="3" fill="#164e63"/>
+</svg>
