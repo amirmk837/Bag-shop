@@ -214,7 +214,8 @@ export const getAdminDashboard = async () => {
     month.orderCount += 1;
   }
 
-  const customerIds = customerGroups.map((group) => group.userId);
+  const activeCustomerGroups = customerGroups.filter((group) => group.userId !== null);
+  const customerIds = activeCustomerGroups.map((group) => group.userId);
   const customers = customerIds.length
     ? await prisma.user.findMany({
         where: { id: { in: customerIds } },
@@ -226,7 +227,7 @@ export const getAdminDashboard = async () => {
     customers.map((customer) => [customer.id, customer]),
   );
 
-  const topCustomers = customerGroups.map((group) => {
+  const topCustomers = activeCustomerGroups.map((group) => {
     const customer = customerMap.get(group.userId);
     return {
       userId: group.userId,
