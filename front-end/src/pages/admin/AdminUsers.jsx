@@ -21,7 +21,7 @@ const AdminUsers = () => {
 
   const [pagination, setPagination] = useState({
     page: 1,
-    pageSize: 20,
+    pageSize: 10,
     total: 0,
     totalPages: 0,
   });
@@ -209,6 +209,21 @@ const AdminUsers = () => {
           <option value="all">همه کاربران</option>
           <option value="active">فقط فعال</option>
           <option value="inactive">فقط غیرفعال</option>
+        </select>
+
+        <select
+          value={sortBy}
+          onChange={(event) => {
+            setSortBy(event.target.value);
+            setSortOrder("desc");
+            setPagination((current) => ({ ...current, page: 1 }));
+          }}
+          aria-label="مرتب‌سازی کاربران"
+          className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none"
+        >
+          <option value="createdAt">جدیدترین ثبت‌نام‌ها</option>
+          <option value="totalSpent">بیشترین مبلغ خرید</option>
+          <option value="productQuantity">بیشترین تعداد محصول خریداری‌شده</option>
         </select>
       </div>
 
