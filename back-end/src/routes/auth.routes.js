@@ -12,8 +12,8 @@ import {
 import { requireAuth } from "../middlewares/auth.middleware.js";
 import { createRateLimiter } from "../middlewares/rateLimit.middleware.js";
 
-const limitLogin = createRateLimiter({ windowMs: 15 * 60 * 1000, max: 8 });
-const limitRegister = createRateLimiter({ windowMs: 60 * 60 * 1000, max: 5 });
+const limitLogin = createRateLimiter({ name: "auth-login", windowMs: 15 * 60 * 1000, max: 8 });
+const limitRegister = createRateLimiter({ name: "auth-register", windowMs: 60 * 60 * 1000, max: 5 });
 import { requireCustomer } from "../middlewares/customer.middleware.js";
 
 const router = express.Router();
