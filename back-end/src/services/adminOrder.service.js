@@ -203,7 +203,7 @@ export const getAdminOrders = async ({
   const orderIdsQuery = `
     SELECT o."id"
     FROM "Order" o
-    INNER JOIN "User" u ON u."id" = o."userId"
+    LEFT JOIN "User" u ON u."id" = o."userId"
     LEFT JOIN "OrderItem" oi ON oi."orderId" = o."id"
     WHERE ${sqlConditions.join(" AND ")}
     GROUP BY o."id", o."totalAmount", o."createdAt"
