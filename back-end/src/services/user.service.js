@@ -18,6 +18,8 @@ const ORDER_BY_MAP = {
   createdAt: `u."createdAt"`,
   orderCount: `"orderCount"`,
   maxOrderAmount: `"maxOrderAmount"`,
+  totalSpent: `"totalSpent"`,
+  productQuantity: `"productQuantity"`,
 };
 
 // =========================================
@@ -58,14 +60,14 @@ const normalizePermissions = (permissions) => {
 
 export const getUsers = async ({
   page = 1,
-  pageSize = 20,
+  pageSize = 10,
   search = "",
   status = "all",
   sortBy = "createdAt",
   sortOrder = "desc",
 }) => {
   const currentPage = parsePositiveInt(page, 1, 100000);
-  const currentPageSize = parsePositiveInt(pageSize, 20, 100);
+  const currentPageSize = parsePositiveInt(pageSize, 10, 10);
 
   const safeSortBy = ORDER_BY_MAP[sortBy] ? sortBy : "createdAt";
   const safeSortOrder = sortOrder === "asc" ? "ASC" : "DESC";
@@ -138,7 +140,15 @@ export const getUsers = async ({
       COALESCE(
         SUM(o."totalAmount"),
         0
-      )::int AS "totalSpent"
+      )::int AS "totalSpent",
+
+      COALESCE((
+        SELECT SUM(oi."quantity")
+        FROM "Order" purchased_order
+        INNER JOIN "OrderItem" oi ON oi."orderId" = purchased_order."id"
+        WHERE purchased_order."userId" = u."id"
+          AND purchased_order."status" = 'CONFIRMED'
+      ), 0)::int AS "productQuantity"
 
     FROM "User" u
 
@@ -200,6 +210,7 @@ export const getUsers = async ({
       orderCount: Number(user.orderCount),
       maxOrderAmount: Number(user.maxOrderAmount),
       totalSpent: Number(user.totalSpent),
+      productQuantity: Number(user.productQuantity),
       address: addressByUserId.get(Number(user.id)) || null,
     })),
 
