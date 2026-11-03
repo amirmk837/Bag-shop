@@ -31,6 +31,7 @@ import Checkout from "./pages/Checkout";
 import Account from "./pages/account/Account";
 import AdminBanners from "./admin/pages/AdminBanners";
 import AdminSocialLinks from "./admin/pages/AdminSocialLinks";
+import AdminSiteSettings from "./admin/pages/AdminSiteSettings";
 
 import AdminPaymentSettings from "./admin/pages/AdminPaymentSettings";
 import PaymentResult from "./pages/payment/PaymentResult";
