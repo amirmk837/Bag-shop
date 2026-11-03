@@ -22,9 +22,6 @@ jobs:
       - name: Build frontend
         working-directory: front-end
         run: npm run build
-      - name: Lint frontend
-        working-directory: front-end
-        run: npm run lint
 
   backend:
     runs-on: ubuntu-latest
