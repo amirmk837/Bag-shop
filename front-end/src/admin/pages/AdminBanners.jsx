@@ -394,7 +394,7 @@ const AdminBanners = () => {
       {/* CREATE BANNER */}
       <form
         onSubmit={handleCreate}
-        className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 sm:p-5"
+        className="rounded-xl border border-zinc-800 bg-zinc-900 p-3 sm:p-4"
       >
         <h3 className="text-lg font-bold">افزودن بنر جدید</h3>
 
@@ -404,14 +404,14 @@ const AdminBanners = () => {
         </p>
 
         {/* IMAGE UPLOADS */}
-        <div className="mt-4 grid gap-3 lg:grid-cols-2">
+        <div className="mt-3 grid gap-2 lg:grid-cols-2">
           {/* DESKTOP */}
           <div>
             <label className="mb-2 block text-sm text-zinc-300">
               تصویر دسکتاپ
             </label>
 
-            <label className="flex min-h-24 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 bg-zinc-950 p-3 text-center transition hover:border-zinc-500">
+            <label className="flex min-h-20 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-zinc-700 bg-zinc-950 p-2 text-center transition hover:border-zinc-500">
               <FiUpload size={26} className="text-zinc-300" />
 
               <span className="text-sm font-semibold text-zinc-200">
@@ -439,7 +439,7 @@ const AdminBanners = () => {
               تصویر موبایل
             </label>
 
-            <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-zinc-700 bg-zinc-950 p-5 text-center transition hover:border-zinc-500">
+            <label className="flex min-h-20 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-zinc-700 bg-zinc-950 p-2 text-center transition hover:border-zinc-500">
               <FiUpload size={26} className="text-zinc-300" />
 
               <span className="text-sm font-semibold text-zinc-200">
@@ -464,12 +464,12 @@ const AdminBanners = () => {
 
         {/* PREVIEWS */}
         {(desktopPreviewUrl || mobilePreviewUrl) && (
-          <div className="mt-4 space-y-4">
+          <div className="mt-3 space-y-2">
             {desktopPreviewUrl && (
               <div>
                 <h4 className="mb-2 text-sm font-bold">پیش‌نمایش دسکتاپ</h4>
 
-                <div className="aspect-[4/1] overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
+                <div className="aspect-[5/1] max-h-36 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
                   <img
                     src={desktopPreviewUrl}
                     alt="پیش‌نمایش بنر دسکتاپ"
@@ -484,7 +484,7 @@ const AdminBanners = () => {
               <div>
                 <h4 className="mb-2 text-sm font-bold">پیش‌نمایش موبایل</h4>
 
-                <div className="mx-auto aspect-[9/16] max-w-xs overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950">
+                <div className="mx-auto aspect-[9/16] max-h-44 max-w-[7rem] overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
                   <img
                     src={mobilePreviewUrl}
                     alt="پیش‌نمایش بنر موبایل"
@@ -498,7 +498,7 @@ const AdminBanners = () => {
         )}
 
         {/* BANNER DETAILS */}
-        <div className="mt-4 grid gap-3 lg:grid-cols-2">
+        <div className="mt-3 grid gap-2 lg:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm text-zinc-300">
               نام نمایشی بنر
@@ -576,7 +576,7 @@ const AdminBanners = () => {
         </label>
 
         {/* SUBMIT */}
-        <div className="mt-4 flex justify-end">
+        <div className="mt-3 flex justify-end">
           <button
             type="submit"
             disabled={saving || !desktopFile || !mobileFile || !name.trim()}
@@ -589,8 +589,8 @@ const AdminBanners = () => {
       </form>
 
       {/* SAVED BANNERS */}
-      <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 sm:p-7">
-        <div className="mb-4">
+      <section className="rounded-xl border border-zinc-800 bg-zinc-900 p-3 sm:p-4">
+        <div className="mb-3">
           <h3 className="text-lg font-bold">بنرهای ذخیره‌شده</h3>
 
           <p className="mt-2 text-sm leading-6 text-zinc-500">
@@ -614,7 +614,7 @@ const AdminBanners = () => {
             </p>
           </div>
         ) : (
-          <div className="grid gap-3 xl:grid-cols-2">
+          <div className="grid gap-2 xl:grid-cols-2">
             {banners.map((banner) => {
               const draft = editDrafts[banner.id] || {
                 name: banner.name || "",
@@ -625,14 +625,14 @@ const AdminBanners = () => {
               return (
                 <article
                   key={banner.id}
-                  className="min-w-0 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950"
+                  className="min-w-0 overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950"
                 >
                   {/* EXISTING IMAGE PREVIEWS */}
-                  <div className="grid gap-3 p-3 sm:grid-cols-2">
+                  <div className="grid gap-2 p-2 sm:grid-cols-2">
                     <div>
                       <p className="mb-2 text-xs text-zinc-400">دسکتاپ</p>
 
-                      <div className="aspect-[4/1] overflow-hidden rounded-lg bg-black">
+                      <div className="aspect-[5/1] max-h-24 overflow-hidden rounded-lg bg-black">
                         <img
                           src={getImageUrl(banner, "desktop")}
                           alt={`${banner.name} - دسکتاپ`}
@@ -646,7 +646,7 @@ const AdminBanners = () => {
                     <div>
                       <p className="mb-2 text-xs text-zinc-400">موبایل</p>
 
-                      <div className="mx-auto aspect-[9/16] max-w-[120px] overflow-hidden rounded-lg bg-black">
+                      <div className="mx-auto aspect-[9/16] max-h-28 max-w-[5.5rem] overflow-hidden rounded-lg bg-black">
                         <img
                           src={getImageUrl(banner, "mobile")}
                           alt={`${banner.name} - موبایل`}
@@ -658,9 +658,9 @@ const AdminBanners = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-3 p-3 sm:p-4">
+                  <div className="space-y-2 p-2 sm:p-3">
                     {/* TITLE AND STATUS */}
-                    <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
                       <h4 className="font-bold text-white">{banner.name}</h4>
 
                       {banner.isActive ? (
@@ -695,7 +695,7 @@ const AdminBanners = () => {
                           )
                         }
                         maxLength={120}
-                        className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-sm text-white outline-none focus:border-zinc-400"
+                        className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white outline-none focus:border-zinc-400"
                       />
                     </div>
 
@@ -740,7 +740,7 @@ const AdminBanners = () => {
                             event.target.value,
                           )
                         }
-                        className="w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-sm text-white outline-none focus:border-zinc-400"
+                        className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white outline-none focus:border-zinc-400"
                       >
                         <option value="contain">
                           نمایش کامل تصویر — بدون برش
@@ -753,7 +753,7 @@ const AdminBanners = () => {
                     </div>
 
                     {/* ACTIONS */}
-                    <div className="flex flex-wrap gap-3 border-t border-zinc-800 pt-4">
+                    <div className="flex flex-wrap gap-2 border-t border-zinc-800 pt-3">
                       <button
                         type="button"
                         onClick={() => handleSaveSettings(banner)}
