@@ -156,7 +156,7 @@ const Banner = () => {
               aria-hidden={!isCurrent}
               className={`
                 absolute inset-0
-                transition-opacity duration-900 ease-in-out will-change-[opacity]
+                transition-opacity duration-1000 ease-in-out will-change-[opacity]
                 motion-reduce:transition-none
                 ${
                   isCurrent
