@@ -5,12 +5,17 @@ import fs from "node:fs";
 import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
 import { validateUploadedImages } from "../middlewares/validateImage.middleware.js";
 import { handleUploadError } from "../middlewares/uploadError.middleware.js";
+import { createRateLimiter } from "../middlewares/rateLimit.middleware.js";
 import {
   getSiteSettingsController,
   updateSiteSettingsController,
 } from "../controllers/siteSettings.controller.js";
 
 const router = express.Router();
+const limitSiteSettingsUpdates = createRateLimiter({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+});
 const uploadDir = path.resolve("public/uploads/site");
 fs.mkdirSync(uploadDir, { recursive: true });
 
@@ -60,6 +65,7 @@ router.put(
   "/",
   requireAuth,
   requireAdmin,
+  limitSiteSettingsUpdates,
   parseSiteSettingsUpload,
   handleUploadError,
   validateUploadedImages,
