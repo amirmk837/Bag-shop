@@ -87,8 +87,15 @@ const TopBar = () => {
             className="h-10 w-10 object-contain sm:h-12 sm:w-12"
           />
 
-          <span className="hidden whitespace-nowrap text-sm font-bold text-white sm:inline md:text-base">
-            {site?.storeName || "فروشگاه کاظمی"}
+          <span className="hidden min-w-0 text-right sm:block">
+            <span className="block whitespace-nowrap text-sm font-bold text-white md:text-base">
+              {site?.storeName || "فروشگاه کاظمی"}
+            </span>
+            {site?.headerText && (
+              <span className="mt-0.5 block max-w-56 truncate text-[10px] text-zinc-400 md:text-xs">
+                {site.headerText}
+              </span>
+            )}
           </span>
         </Link>
       </div>
