@@ -91,7 +91,7 @@ const AdminUserModal = ({ data, onClose, onChanged }) => {
 
       await onChanged();
     } catch (requestError) {
-      setError(requestError.message || "حذف کاربر ناموفق بود.");
+      setError(requestError.message || "حذف دائمی کاربر ناموفق بود.");
     } finally {
       setDeleting(false);
     }
@@ -406,8 +406,9 @@ const AdminUserModal = ({ data, onClose, onChanged }) => {
               <h4 className="text-xl font-bold text-red-400">حذف کاربر</h4>
 
               <p className="mt-3 text-sm leading-7 text-zinc-400">
-                این عملیات حساب کاربر را غیرفعال می‌کند. سابقه سفارش‌ها حذف
-                نخواهد شد.
+                این عملیات برگشت‌ناپذیر است و حساب، اطلاعات ورود، آدرس و سبد خرید
+                کاربر را کاملاً حذف می‌کند. سوابق مالی سفارش‌ها باقی می‌مانند،
+                اما اطلاعات شخصی گیرنده از سفارش‌های قبلی پاک می‌شود.
               </p>
 
               <p className="mt-4 text-sm text-white">

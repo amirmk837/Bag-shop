@@ -2,7 +2,7 @@
 import {
   getUserDetail,
   getUsers,
-  softDeleteUser,
+  hardDeleteUser,
   updateUser,
 } from "../services/user.service.js";
 
@@ -89,10 +89,10 @@ export const updateUserController = async (req, res) => {
 // =========================================
 export const deleteUserController = async (req, res) => {
   try {
-    const deletedUser = await softDeleteUser(req.params.id, req.user.id);
+    const deletedUser = await hardDeleteUser(req.params.id, req.user.id);
 
     return res.status(200).json({
-      message: "کاربر با موفقیت غیرفعال و حذف منطقی شد.",
+      message: "حساب کاربر به‌صورت دائمی حذف شد؛ سوابق مالی سفارش‌ها بدون اطلاعات شخصی باقی ماند.",
       user: deletedUser,
     });
   } catch (error) {

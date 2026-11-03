@@ -512,7 +512,7 @@ export const updateUser = async ({
   });
 };
 
-export const softDeleteUser = async (targetUserId, actorUserId) => {
+export const hardDeleteUser = async (targetUserId, actorUserId) => {
   const { targetId, actorId } = validateUserMutationIds(
     targetUserId,
     actorUserId,
@@ -525,6 +525,12 @@ export const softDeleteUser = async (targetUserId, actorUserId) => {
   return runUserAdminTransaction(async (tx) => {
     const targetUser = await tx.user.findUnique({
       where: { id: targetId },
+      select: {
+        id: true,
+        role: true,
+        isActive: true,
+        deletedAt: true,
+      },
     });
 
     if (!targetUser) throw new Error("کاربر پیدا نشد.");
@@ -537,35 +543,45 @@ export const softDeleteUser = async (targetUserId, actorUserId) => {
       await ensureAnotherActiveAdmin(tx);
     }
 
-    const deletedUser = await tx.user.update({
-      where: { id: targetId },
+    // Keep order/payment/accounting records, but detach them from the deleted account
+    // and remove personal shipping details stored on historical orders.
+    await tx.order.updateMany({
+      where: { userId: targetId },
       data: {
-        isActive: false,
-        deletedAt: targetUser.deletedAt || new Date(),
-      },
-      select: {
-        id: true,
-        username: true,
-        role: true,
-        isActive: true,
-        deletedAt: true,
+        userId: null,
+        shippingRecipientName: null,
+        shippingRecipientPhone: null,
+        shippingProvince: null,
+        shippingCity: null,
+        shippingAddressLine: null,
+        shippingPostalCode: null,
+        shippingPlateNumber: null,
+        shippingUnitNumber: null,
       },
     });
 
     await tx.adminAuditLog.create({
       data: {
         adminId: actorId,
-        action: "USER_SOFT_DELETED",
+        action: "USER_DELETED",
         targetType: "USER",
         targetId,
         details: {
           previousRole: targetUser.role,
           wasActive: targetUser.isActive,
+          ordersAnonymized: true,
         },
       },
       select: { id: true },
     });
 
-    return deletedUser;
+    await tx.user.delete({
+      where: { id: targetId },
+    });
+
+    return {
+      id: targetId,
+      deleted: true,
+    };
   });
 };

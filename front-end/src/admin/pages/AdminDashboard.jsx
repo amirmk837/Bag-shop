@@ -58,7 +58,7 @@ const STATUS_CLASSES = {
 // =========================================
 
 const Section = ({ title, description, children, to }) => (
-  <section className="h-fit min-w-0 rounded-xl border border-white/[0.07] bg-[#151923] p-2.5 shadow-sm">
+  <section className="h-fit min-w-0 rounded-xl border border-white/[0.07] bg-[#151923] p-2 shadow-sm">
     <div className="mb-1.5 flex items-center gap-1.5">
       <span className="h-4 w-1 shrink-0 rounded-full bg-cyan-400" />
       <div className="min-w-0">
@@ -84,7 +84,7 @@ const OrderStatus = ({ status }) => (
 );
 
 const StatCard = ({ title, value, description, icon: Icon, tone, to }) => (
-  <Link to={to} className="relative block min-w-0 overflow-hidden rounded-2xl border border-white/[0.07] bg-[#151923] p-3 transition hover:border-white/15">
+  <Link to={to} className="relative block min-w-0 overflow-hidden rounded-xl border border-white/[0.07] bg-[#151923] p-2.5 transition hover:border-white/15">
     <div className={`absolute inset-x-0 top-0 h-[2px] ${tone.bar}`} />
     <div className="flex items-center justify-between gap-2">
       <p className="text-xs font-medium text-zinc-400">{title}</p>
@@ -109,7 +109,7 @@ const SalesChart = ({ months }) => {
         <div><p className="text-xs text-zinc-500">مجموع فروش ۱۲ ماه شمسی</p><p className="mt-1 text-lg font-black text-white">{formatPrice(months.reduce((sum, month) => sum + Number(month.total || 0), 0))}</p></div>
         <span className="rounded-lg bg-zinc-800 px-2 py-1 text-[10px] text-zinc-400">ماهانه</span>
       </div>
-      <div dir="ltr" className="grid h-28 grid-cols-12 items-end gap-1 border-b border-zinc-800 pb-2">
+      <div dir="ltr" className="grid h-24 grid-cols-12 items-end gap-1 border-b border-zinc-800 pb-2">
         {months.map((month) => {
           const total=Number(month.total)||0; const height=maxSales>0?(total/maxSales)*100:0;
           const params=new URLSearchParams({from:month.start,to:month.end,period:"custom"});
@@ -395,14 +395,14 @@ const AdminDashboard = () => {
   const stock = data?.stock || {};
 
   return (
-    <div dir="rtl" className="space-y-3 text-white">
+    <div dir="rtl" className="space-y-2 text-white">
       {/* HEADER */}
 
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
         <div>
           <h2 className="text-xl font-black tracking-tight text-white">داشبورد مدیریت</h2>
 
-          <p className="mt-2 text-sm leading-6 text-zinc-400">
+          <p className="mt-1 text-xs leading-5 text-zinc-400">
             نمای کلی از فروش، سفارش‌ها، مشتریان و موجودی فروشگاه
           </p>
         </div>
