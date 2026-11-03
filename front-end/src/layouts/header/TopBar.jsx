@@ -1,4 +1,4 @@
-import { FiShoppingCart, FiUserCircle } from "react-icons/fi";
+import { FiShoppingCart, FiUser } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
@@ -29,7 +29,7 @@ const TopBar = () => {
               title={user ? "حساب کاربری" : "ورود"}
               className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-zinc-300 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
             >
-              <FiUserCircle size={21} />
+              <FiUser size={21} />
             </Link>
           )}
 
