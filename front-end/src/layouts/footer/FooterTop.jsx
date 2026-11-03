@@ -151,7 +151,7 @@ const FooterTop = () => {
       {/* شماره تماس */}
       <div className="flex justify-center">
         <a
-          href="tel:09106386819"
+          href={site?.phone ? `tel:${site.phone.replace(/[^0-9+]/g, "")}` : undefined}
           dir="rtl"
           className="
             group flex w-full max-w-xs items-center gap-4
@@ -176,7 +176,7 @@ const FooterTop = () => {
               dir="ltr"
               className="mt-1 block text-base font-bold text-white"
             >
-              09106386819
+              {site?.phone || "شماره تماس ثبت نشده"}
             </span>
           </span>
         </a>
