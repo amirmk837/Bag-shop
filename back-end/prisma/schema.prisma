@@ -153,8 +153,8 @@ enum OrderStatus {
 model Order {
   id Int @id @default(autoincrement())
 
-  userId Int
-  user   User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   status          OrderStatus @default(PENDING)
   totalAmount     Int
@@ -306,12 +306,13 @@ enum AdminAuditAction {
   ADMIN_LOGIN_FAILED
   USER_UPDATED
   USER_SOFT_DELETED
+  USER_DELETED
 }
 
 model AdminAuditLog {
   id          Int              @id @default(autoincrement())
-  adminId     Int
-  admin       User             @relation(fields: [adminId], references: [id], onDelete: Restrict)
+  adminId     Int?
+  admin       User?            @relation(fields: [adminId], references: [id], onDelete: SetNull)
   action      AdminAuditAction
   targetType  String
   targetId    Int
