@@ -12,7 +12,6 @@ const Banner = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const { user } = useAuth();
 
-  const isAdmin = true;
 
   // دریافت بنرهای فعال
   useEffect(() => {
@@ -157,7 +156,7 @@ const Banner = () => {
               aria-hidden={!isCurrent}
               className={`
                 absolute inset-0
-                transition-opacity duration-700 ease-in-out
+                transition-opacity duration-900 ease-in-out will-change-[opacity]
                 motion-reduce:transition-none
                 ${
                   isCurrent
