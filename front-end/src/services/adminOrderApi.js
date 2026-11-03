@@ -26,18 +26,22 @@ const request = async (url, options = {}) => {
 
 export const getAdminOrders = async ({
   page = 1,
-  pageSize = 20,
+  pageSize = 10,
   status = "all",
   search = "",
   from = "",
   to = "",
   period = "all",
+  sortBy = "createdAt",
+  sortOrder = "desc",
 } = {}) => {
   const params = new URLSearchParams({
     page: String(page),
     pageSize: String(pageSize),
     search,
     period,
+    sortBy,
+    sortOrder,
   });
 
   if (from) params.set("from", from);
