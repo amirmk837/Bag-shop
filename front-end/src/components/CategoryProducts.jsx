@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getCategories, getProducts } from "../services/api";
 import ProductCard from "../productsTable/ProductCard";
+import BackPage from "./BackPage";
 
 const CategoryProducts = () => {
   const { slug } = useParams();
@@ -66,6 +67,7 @@ const CategoryProducts = () => {
   return (
     <main dir="rtl" className="min-h-screen px-4 py-10">
       <div className="mx-auto max-w-7xl">
+        <div className="mb-5"><BackPage fallback="/" /></div>
         <div className="mb-10 text-center">
           {category?.image && (
             <img
