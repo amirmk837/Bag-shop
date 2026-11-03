@@ -30,9 +30,8 @@ const Brands = () => {
       <div
         className="
           grid grid-cols-2 items-stretch gap-3
-          sm:grid-cols-4 sm:gap-3 sm:px-0
-          md:grid-cols-6 md:gap-5 md:px-4
-          lg:grid-cols-8 lg:px-8
+          sm:grid-cols-3 sm:gap-3 sm:px-0
+          lg:grid-cols-4 lg:gap-5 lg:px-8
         "
       >
         {categories.map((category) => (
