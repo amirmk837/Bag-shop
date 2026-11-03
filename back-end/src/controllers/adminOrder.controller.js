@@ -52,6 +52,8 @@ export const getAdminOrdersController = async (req, res) => {
       from: req.query.from,
       to: req.query.to,
       period: req.query.period,
+      sortBy: req.query.sortBy,
+      sortOrder: req.query.sortOrder,
     });
 
     return res.status(200).json(result);
