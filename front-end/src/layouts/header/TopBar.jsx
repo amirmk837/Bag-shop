@@ -1,4 +1,4 @@
-import { FiShoppingCart } from "react-icons/fi";
+import { FiShoppingCart, FiUserCircle } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
@@ -11,6 +11,7 @@ const TopBar = () => {
 
   const cartCount = Number(totalItems || 0);
   const showCart = !loading && user?.role !== "ADMIN";
+  const accountPath = !user ? "/login" : user.role === "ADMIN" ? "/admin" : "/account";
 
   return (
     <div className="container mx-auto w-full px-3 sm:px-5">
@@ -20,6 +21,17 @@ const TopBar = () => {
       >
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <HamburgerMenu />
+
+          {!loading && (
+            <Link
+              to={accountPath}
+              aria-label={user ? "رفتن به حساب کاربری" : "ورود به حساب کاربری"}
+              title={user ? "حساب کاربری" : "ورود"}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-zinc-300 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+            >
+              <FiUserCircle size={21} />
+            </Link>
+          )}
 
           {showCart && (
             <button
@@ -55,7 +67,7 @@ const TopBar = () => {
 
         <Link
           to="/"
-          aria-label="صفحه اصلی فروشگاه الماس"
+          aria-label="صفحه اصلی فروشگاه کاظمی"
           className="
             absolute left-1/2 top-1/2 flex -translate-x-1/2
             -translate-y-1/2 items-center gap-2 rounded-xl p-1
@@ -65,13 +77,13 @@ const TopBar = () => {
           "
         >
           <img
-            src="/images/icon.png"
+            src="/images/brand-logo.svg"
             alt=""
             className="h-10 w-10 object-contain sm:h-12 sm:w-12"
           />
 
           <span className="hidden whitespace-nowrap text-sm font-bold text-white sm:inline md:text-base">
-            فروشگاه الماس
+            فروشگاه کاظمی
           </span>
         </Link>
       </div>
