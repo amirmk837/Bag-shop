@@ -19,6 +19,11 @@ jobs:
       - name: Install frontend dependencies
         working-directory: front-end
         run: npm ci
+      - name: Audit frontend production dependencies
+        working-directory: front-end
+        run: |
+          npm audit --omit=dev --json > audit-report.json || true
+          node -e 'const a=require("./audit-report.json"); for (const [name,v] of Object.entries(a.vulnerabilities || {})) console.log(`${name}: ${v.severity}; direct=${v.isDirect}; fix=${JSON.stringify(v.fixAvailable)}`); console.log(`Production dependency findings: ${a.metadata?.vulnerabilities?.total ?? 0}`)'
       - name: Build frontend
         working-directory: front-end
         run: npm run build
@@ -35,6 +40,11 @@ jobs:
       - name: Install backend dependencies
         working-directory: back-end
         run: npm ci
+      - name: Audit backend production dependencies
+        working-directory: back-end
+        run: |
+          npm audit --omit=dev --json > audit-report.json || true
+          node -e 'const a=require("./audit-report.json"); for (const [name,v] of Object.entries(a.vulnerabilities || {})) console.log(`${name}: ${v.severity}; direct=${v.isDirect}; fix=${JSON.stringify(v.fixAvailable)}`); console.log(`Production dependency findings: ${a.metadata?.vulnerabilities?.total ?? 0}`)'
       - name: Run backend tests
         working-directory: back-end
         run: npm test
