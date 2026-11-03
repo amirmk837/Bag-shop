@@ -355,13 +355,13 @@ const AdminBanners = () => {
   };
 
   return (
-    <div dir="rtl" className="space-y-7 text-white">
+    <div dir="rtl" className="space-y-4 text-white">
       {/* HEADER */}
-      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
         <div>
-          <h2 className="text-2xl font-black">مدیریت بنرها</h2>
+          <h2 className="text-xl font-black">مدیریت بنرها</h2>
 
-          <p className="mt-2 text-sm leading-6 text-zinc-400">
+          <p className="mt-1 text-xs leading-5 text-zinc-400">
             تصاویر جداگانه دسکتاپ و موبایل را بارگذاری و بنر صفحه اصلی را مدیریت
             کن.
           </p>
@@ -394,7 +394,7 @@ const AdminBanners = () => {
       {/* CREATE BANNER */}
       <form
         onSubmit={handleCreate}
-        className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 sm:p-7"
+        className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 sm:p-5"
       >
         <h3 className="text-lg font-bold">افزودن بنر جدید</h3>
 
@@ -404,14 +404,14 @@ const AdminBanners = () => {
         </p>
 
         {/* IMAGE UPLOADS */}
-        <div className="mt-6 grid gap-5 lg:grid-cols-2">
+        <div className="mt-4 grid gap-3 lg:grid-cols-2">
           {/* DESKTOP */}
           <div>
             <label className="mb-2 block text-sm text-zinc-300">
               تصویر دسکتاپ
             </label>
 
-            <label className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-zinc-700 bg-zinc-950 p-5 text-center transition hover:border-zinc-500">
+            <label className="flex min-h-24 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 bg-zinc-950 p-3 text-center transition hover:border-zinc-500">
               <FiUpload size={26} className="text-zinc-300" />
 
               <span className="text-sm font-semibold text-zinc-200">
@@ -464,12 +464,12 @@ const AdminBanners = () => {
 
         {/* PREVIEWS */}
         {(desktopPreviewUrl || mobilePreviewUrl) && (
-          <div className="mt-6 space-y-6">
+          <div className="mt-4 space-y-4">
             {desktopPreviewUrl && (
               <div>
                 <h4 className="mb-2 text-sm font-bold">پیش‌نمایش دسکتاپ</h4>
 
-                <div className="aspect-[4/1] overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950">
+                <div className="aspect-[4/1] overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
                   <img
                     src={desktopPreviewUrl}
                     alt="پیش‌نمایش بنر دسکتاپ"
@@ -498,7 +498,7 @@ const AdminBanners = () => {
         )}
 
         {/* BANNER DETAILS */}
-        <div className="mt-6 grid gap-5 lg:grid-cols-2">
+        <div className="mt-4 grid gap-3 lg:grid-cols-2">
           <div>
             <label className="mb-2 block text-sm text-zinc-300">
               نام نمایشی بنر
@@ -555,7 +555,7 @@ const AdminBanners = () => {
         </div>
 
         {/* ACTIVATE */}
-        <label className="mt-6 flex cursor-pointer items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-950 p-4">
+        <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-950 p-4">
           <input
             type="checkbox"
             checked={isActive}
@@ -576,7 +576,7 @@ const AdminBanners = () => {
         </label>
 
         {/* SUBMIT */}
-        <div className="mt-6 flex justify-end">
+        <div className="mt-4 flex justify-end">
           <button
             type="submit"
             disabled={saving || !desktopFile || !mobileFile || !name.trim()}
@@ -590,7 +590,7 @@ const AdminBanners = () => {
 
       {/* SAVED BANNERS */}
       <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5 sm:p-7">
-        <div className="mb-6">
+        <div className="mb-4">
           <h3 className="text-lg font-bold">بنرهای ذخیره‌شده</h3>
 
           <p className="mt-2 text-sm leading-6 text-zinc-500">
@@ -614,7 +614,7 @@ const AdminBanners = () => {
             </p>
           </div>
         ) : (
-          <div className="grid gap-5 xl:grid-cols-2">
+          <div className="grid gap-3 xl:grid-cols-2">
             {banners.map((banner) => {
               const draft = editDrafts[banner.id] || {
                 name: banner.name || "",
@@ -646,7 +646,7 @@ const AdminBanners = () => {
                     <div>
                       <p className="mb-2 text-xs text-zinc-400">موبایل</p>
 
-                      <div className="mx-auto aspect-[9/16] max-w-[150px] overflow-hidden rounded-lg bg-black">
+                      <div className="mx-auto aspect-[9/16] max-w-[120px] overflow-hidden rounded-lg bg-black">
                         <img
                           src={getImageUrl(banner, "mobile")}
                           alt={`${banner.name} - موبایل`}
@@ -658,7 +658,7 @@ const AdminBanners = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-5 p-4 sm:p-5">
+                  <div className="space-y-3 p-3 sm:p-4">
                     {/* TITLE AND STATUS */}
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <h4 className="font-bold text-white">{banner.name}</h4>
