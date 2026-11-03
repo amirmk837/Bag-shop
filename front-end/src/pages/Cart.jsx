@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FiMinus, FiPlus, FiTrash2, FiShoppingBag } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+import BackPage from "../components/BackPage";
 
 const Cart = () => {
   const { isAuthenticated, loading: authLoading } = useAuth();
@@ -122,6 +123,7 @@ const Cart = () => {
       className="min-h-screen px-4 py-8 text-white sm:px-6 lg:px-8"
     >
       <div className="mx-auto max-w-7xl">
+        <div className="mb-5"><BackPage fallback="/" /></div>
         <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-black sm:text-3xl">سبد خرید</h1>
