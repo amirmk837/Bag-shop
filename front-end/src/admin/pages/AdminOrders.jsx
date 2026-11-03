@@ -81,7 +81,7 @@ const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
-    pageSize: 20,
+    pageSize: 10,
     total: 0,
     totalPages: 0,
   });
@@ -89,6 +89,7 @@ const AdminOrders = () => {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
+  const [sortBy, setSortBy] = useState("createdAt");
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -154,6 +155,8 @@ const AdminOrders = () => {
           from,
           to,
           period,
+          sortBy,
+          sortOrder: "desc",
         });
 
         if (ignore) return;
@@ -177,7 +180,7 @@ const AdminOrders = () => {
     return () => {
       ignore = true;
     };
-  }, [pagination.page, pagination.pageSize, search, status, from, to, period, refreshKey]);
+  }, [pagination.page, pagination.pageSize, search, status, from, to, period, sortBy, refreshKey]);
 
   const openOrder = useCallback(async (orderId) => {
     setModalOpen(true);
@@ -419,7 +422,7 @@ const AdminOrders = () => {
         </div>
       )}
 
-      <div className="mb-6 grid gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 md:grid-cols-[1fr_220px_220px]">
+      <div className="mb-6 grid gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 md:grid-cols-[minmax(0,1fr)_180px_180px_200px]">
         <div className="relative">
           <FiSearch className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500" />
           <input
@@ -465,6 +468,19 @@ const AdminOrders = () => {
               {label}
             </option>
           ))}
+        </select>
+        <select
+          value={sortBy}
+          onChange={(event) => {
+            setSortBy(event.target.value);
+            setPagination((current) => ({ ...current, page: 1 }));
+          }}
+          aria-label="مرتب‌سازی سفارش‌ها"
+          className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none"
+        >
+          <option value="createdAt">جدیدترین سفارش‌ها</option>
+          <option value="totalAmount">گران‌ترین سفارش‌ها</option>
+          <option value="itemQuantity">بیشترین تعداد محصول</option>
         </select>
       </div>
 
