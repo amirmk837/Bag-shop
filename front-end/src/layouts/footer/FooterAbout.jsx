@@ -1,4 +1,9 @@
+import { useEffect, useState } from "react";
+import { getSiteSettings } from "../../services/siteSettingsApi";
+
 const FooterAbout = () => {
+  const [site, setSite] = useState(null);
+  useEffect(() => { getSiteSettings().then(setSite).catch(() => {}); }, []);
   return (
     <section
       aria-labelledby="footer-about-title"
@@ -15,13 +20,11 @@ const FooterAbout = () => {
             sm:text-xl
           "
         >
-          درباره فروشگاه الماس
+          درباره {site?.storeName || "فروشگاه کاظمی"}
         </h2>
 
         <p className="text-justify text-sm leading-8 text-zinc-400 sm:text-base sm:leading-9">
-          در فروشگاه الماس می‌توانید محصولات مرتبط با کیف، کوله‌پشتی و لوازم
-          جانبی را مشاهده و بررسی کنید. هدف ما فراهم کردن تجربه‌ای ساده و راحت
-          برای مشاهده محصولات و انتخاب کالای موردنظر شماست.
+          {site?.footerAbout || "در فروشگاه کاظمی می‌توانید محصولات مرتبط با کیف، کوله‌پشتی و لوازم جانبی را مشاهده و بررسی کنید."}
         </p>
       </div>
     </section>
