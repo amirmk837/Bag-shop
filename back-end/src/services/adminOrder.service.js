@@ -82,15 +82,17 @@ const orderInclude = {
 
 export const getAdminOrders = async ({
   page = 1,
-  pageSize = 20,
+  pageSize = 10,
   status = "all",
   search = "",
   from,
   to,
   period = "all",
+  sortBy = "createdAt",
+  sortOrder = "desc",
 } = {}) => {
   const currentPage = parsePositiveInt(page, 1, 100000);
-  const currentPageSize = parsePositiveInt(pageSize, 20, 100);
+  const currentPageSize = parsePositiveInt(pageSize, 10, 10);
 
   const where = {};
   const now = new Date();
@@ -154,17 +156,83 @@ export const getAdminOrders = async ({
     where.AND = [{ OR: conditions }];
   }
 
-  const [total, orders] = await prisma.$transaction([
-    prisma.order.count({ where }),
+  const safeSortBy = ["createdAt", "totalAmount", "itemQuantity"].includes(sortBy)
+    ? sortBy
+    : "createdAt";
+  const safeSortOrder = sortOrder === "asc" ? "ASC" : "DESC";
 
-    prisma.order.findMany({
-      where,
-      include: orderInclude,
-      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-      skip: (currentPage - 1) * currentPageSize,
-      take: currentPageSize,
-    }),
+  // مرتب‌سازی و صفحه‌بندی شناسه‌ها در دیتابیس؛ جزئیات فقط برای همین صفحه خوانده می‌شود.
+  const sqlConditions = ["1 = 1"];
+  const sqlParams = [];
+
+  if (rangeStart && rangeEnd) {
+    sqlParams.push(rangeStart, rangeEnd);
+    sqlConditions.push(`o."createdAt" >= $1 AND o."createdAt" < $2`);
+  }
+
+  if (status && status !== "all") {
+    sqlParams.push(status);
+    sqlConditions.push(`o."status" = $${sqlParams.length}`);
+  }
+
+  if (query) {
+    sqlParams.push(`%${query}%`);
+    const searchIndex = sqlParams.length;
+    const searchConditions = [
+      `u."username" ILIKE $${searchIndex}`,
+      `COALESCE(u."phone", '') ILIKE $${searchIndex}`,
+    ];
+
+    const numericId = Number(query);
+    if (Number.isSafeInteger(numericId) && numericId > 0) {
+      sqlParams.push(numericId);
+      searchConditions.push(`o."id" = $${sqlParams.length}`);
+    }
+
+    sqlConditions.push(`(${searchConditions.join(" OR ")})`);
+  }
+
+  const orderExpression = {
+    createdAt: `o."createdAt"`,
+    totalAmount: `o."totalAmount"`,
+    itemQuantity: `SUM(COALESCE(oi."quantity", 0))`,
+  }[safeSortBy];
+
+  const limitIndex = sqlParams.length + 1;
+  const offsetIndex = sqlParams.length + 2;
+  const orderIdsQuery = `
+    SELECT o."id"
+    FROM "Order" o
+    INNER JOIN "User" u ON u."id" = o."userId"
+    LEFT JOIN "OrderItem" oi ON oi."orderId" = o."id"
+    WHERE ${sqlConditions.join(" AND ")}
+    GROUP BY o."id", o."totalAmount", o."createdAt"
+    ORDER BY ${orderExpression} ${safeSortOrder},
+             o."createdAt" DESC,
+             o."id" DESC
+    LIMIT $${limitIndex}
+    OFFSET $${offsetIndex}
+  `;
+
+  const [total, orderRows] = await Promise.all([
+    prisma.order.count({ where }),
+    prisma.$queryRawUnsafe(
+      orderIdsQuery,
+      ...sqlParams,
+      currentPageSize,
+      (currentPage - 1) * currentPageSize,
+    ),
   ]);
+
+  const orderIds = orderRows.map((row) => Number(row.id));
+  const fetchedOrders = orderIds.length
+    ? await prisma.order.findMany({
+        where: { id: { in: orderIds } },
+        include: orderInclude,
+      })
+    : [];
+  const orderById = new Map(fetchedOrders.map((order) => [order.id, order]));
+  const orders = orderIds.map((id) => orderById.get(id)).filter(Boolean);
 
   return {
     items: orders,
@@ -173,6 +241,10 @@ export const getAdminOrders = async ({
       pageSize: currentPageSize,
       total,
       totalPages: Math.ceil(total / currentPageSize),
+    },
+    sort: {
+      sortBy: safeSortBy,
+      sortOrder: safeSortOrder.toLowerCase(),
     },
   };
 };

@@ -21,7 +21,7 @@ const request = async (url, options = {}) => {
 // =========================================
 export const getUsers = async ({
   page = 1,
-  pageSize = 20,
+  pageSize = 10,
   search = "",
   status = "all",
   sortBy = "createdAt",
