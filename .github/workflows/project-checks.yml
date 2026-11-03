@@ -1,0 +1,49 @@
+name: Project checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: front-end/package-lock.json
+      - name: Install frontend dependencies
+        working-directory: front-end
+        run: npm ci
+      - name: Build frontend
+        working-directory: front-end
+        run: npm run build
+      - name: Lint frontend
+        working-directory: front-end
+        run: npm run lint
+
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: back-end/package-lock.json
+      - name: Install backend dependencies
+        working-directory: back-end
+        run: npm ci
+      - name: Run backend tests
+        working-directory: back-end
+        run: npm test
+      - name: Check backend JavaScript syntax
+        working-directory: back-end
+        shell: bash
+        run: |
+          node --check server.js
+          while IFS= read -r -d '' file; do node --check "$file"; done < <(find src -type f -name '*.js' -print0)
