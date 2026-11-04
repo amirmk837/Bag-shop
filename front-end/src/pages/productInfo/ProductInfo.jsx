@@ -120,6 +120,8 @@ const ProductInfoes = () => {
                     image={images[activeImage]}
                     title={product.title}
                     id={product.productCode ?? product.id}
+                    loading="eager"
+                    fetchPriority="high"
                     onNext={nextImage}
                     onPrev={prevImage}
                   />
