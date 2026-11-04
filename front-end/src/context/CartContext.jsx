@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import {
   addToCart as addToCartRequest,
   clearCart as clearCartRequest,
@@ -22,8 +28,16 @@ export const CartProvider = ({ children }) => {
 
   const [cart, setCart] = useState(emptyCart);
   const [loading, setLoading] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
-  const refreshCart = async () => {
+  // دریافت سبد فقط هنگام ورود به صفحه سبد/تسویه یا درخواست صریح.
+  const refreshCart = useCallback(async () => {
+    if (!isAuthenticated) {
+      setCart(emptyCart);
+      setInitialized(true);
+      return emptyCart;
+    }
+
     try {
       setLoading(true);
       const data = await getCart();
@@ -35,62 +49,44 @@ export const CartProvider = ({ children }) => {
       throw error;
     } finally {
       setLoading(false);
+      setInitialized(true);
     }
-  };
+  }, [isAuthenticated]);
 
+  // فقط وضعیت خروج را پاک می‌کنیم؛ در بارگذاری عمومی سایت GET /cart نداریم.
   useEffect(() => {
-    if (authLoading) return;
+    if (authLoading || isAuthenticated) return;
 
-    if (!isAuthenticated) {
-      setCart(emptyCart);
-      setLoading(false);
-      return;
-    }
-
-    let ignore = false;
-
-    const loadCart = async () => {
-      try {
-        setLoading(true);
-        const data = await getCart();
-
-        if (!ignore) setCart(data);
-      } catch (error) {
-        console.error("Load cart error:", error);
-        if (!ignore) setCart(emptyCart);
-      } finally {
-        if (!ignore) setLoading(false);
-      }
-    };
-
-    loadCart();
-
-    return () => {
-      ignore = true;
-    };
+    setCart(emptyCart);
+    setLoading(false);
+    setInitialized(false);
   }, [isAuthenticated, authLoading]);
 
   const addToCart = async (productCode, quantity = 1, color = "") => {
     const data = await addToCartRequest(productCode, quantity, color);
     setCart(data);
+    setInitialized(true);
     return data;
   };
 
   const updateCartItem = async (productCode, quantity, color = "") => {
     const data = await updateCartItemRequest(productCode, quantity, color);
     setCart(data);
+    setInitialized(true);
     return data;
   };
 
   const removeCartItem = async (productCode, color = "") => {
     const data = await removeCartItemRequest(productCode, color);
     setCart(data);
+    setInitialized(true);
     return data;
   };
 
   const clearCart = async () => {
     const data = await clearCartRequest();
     setCart(data);
+    setInitialized(true);
     return data;
   };
 
@@ -98,6 +94,7 @@ export const CartProvider = ({ children }) => {
     cart,
     items: Array.isArray(cart.items) ? cart.items : [],
     loading,
+    initialized,
     addToCart,
     updateCartItem,
     removeCartItem,
