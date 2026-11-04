@@ -35,7 +35,7 @@ const DeferredMount = ({
     <div
       ref={containerRef}
       className={className}
-      style={!isVisible && minHeight ? { minHeight } : undefined}
+      style={minHeight ? { minHeight } : undefined}
     >
       {isVisible ? children : null}
     </div>
