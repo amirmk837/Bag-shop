@@ -73,6 +73,7 @@ const CategoryProducts = () => {
             <img
               src={category.image}
               alt={category.name}
+              decoding="async"
               className="mx-auto mb-5 h-32 object-contain"
             />
           )}
@@ -94,8 +95,12 @@ const CategoryProducts = () => {
               xl:grid-cols-4
             "
           >
-            {products.map((product) => (
-              <ProductCard key={product.productCode} product={product} />
+            {products.map((product, index) => (
+              <ProductCard
+                key={product.productCode}
+                product={product}
+                priority={index < 4}
+              />
             ))}
           </div>
         )}
