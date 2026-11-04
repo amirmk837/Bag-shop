@@ -29,13 +29,47 @@ const getProductsController = async (req, res) => {
       });
     }
 
+    const hasPagination =
+      req.query.page !== undefined || req.query.limit !== undefined;
+
+    let filters = categorySlug ? { categorySlug } : {};
+
+    if (hasPagination) {
+      const page = Number(req.query.page ?? 1);
+      const limit = Number(req.query.limit ?? 12);
+
+      if (
+        !Number.isSafeInteger(page) ||
+        page < 1 ||
+        !Number.isSafeInteger(limit) ||
+        limit < 1 ||
+        limit > 24
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "شماره صفحه یا تعداد محصولات نامعتبر است",
+        });
+      }
+
+      filters = { ...filters, page, limit };
+    }
+
     const products = await getProducts(
-      categorySlug ? { categorySlug } : undefined,
+      Object.keys(filters).length ? filters : undefined,
     );
 
     res.status(200).json({
       success: true,
-      data: products,
+      data: hasPagination ? products.items : products,
+      ...(hasPagination && {
+        pagination: {
+          page: products.page,
+          limit: products.limit,
+          total: products.total,
+          totalPages: products.totalPages,
+          hasMore: products.hasMore,
+        },
+      }),
     });
   } catch (error) {
     console.error("Get products error:", error);
