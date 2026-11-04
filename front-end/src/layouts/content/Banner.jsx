@@ -50,8 +50,7 @@ const Banner = () => {
 
     const timer = window.setTimeout(() => {
       setPreviousIndex(activeIndex);
-      setPreviousIndex(activeIndex);
-    setActiveIndex((current) => (current + 1) % banners.length);
+      setActiveIndex((current) => (current + 1) % banners.length);
     }, SLIDE_INTERVAL);
 
     return () => window.clearTimeout(timer);
@@ -86,6 +85,7 @@ const Banner = () => {
   const showNext = () => {
     if (banners.length < 2) return;
 
+    setPreviousIndex(activeIndex);
     setActiveIndex((current) => (current + 1) % banners.length);
   };
 
