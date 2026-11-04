@@ -106,8 +106,11 @@ const normalizeProduct = (product) => {
 // GET /api/products
 // =================================================
 
-export const getProducts = async () => {
-  const result = await request("/products");
+export const getProducts = async ({ categorySlug } = {}) => {
+  const query = categorySlug
+    ? `?categorySlug=${encodeURIComponent(categorySlug)}`
+    : "";
+  const result = await request(`/products${query}`);
   const data = getData(result);
 
   if (!Array.isArray(data)) {
