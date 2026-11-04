@@ -1,11 +1,10 @@
 import FooterTop from "./FooterTop";
 import FooterAbout from "./FooterAbout";
-import { useEffect, useState } from "react";
-import { getSiteSettings } from "../../services/siteSettingsApi";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
 
 const Footer = () => {
-  const [site, setSite] = useState(null);
-  useEffect(() => { getSiteSettings().then(setSite).catch(() => {}); }, []);
+  const { siteSettings: site } = useSiteSettings();
+
   return (
     <footer
       dir="rtl"
@@ -20,11 +19,9 @@ const Footer = () => {
     >
       <div className="container relative mx-auto max-w-7xl">
         <FooterTop />
-
         <div className="mt-8 sm:mt-10">
           <FooterAbout />
         </div>
-
         <div className="mt-8 border-t border-white/10 pt-5 text-center">
           <p className="text-xs text-zinc-500 sm:text-sm">
             {site?.footerCaption || `© ${site?.storeName || "فروشگاه کاظمی"} — تمامی حقوق محفوظ است.`}
