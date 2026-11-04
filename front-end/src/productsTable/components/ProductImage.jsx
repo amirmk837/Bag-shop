@@ -1,6 +1,6 @@
 import { useRef } from "react";
 
-const ProductImage = ({ image, title, id, onNext, onPrev, onClick }) => {
+const ProductImage = ({ image, title, id, onNext, onPrev, onClick, loading = "lazy", fetchPriority = "auto" }) => {
   const touchStartX = useRef(null);
   const touchEndX = useRef(null);
 
@@ -41,6 +41,9 @@ const ProductImage = ({ image, title, id, onNext, onPrev, onClick }) => {
     <img
       src={image}
       alt={title || id || "تصویر محصول"}
+      loading={loading}
+      decoding="async"
+      fetchPriority={fetchPriority}
       draggable="false"
       onClick={onClick}
       onTouchStart={handleTouchStart}
