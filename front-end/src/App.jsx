@@ -3,41 +3,36 @@ import Header from "./layouts/header/Header";
 
 import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 
-import Content from "./layouts/content/Content";
-import ProductInfo from "./pages/productInfo/ProductInfo";
-
-import AdminLogin from "./pages/admin/AdminLogin";
-import AdminLayout from "./admin/layouts/AdminLayout";
-
-import AdminDashboard from "./admin/pages/AdminDashboard";
-import AdminProducts from "./admin/pages/AdminProducts";
-import AdminProductCreate from "./admin/pages/AdminProductCreate";
-import AdminProductEdit from "./admin/pages/AdminProductEdit";
-import AdminCategories from "./admin/pages/AdminCategories";
-import AdminCategoryProducts from "./admin/pages/AdminCategoryProducts";
-import AdminOrders from "./admin/pages/AdminOrders";
-
-import AdminUsers from "./pages/admin/AdminUsers";
-import CategoryProducts from "./components/CategoryProducts";
+import { lazy, Suspense } from "react";
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import CustomerOnlyRoute from "./routes/CustomerOnlyRoute";
 
-import CustomerLogin from "./pages/auth/CustomerLogin";
-import CustomerRegister from "./pages/auth/CustomerRegister";
-
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
-import Account from "./pages/account/Account";
-import AdminBanners from "./admin/pages/AdminBanners";
-import AdminSocialLinks from "./admin/pages/AdminSocialLinks";
-import AdminSiteSettings from "./admin/pages/AdminSiteSettings";
-
-import AdminPaymentSettings from "./admin/pages/AdminPaymentSettings";
-import PaymentResult from "./pages/payment/PaymentResult";
-
-import MyOrders from "./pages/account/MyOrders";
-import AdminShippingMethods from "./admin/pages/AdminShippingMethods";
+const Content = lazy(() => import("./layouts/content/Content"));
+const ProductInfo = lazy(() => import("./pages/productInfo/ProductInfo"));
+const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
+const AdminLayout = lazy(() => import("./admin/layouts/AdminLayout"));
+const AdminDashboard = lazy(() => import("./admin/pages/AdminDashboard"));
+const AdminProducts = lazy(() => import("./admin/pages/AdminProducts"));
+const AdminProductCreate = lazy(() => import("./admin/pages/AdminProductCreate"));
+const AdminProductEdit = lazy(() => import("./admin/pages/AdminProductEdit"));
+const AdminCategories = lazy(() => import("./admin/pages/AdminCategories"));
+const AdminCategoryProducts = lazy(() => import("./admin/pages/AdminCategoryProducts"));
+const AdminOrders = lazy(() => import("./admin/pages/AdminOrders"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const CategoryProducts = lazy(() => import("./components/CategoryProducts"));
+const CustomerLogin = lazy(() => import("./pages/auth/CustomerLogin"));
+const CustomerRegister = lazy(() => import("./pages/auth/CustomerRegister"));
+const Cart = lazy(() => import("./pages/Cart"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const Account = lazy(() => import("./pages/account/Account"));
+const AdminBanners = lazy(() => import("./admin/pages/AdminBanners"));
+const AdminSocialLinks = lazy(() => import("./admin/pages/AdminSocialLinks"));
+const AdminSiteSettings = lazy(() => import("./admin/pages/AdminSiteSettings"));
+const AdminPaymentSettings = lazy(() => import("./admin/pages/AdminPaymentSettings"));
+const PaymentResult = lazy(() => import("./pages/payment/PaymentResult"));
+const MyOrders = lazy(() => import("./pages/account/MyOrders"));
+const AdminShippingMethods = lazy(() => import("./admin/pages/AdminShippingMethods"));
 // =========================================
 // ROUTES
 // =========================================
@@ -321,11 +316,19 @@ const App = () => {
       {!isAdminArea && <Header />}
 
       <main className="min-h-screen">
-        <Routes>
-          {routes.map((route) => (
-            <Route key={route.path} path={route.path} element={route.element} />
-          ))}
-        </Routes>
+        <Suspense
+          fallback={
+            <div className="flex min-h-[50vh] items-center justify-center text-sm text-white">
+              در حال بارگذاری...
+            </div>
+          }
+        >
+          <Routes>
+            {routes.map((route) => (
+              <Route key={route.path} path={route.path} element={route.element} />
+            ))}
+          </Routes>
+        </Suspense>
       </main>
 
       {!isAdminArea && <Footer />}
