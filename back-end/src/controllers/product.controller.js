@@ -16,7 +16,22 @@ import {
 
 const getProductsController = async (req, res) => {
   try {
-    const products = await getProducts();
+    const categorySlug = req.query.categorySlug;
+    if (
+      categorySlug !== undefined &&
+      (typeof categorySlug !== "string" ||
+        categorySlug.length > 100 ||
+        !/^[a-z0-9-]+$/.test(categorySlug))
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "شناسه دسته‌بندی نامعتبر است",
+      });
+    }
+
+    const products = await getProducts(
+      categorySlug ? { categorySlug } : undefined,
+    );
 
     res.status(200).json({
       success: true,
