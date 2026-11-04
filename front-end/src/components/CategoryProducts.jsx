@@ -1,28 +1,40 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getCategories, getProducts } from "../services/api";
+import { getCategories, getProductsPage } from "../services/api";
 import ProductCard from "../productsTable/ProductCard";
 import BackPage from "./BackPage";
 
+const PAGE_SIZE = 12;
+
 const CategoryProducts = () => {
   const { slug } = useParams();
+  const sentinelRef = useRef(null);
+  const loadingMoreRef = useRef(false);
 
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState(null);
-
+  const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState("");
+  const [loadMoreError, setLoadMoreError] = useState("");
 
   useEffect(() => {
-    const loadData = async () => {
+    let ignore = false;
+
+    const loadInitialData = async () => {
       try {
         setLoading(true);
         setError("");
+        setProducts([]);
+        setPagination(null);
 
-        const [productsData, categoriesData] = await Promise.all([
-          getProducts({ categorySlug: slug }),
+        const [pageData, categoriesData] = await Promise.all([
+          getProductsPage({ categorySlug: slug, page: 1, limit: PAGE_SIZE }),
           getCategories(),
         ]);
+
+        if (ignore) return;
 
         const foundCategory = categoriesData.find((item) => item.slug === slug);
 
@@ -32,17 +44,72 @@ const CategoryProducts = () => {
         }
 
         setCategory(foundCategory);
-        setProducts(productsData);
-      } catch (error) {
-        console.error("Category products error:", error);
-        setError("خطا در دریافت اطلاعات دسته‌بندی");
+        setProducts(pageData.products);
+        setPagination(pageData.pagination);
+      } catch (requestError) {
+        console.error("Category products error:", requestError);
+        if (!ignore) setError("خطا در دریافت اطلاعات دسته‌بندی");
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
 
-    loadData();
+    loadInitialData();
+
+    return () => {
+      ignore = true;
+    };
   }, [slug]);
+
+  const loadMore = useCallback(async () => {
+    if (!pagination?.hasMore || loadingMoreRef.current) return;
+
+    loadingMoreRef.current = true;
+    setLoadingMore(true);
+    setLoadMoreError("");
+
+    try {
+      const nextPage = pagination.page + 1;
+      const pageData = await getProductsPage({
+        categorySlug: slug,
+        page: nextPage,
+        limit: PAGE_SIZE,
+      });
+
+      setProducts((current) => [...current, ...pageData.products]);
+      setPagination(pageData.pagination);
+    } catch (requestError) {
+      console.error("Load more products error:", requestError);
+      setLoadMoreError("دریافت محصولات بعدی ناموفق بود. دوباره تلاش کنید.");
+    } finally {
+      loadingMoreRef.current = false;
+      setLoadingMore(false);
+    }
+  }, [pagination, slug]);
+
+  // صفحه بعد کمی پیش از رسیدن کاربر به انتهای فهرست دریافت می‌شود.
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+
+    if (
+      !sentinel ||
+      !pagination?.hasMore ||
+      loadMoreError ||
+      typeof IntersectionObserver === "undefined"
+    ) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) loadMore();
+      },
+      { rootMargin: "500px 0px" },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [pagination?.hasMore, loadMore, loadMoreError]);
 
   if (loading) {
     return (
@@ -95,9 +162,24 @@ const CategoryProducts = () => {
               <ProductCard
                 key={product.productCode}
                 product={product}
-                priority={index < 4}
+                priority={index < 2}
               />
             ))}
+          </div>
+        )}
+
+        {pagination?.hasMore && (
+          <div ref={sentinelRef} className="flex min-h-24 flex-col items-center justify-center gap-3 py-6">
+            {loadingMore && <p className="text-sm text-zinc-400">در حال دریافت محصولات بیشتر...</p>}
+            {loadMoreError && <p role="alert" className="text-sm text-red-400">{loadMoreError}</p>}
+            <button
+              type="button"
+              onClick={loadMore}
+              disabled={loadingMore}
+              className="rounded-xl border border-zinc-600 px-5 py-2.5 text-sm font-semibold text-zinc-200 transition hover:bg-white/10 disabled:opacity-50"
+            >
+              {loadingMore ? "در حال بارگذاری..." : "نمایش محصولات بیشتر"}
+            </button>
           </div>
         )}
       </div>
