@@ -120,6 +120,32 @@ export const getProducts = async ({ categorySlug } = {}) => {
   return data.map(normalizeProduct);
 };
 
+// دریافت صفحه‌ای محصولات برای فهرست‌های طولانی
+export const getProductsPage = async ({
+  categorySlug,
+  page = 1,
+  limit = 12,
+} = {}) => {
+  const query = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+  });
+
+  if (categorySlug) query.set("categorySlug", categorySlug);
+
+  const result = await request(`/products?${query.toString()}`);
+  const data = getData(result);
+
+  if (!Array.isArray(data) || !result?.pagination) {
+    throw new Error("ساختار پاسخ صفحه محصولات معتبر نیست.");
+  }
+
+  return {
+    products: data.map(normalizeProduct),
+    pagination: result.pagination,
+  };
+};
+
 // =================================================
 // GET /api/products/:productCode
 // =================================================
