@@ -20,7 +20,7 @@ const AdminCategoryProducts = () => {
 
         const [categoriesData, productsData] = await Promise.all([
           getCategories(),
-          getProducts(),
+          getProducts({ categorySlug: slug }),
         ]);
 
         const foundCategory = categoriesData.find((item) => item.slug === slug);
@@ -30,12 +30,8 @@ const AdminCategoryProducts = () => {
           return;
         }
 
-        const filteredProducts = productsData.filter(
-          (product) => product.category?.id === foundCategory.id,
-        );
-
         setCategory(foundCategory);
-        setProducts(filteredProducts);
+        setProducts(productsData);
       } catch (error) {
         console.error("Admin category products error:", error);
 
