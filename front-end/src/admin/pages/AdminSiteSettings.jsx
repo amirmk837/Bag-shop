@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getSiteSettings, saveSiteSettings } from "../../services/siteSettingsApi";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
 
 const initial = { storeName: "فروشگاه کاظمی", phone: "", headerText: "", footerAbout: "", footerCaption: "", logoUrl: "", footerLogoUrl: "", logoFile: null, footerLogoFile: null };
 
@@ -9,6 +10,7 @@ function TextField({ label, name, value, onChange, multiline = false, maxLength 
 }
 
 export default function AdminSiteSettings() {
+  const { refreshSiteSettings } = useSiteSettings();
   const [form, setForm] = useState(initial);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -42,6 +44,7 @@ export default function AdminSiteSettings() {
     try {
       const saved = await saveSiteSettings(form);
       setForm({ ...initial, ...saved });
+      await refreshSiteSettings();
       setMessage("تنظیمات با موفقیت ذخیره شد.");
     } catch (e) { setError(e.message); }
     finally { setSaving(false); }
