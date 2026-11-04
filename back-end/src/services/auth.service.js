@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import prisma from "../config/prisma.js";
+import { createRegistrationConflictError } from "../utils/registrationErrors.js";
 
 // =========================================
 // JWT
@@ -180,25 +181,24 @@ export const registerUser = async (username, phone, password) => {
     );
   }
 
-  const existingUser = await prisma.user.findFirst({
-    where: {
-      OR: [
-        {
-          username: normalizedUsername,
-        },
-        {
-          phone: normalizedPhone,
-        },
-      ],
-    },
-  });
+  // Check each unique field independently so both conflicts can be reported.
+  const [usernameConflict, phoneConflict] = await Promise.all([
+    prisma.user.findUnique({
+      where: { username: normalizedUsername },
+      select: { id: true },
+    }),
+    prisma.user.findUnique({
+      where: { phone: normalizedPhone },
+      select: { id: true },
+    }),
+  ]);
 
-  if (existingUser) {
-    if (existingUser.username === normalizedUsername) {
-      throw new Error("این نام کاربری قبلاً ثبت شده است.");
-    }
+  const conflictingFields = [];
+  if (usernameConflict) conflictingFields.push("username");
+  if (phoneConflict) conflictingFields.push("phone");
 
-    throw new Error("این شماره موبایل قبلاً ثبت شده است.");
+  if (conflictingFields.length) {
+    throw createRegistrationConflictError(conflictingFields);
   }
 
   const passwordHash = await hashPassword(password);
