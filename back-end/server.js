@@ -91,7 +91,16 @@ app.use("/api/orders", orderRoutes);
 // STATIC FILES
 // =========================================
 
-app.use("/uploads", express.static("public/uploads"));
+// Uploaded images use unique filenames, so long-lived immutable caching is safe.
+app.use(
+  "/uploads",
+  express.static("public/uploads", {
+    maxAge: "1y",
+    immutable: true,
+    etag: true,
+    lastModified: true,
+  }),
+);
 
 // =========================================
 // NOT FOUND + CENTRAL ERROR HANDLING
