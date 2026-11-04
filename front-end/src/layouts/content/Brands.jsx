@@ -78,6 +78,7 @@ const Brands = () => {
                 src={category.image}
                 alt={category.name}
                 loading="lazy"
+                decoding="async"
                 className="
                   h-full w-full object-contain
                   transition-transform duration-500
