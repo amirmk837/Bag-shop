@@ -1,5 +1,8 @@
-import Brands from "./Brands";
+import { lazy, Suspense } from "react";
 import Banner from "./Banner";
+import DeferredMount from "../../components/DeferredMount";
+
+const Brands = lazy(() => import("./Brands"));
 
 const Content = () => {
   return (
@@ -16,7 +19,12 @@ const Content = () => {
       "
     >
       <Banner />
-      <Brands />
+
+      <DeferredMount rootMargin="500px 0px" minHeight={220}>
+        <Suspense fallback={<div aria-hidden="true" className="min-h-[220px]" />}>
+          <Brands />
+        </Suspense>
+      </DeferredMount>
     </main>
   );
 };
