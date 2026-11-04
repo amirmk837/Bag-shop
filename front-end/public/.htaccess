@@ -1,16 +1,16 @@
 # Keep the HTML entry point revalidatable so new deployments take effect.
 <IfModule mod_headers.c>
-  <FilesMatch "\\.html$">
+  <FilesMatch "\.html$">
     Header set Cache-Control "no-cache"
   </FilesMatch>
 
   # Vite production JS and CSS filenames contain content hashes.
-  <FilesMatch "\\.(js|css)$">
+  <FilesMatch "\.(js|css)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
 
   # Public images and fonts use stable names; refresh them periodically.
-  <FilesMatch "\\.(png|jpe?g|webp|avif|svg|ico|woff2?)$">
+  <FilesMatch "\.(png|jpe?g|webp|avif|svg|ico|woff2?)$">
     Header set Cache-Control "public, max-age=2592000"
   </FilesMatch>
 </IfModule>
