@@ -10,6 +10,7 @@ const SLIDE_INTERVAL = 5000;
 const Banner = () => {
   const [banners, setBanners] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [previousIndex, setPreviousIndex] = useState(null);
   const { user } = useAuth();
 
 
@@ -24,6 +25,7 @@ const Banner = () => {
         if (!ignore) {
           setBanners(Array.isArray(data) ? data : []);
           setActiveIndex(0);
+          setPreviousIndex(null);
         }
       } catch (error) {
         console.error("Load active banners error:", error);
@@ -47,15 +49,35 @@ const Banner = () => {
     if (banners.length < 2) return;
 
     const timer = window.setTimeout(() => {
-      setActiveIndex((current) => (current + 1) % banners.length);
+      setPreviousIndex(activeIndex);
+      setPreviousIndex(activeIndex);
+    setActiveIndex((current) => (current + 1) % banners.length);
     }, SLIDE_INTERVAL);
 
     return () => window.clearTimeout(timer);
   }, [activeIndex, banners.length]);
 
+  // فقط تصویر اسلاید بعدی را پیش‌بارگذاری می‌کنیم؛ نه تمام اسلایدها را.
+  useEffect(() => {
+    if (banners.length < 2) return;
+
+    const nextBanner = banners[(activeIndex + 1) % banners.length];
+    const isMobile = window.matchMedia("(max-width: 639px)").matches;
+    const nextImageUrl = isMobile
+      ? nextBanner?.mobileImageUrl || nextBanner?.desktopImageUrl || nextBanner?.imageUrl
+      : nextBanner?.desktopImageUrl || nextBanner?.imageUrl;
+
+    if (!nextImageUrl) return;
+
+    const image = new window.Image();
+    image.decoding = "async";
+    image.src = nextImageUrl;
+  }, [activeIndex, banners]);
+
   const showPrevious = () => {
     if (banners.length < 2) return;
 
+    setPreviousIndex(activeIndex);
     setActiveIndex(
       (current) => (current - 1 + banners.length) % banners.length,
     );
@@ -68,7 +90,9 @@ const Banner = () => {
   };
 
   const handleImageError = (bannerId) => {
+    setPreviousIndex(null);
     setBanners((current) => current.filter((banner) => banner.id !== bannerId));
+    setActiveIndex(0);
   };
 
   const renderBannerImage = (banner, index) => {
@@ -150,10 +174,18 @@ const Banner = () => {
       >
         {slides.map((banner, index) => {
           const isCurrent = index === activeIndex;
+          const isPrevious = index === previousIndex;
+
+          if (!isCurrent && !isPrevious) return null;
 
           return (
             <div
               key={banner?.id ?? "fallback-banner"}
+              onTransitionEnd={(event) => {
+                if (event.target === event.currentTarget && isPrevious) {
+                  setPreviousIndex(null);
+                }
+              }}
               aria-hidden={!isCurrent}
               className={`
                 absolute inset-0
@@ -242,7 +274,10 @@ const Banner = () => {
                 <button
                   key={banner.id}
                   type="button"
-                  onClick={() => setActiveIndex(index)}
+                  onClick={() => {
+                    setPreviousIndex(activeIndex);
+                    setActiveIndex(index);
+                  }}
                   aria-label={`رفتن به بنر ${index + 1}`}
                   aria-current={index === activeIndex ? "true" : undefined}
                   className={`
