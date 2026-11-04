@@ -41,8 +41,13 @@ const joinColors = (stocks) => stocks.map((item) => item.color).join("، ");
 // GET ALL
 // =========================================
 
-const getProducts = async () => {
+const getProducts = async (filters = {}) => {
+  const where = filters.categorySlug
+    ? { category: { slug: filters.categorySlug } }
+    : undefined;
+
   return prisma.product.findMany({
+    where,
     include: productInclude,
     orderBy: {
       id: "asc",
