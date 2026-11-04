@@ -26,12 +26,12 @@ const Cart = () => {
   const cartItems = Array.isArray(items) ? items : [];
 
   useEffect(() => {
-    if (authLoading || !isAuthenticated || cartInitialized) return;
+    if (authLoading || !isAuthenticated || cartInitialized || cartLoading) return;
 
     refreshCart().catch((requestError) => {
       setError(requestError.message || "دریافت سبد خرید ناموفق بود.");
     });
-  }, [authLoading, isAuthenticated, cartInitialized, refreshCart]);
+  }, [authLoading, isAuthenticated, cartInitialized, cartLoading, refreshCart]);
 
   // اجرای امن عملیات سبد: جلوگیری از کلیک تکراری و نمایش خطا
   const runAction = async (id, action) => {
