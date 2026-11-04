@@ -9,6 +9,7 @@ import {
 } from "react-icons/fi";
 
 import FeedbackDialog from "../components/ui/FeedbackDialog";
+import { optimizeImage } from "../../utils/optimizeImage";
 
 import {
   activateBanner,
@@ -184,9 +185,22 @@ const AdminBanners = () => {
       setError("");
       setSuccess("");
 
+      const [optimizedDesktopFile, optimizedMobileFile] = await Promise.all([
+        optimizeImage(desktopFile, {
+          maxWidth: 1920,
+          maxHeight: 1200,
+          maxBytes: 800 * 1024,
+        }),
+        optimizeImage(mobileFile, {
+          maxWidth: 1000,
+          maxHeight: 1600,
+          maxBytes: 500 * 1024,
+        }),
+      ]);
+
       await createBanner({
-        desktopFile,
-        mobileFile,
+        desktopFile: optimizedDesktopFile,
+        mobileFile: optimizedMobileFile,
         name: name.trim(),
         linkUrl: linkUrl.trim(),
         fit,
