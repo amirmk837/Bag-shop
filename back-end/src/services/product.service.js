@@ -46,13 +46,37 @@ const getProducts = async (filters = {}) => {
     ? { category: { slug: filters.categorySlug } }
     : undefined;
 
-  return prisma.product.findMany({
+  const query = {
     where,
     include: productInclude,
-    orderBy: {
-      id: "asc",
-    },
-  });
+    orderBy: { id: "asc" },
+  };
+
+  // درخواست‌های قدیمی (از جمله پنل مدیریت) همچنان همه محصولات را می‌گیرند.
+  if (filters.page === undefined && filters.limit === undefined) {
+    return prisma.product.findMany(query);
+  }
+
+  const page = filters.page ?? 1;
+  const limit = filters.limit ?? 12;
+
+  const [items, total] = await Promise.all([
+    prisma.product.findMany({
+      ...query,
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.product.count({ where }),
+  ]);
+
+  return {
+    items,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+    hasMore: page * limit < total,
+  };
 };
 
 // =========================================
