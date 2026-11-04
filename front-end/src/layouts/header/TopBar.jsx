@@ -8,11 +8,23 @@ import HamburgerMenu from "./HamburgerMenu";
 const TopBar = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const { totalItems } = useCart();
+  const {
+    totalItems,
+    initialized: cartInitialized,
+    refreshCart,
+  } = useCart();
   const { siteSettings: site } = useSiteSettings();
 
   const cartCount = Number(totalItems || 0);
   const showCart = !loading && user?.role !== "ADMIN";
+
+  const prefetchCart = () => {
+    if (user && !cartInitialized) {
+      refreshCart().catch((error) => {
+        console.error("Prefetch cart error:", error);
+      });
+    }
+  };
   const accountPath = !user ? "/login" : user.role === "ADMIN" ? "/admin" : "/account";
 
   return (
@@ -38,6 +50,8 @@ const TopBar = () => {
           {showCart && (
             <button
               type="button"
+              onMouseEnter={prefetchCart}
+              onFocus={prefetchCart}
               onClick={() => navigate("/cart")}
               aria-label="سبد خرید"
               className="
