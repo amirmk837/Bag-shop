@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiMinus, FiPlus, FiTrash2, FiShoppingBag } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
@@ -15,12 +15,23 @@ const Cart = () => {
     updateCartItem,
     removeCartItem,
     clearCart,
+    loading: cartLoading,
+    initialized: cartInitialized,
+    refreshCart,
   } = useCart();
 
   const [busyId, setBusyId] = useState(null);
   const [error, setError] = useState("");
 
   const cartItems = Array.isArray(items) ? items : [];
+
+  useEffect(() => {
+    if (authLoading || !isAuthenticated || cartInitialized) return;
+
+    refreshCart().catch((requestError) => {
+      setError(requestError.message || "دریافت سبد خرید ناموفق بود.");
+    });
+  }, [authLoading, isAuthenticated, cartInitialized, refreshCart]);
 
   // اجرای امن عملیات سبد: جلوگیری از کلیک تکراری و نمایش خطا
   const runAction = async (id, action) => {
@@ -84,6 +95,14 @@ const Cart = () => {
     );
   }
 
+  if (isAuthenticated && (cartLoading || !cartInitialized)) {
+    return (
+      <div dir="rtl" className="flex min-h-[50vh] items-center justify-center text-zinc-400">
+        در حال دریافت سبد خرید...
+      </div>
+    );
+  }
+
   // =========================================
   // سبد خالی
   // =========================================
@@ -99,6 +118,7 @@ const Cart = () => {
           <p className="mt-3 text-sm text-zinc-400">
             هنوز محصولی به سبد خرید اضافه نکرده‌اید.
           </p>
+          {error && <p role="alert" className="mt-3 text-sm text-red-400">{error}</p>}
 
           <Link
             to="/"
