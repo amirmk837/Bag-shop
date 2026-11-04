@@ -5,7 +5,7 @@ import ProductImage from "./components/ProductImage";
 import ImageThumbnails from "../components/ImageThumbnails";
 import ProductInfoes from "../productsTable/components/ProductInfoes";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, priority = false }) => {
   const images = Array.isArray(product.url)
     ? product.url.filter(Boolean)
     : product.url
@@ -92,6 +92,8 @@ const ProductCard = ({ product }) => {
                 image={images[activeImage]}
                 title={product.title}
                 id={product.productCode ?? product.id}
+                loading={priority ? "eager" : "lazy"}
+                fetchPriority={priority ? "high" : "auto"}
                 onNext={nextImage}
                 onPrev={prevImage}
               />
