@@ -2,17 +2,14 @@ import { FiShoppingCart, FiUser } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
 import HamburgerMenu from "./HamburgerMenu";
-import { useEffect, useState } from "react";
-import { getSiteSettings } from "../../services/siteSettingsApi";
 
 const TopBar = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const { totalItems } = useCart();
-
-  const [site, setSite] = useState(null);
-  useEffect(() => { getSiteSettings().then(setSite).catch(() => {}); }, []);
+  const { siteSettings: site } = useSiteSettings();
 
   const cartCount = Number(totalItems || 0);
   const showCart = !loading && user?.role !== "ADMIN";
@@ -53,7 +50,6 @@ const TopBar = () => {
               "
             >
               <FiShoppingCart size={21} />
-
               {cartCount > 0 && (
                 <span
                   className="
@@ -86,7 +82,6 @@ const TopBar = () => {
             alt=""
             className="h-10 w-10 object-contain sm:h-12 sm:w-12"
           />
-
           <span className="hidden min-w-0 text-right sm:block">
             <span className="block whitespace-nowrap text-sm font-bold text-white md:text-base">
               {site?.storeName || "فروشگاه کاظمی"}
