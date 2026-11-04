@@ -20,8 +20,8 @@ const getProductsController = async (req, res) => {
     if (
       categorySlug !== undefined &&
       (typeof categorySlug !== "string" ||
-        categorySlug.length > 100 ||
-        !/^[a-z0-9-]+$/.test(categorySlug))
+        !categorySlug.trim() ||
+        categorySlug.length > 100)
     ) {
       return res.status(400).json({
         success: false,
