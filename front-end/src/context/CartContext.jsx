@@ -5,13 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import {
-  addToCart as addToCartRequest,
-  clearCart as clearCartRequest,
-  getCart,
-  removeCartItem as removeCartItemRequest,
-  updateCartItem as updateCartItemRequest,
-} from "../services/cartApi";
+const loadCartApi = () => import("../services/cartApi");
 import { useAuth } from "./AuthContext";
 
 const CartContext = createContext(null);
@@ -40,6 +34,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       setLoading(true);
+      const { getCart } = await loadCartApi();
       const data = await getCart();
       setCart(data);
       return data;
@@ -63,28 +58,32 @@ export const CartProvider = ({ children }) => {
   }, [isAuthenticated, authLoading]);
 
   const addToCart = async (productCode, quantity = 1, color = "") => {
-    const data = await addToCartRequest(productCode, quantity, color);
+    const { addToCart } = await loadCartApi();
+    const data = await addToCart(productCode, quantity, color);
     setCart(data);
     setInitialized(true);
     return data;
   };
 
   const updateCartItem = async (productCode, quantity, color = "") => {
-    const data = await updateCartItemRequest(productCode, quantity, color);
+    const { updateCartItem } = await loadCartApi();
+    const data = await updateCartItem(productCode, quantity, color);
     setCart(data);
     setInitialized(true);
     return data;
   };
 
   const removeCartItem = async (productCode, color = "") => {
-    const data = await removeCartItemRequest(productCode, color);
+    const { removeCartItem } = await loadCartApi();
+    const data = await removeCartItem(productCode, color);
     setCart(data);
     setInitialized(true);
     return data;
   };
 
   const clearCart = async () => {
-    const data = await clearCartRequest();
+    const { clearCart } = await loadCartApi();
+    const data = await clearCart();
     setCart(data);
     setInitialized(true);
     return data;
