@@ -14,6 +14,7 @@ export const SiteSettingsProvider = ({ children }) => {
   const location = useLocation();
   const [siteSettings, setSiteSettings] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   const refreshSiteSettings = useCallback(async () => {
     try {
@@ -23,18 +24,19 @@ export const SiteSettingsProvider = ({ children }) => {
       return data;
     } finally {
       setLoading(false);
+      setHasLoaded(true);
     }
   }, []);
 
   // پنل مدیریت Header فروشگاه را نمایش نمی‌دهد؛ تنظیمات ظاهری آنجا
   // فقط در صفحه مربوط به خودش دریافت می‌شود.
   useEffect(() => {
-    if (location.pathname.startsWith("/admin")) return;
+    if (location.pathname.startsWith("/admin") || hasLoaded || loading) return;
 
     refreshSiteSettings().catch((error) => {
       console.error("Site settings:", error);
     });
-  }, [location.pathname, refreshSiteSettings]);
+  }, [location.pathname, hasLoaded, loading, refreshSiteSettings]);
 
   return (
     <SiteSettingsContext.Provider
