@@ -85,6 +85,7 @@ const Banner = () => {
         <img
           src={banner?.desktopImageUrl || imageUrl}
           alt={banner?.name || "بنر فروشگاه کاظمی"}
+          decoding="async"
           onError={() => {
             if (banner) handleImageError(banner.id);
           }}
