@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { FiShoppingCart, FiUser } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -9,35 +8,12 @@ import HamburgerMenu from "./HamburgerMenu";
 const TopBar = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const {
-    totalItems,
-    initialized: cartInitialized,
-    loading: cartLoading,
-    refreshCart,
-  } = useCart();
-  const cartPrefetchStarted = useRef(false);
+  const { totalItems } = useCart();
   const { siteSettings: site } = useSiteSettings();
 
   const cartCount = Number(totalItems || 0);
   const showCart = !loading && user?.role !== "ADMIN";
 
-  const prefetchCart = () => {
-    if (
-      user &&
-      !cartInitialized &&
-      !cartLoading &&
-      !cartPrefetchStarted.current
-    ) {
-      cartPrefetchStarted.current = true;
-      refreshCart()
-        .catch((error) => {
-          console.error("Prefetch cart error:", error);
-        })
-        .finally(() => {
-          cartPrefetchStarted.current = false;
-        });
-    }
-  };
   const accountPath = !user ? "/login" : user.role === "ADMIN" ? "/admin" : "/account";
 
   return (
@@ -63,8 +39,6 @@ const TopBar = () => {
           {showCart && (
             <button
               type="button"
-              onMouseEnter={prefetchCart}
-              onFocus={prefetchCart}
               onClick={() => navigate("/cart")}
               aria-label="سبد خرید"
               className="
