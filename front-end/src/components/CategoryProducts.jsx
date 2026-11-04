@@ -91,6 +91,8 @@ const CategoryProducts = () => {
       setProducts((current) => [...current, ...pageData.products]);
       setPagination(pageData.pagination);
     } catch (requestError) {
+      if (currentSlugRef.current !== requestedSlug) return;
+
       console.error("Load more products error:", requestError);
       setLoadMoreError("دریافت محصولات بعدی ناموفق بود. دوباره تلاش کنید.");
     } finally {
