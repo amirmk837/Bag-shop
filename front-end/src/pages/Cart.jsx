@@ -175,7 +175,7 @@ const Cart = () => {
 
         <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
           <div className="space-y-4">
-            {cartItems.map((item) => {
+            {cartItems.map((item, index) => {
               const productCode = item.productCode || "";
               const color = item.color || "";
               const quantity = Number(item.quantity || 0);
@@ -205,6 +205,9 @@ const Cart = () => {
                         <img
                           src={image}
                           alt={item.title || "محصول"}
+                          loading={index === 0 ? "eager" : "lazy"}
+                          fetchPriority={index === 0 ? "high" : "auto"}
+                          decoding="async"
                           className="h-full w-full object-contain p-2"
                         />
                       ) : (
