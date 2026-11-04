@@ -20,7 +20,7 @@ const CategoryProducts = () => {
         setError("");
 
         const [productsData, categoriesData] = await Promise.all([
-          getProducts(),
+          getProducts({ categorySlug: slug }),
           getCategories(),
         ]);
 
@@ -31,12 +31,8 @@ const CategoryProducts = () => {
           return;
         }
 
-        const filteredProducts = productsData.filter(
-          (product) => product.category?.id === foundCategory.id,
-        );
-
         setCategory(foundCategory);
-        setProducts(filteredProducts);
+        setProducts(productsData);
       } catch (error) {
         console.error("Category products error:", error);
         setError("خطا در دریافت اطلاعات دسته‌بندی");
