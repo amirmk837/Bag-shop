@@ -6,6 +6,7 @@ import {
   auditFailedAdminLogin,
   invalidateUserTokens,
 } from "../services/auth.service.js";
+import { getRegistrationConflictMessage } from "../utils/registrationErrors.js";
 
 const COOKIE_NAME = "auth_token";
 
@@ -126,16 +127,24 @@ export const registerController = async (req, res) => {
   } catch (error) {
     const status = Number.isInteger(error?.status) ? error.status : 500;
 
+    if (error?.code === "REGISTRATION_CONFLICT") {
+      return res.status(409).json({
+        message: error.message,
+      });
+    }
+
+    // پوشش رقابت درخواست‌های هم‌زمان: در این حالت قید UNIQUE دیتابیس
+    // ممکن است پیش از بررسی اولیه، خطای P2002 ایجاد کند.
+    if (error?.code === "P2002") {
+      return res.status(409).json({
+        message: getRegistrationConflictMessage(error?.meta?.target),
+      });
+    }
+
     if (status >= 500) {
       console.error("REGISTER CONTROLLER ERROR:", {
         errorType: error?.name || "Error",
         code: error?.code,
-      });
-    }
-
-    if (error?.code === "P2002") {
-      return res.status(409).json({
-        message: "نام کاربری یا شماره تماس قبلاً ثبت شده است.",
       });
     }
 
