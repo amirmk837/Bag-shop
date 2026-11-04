@@ -10,6 +10,12 @@ const CategoryProducts = () => {
   const { slug } = useParams();
   const sentinelRef = useRef(null);
   const loadingMoreRef = useRef(false);
+  const currentSlugRef = useRef(slug);
+
+  if (currentSlugRef.current !== slug) {
+    currentSlugRef.current = slug;
+    loadingMoreRef.current = false;
+  }
 
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState(null);
@@ -28,6 +34,9 @@ const CategoryProducts = () => {
         setError("");
         setProducts([]);
         setPagination(null);
+        setLoadingMore(false);
+        setLoadMoreError("");
+        loadingMoreRef.current = false;
 
         const [pageData, categoriesData] = await Promise.all([
           getProductsPage({ categorySlug: slug, page: 1, limit: PAGE_SIZE }),
@@ -64,6 +73,7 @@ const CategoryProducts = () => {
   const loadMore = useCallback(async () => {
     if (!pagination?.hasMore || loadingMoreRef.current) return;
 
+    const requestedSlug = slug;
     loadingMoreRef.current = true;
     setLoadingMore(true);
     setLoadMoreError("");
@@ -76,14 +86,18 @@ const CategoryProducts = () => {
         limit: PAGE_SIZE,
       });
 
+      if (currentSlugRef.current !== requestedSlug) return;
+
       setProducts((current) => [...current, ...pageData.products]);
       setPagination(pageData.pagination);
     } catch (requestError) {
       console.error("Load more products error:", requestError);
       setLoadMoreError("دریافت محصولات بعدی ناموفق بود. دوباره تلاش کنید.");
     } finally {
-      loadingMoreRef.current = false;
-      setLoadingMore(false);
+      if (currentSlugRef.current === requestedSlug) {
+        loadingMoreRef.current = false;
+        setLoadingMore(false);
+      }
     }
   }, [pagination, slug]);
 
