@@ -100,7 +100,8 @@ export default function Checkout() {
       ),
   );
 
-  const cartLoading = Boolean(cartContext?.loading || !cartContext?.initialized);
+  const cartRequestLoading = Boolean(cartContext?.loading);
+  const cartLoading = Boolean(cartRequestLoading || !cartContext?.initialized);
   const refreshCart = cartContext?.refreshCart;
   const cartInitialized = Boolean(cartContext?.initialized);
 
@@ -253,7 +254,7 @@ export default function Checkout() {
     loadAddress();
     loadShippingMethods();
 
-    if (!cartInitialized && refreshCart) {
+    if (!cartInitialized && !cartRequestLoading && refreshCart) {
       refreshCart().catch((err) => {
         setError(getErrorMessage(err, "دریافت سبد خرید ناموفق بود."));
       });
@@ -264,6 +265,7 @@ export default function Checkout() {
     loadAddress,
     loadShippingMethods,
     cartInitialized,
+    cartRequestLoading,
     refreshCart,
   ]);
 
