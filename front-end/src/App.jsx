@@ -1,9 +1,11 @@
-import Footer from "./layouts/footer/Footer";
 import Header from "./layouts/header/Header";
 
 import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import { lazy, Suspense } from "react";
+import DeferredMount from "./components/DeferredMount";
+
+const Footer = lazy(() => import("./layouts/footer/Footer"));
 
 import ProtectedRoute from "./routes/ProtectedRoute";
 import CustomerOnlyRoute from "./routes/CustomerOnlyRoute";
@@ -331,7 +333,13 @@ const App = () => {
         </Suspense>
       </main>
 
-      {!isAdminArea && <Footer />}
+      {!isAdminArea && (
+        <DeferredMount rootMargin="700px 0px" minHeight={300}>
+          <Suspense fallback={null}>
+            <Footer />
+          </Suspense>
+        </DeferredMount>
+      )}
     </div>
   );
 };
