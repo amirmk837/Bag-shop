@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { getCategories, uploadProductImage } from "../../services/api";
+import { optimizeImage } from "../../utils/optimizeImage";
 
 const getInitialForm = (initialValues) => ({
   productCode: initialValues?.productCode || "",
@@ -151,7 +152,12 @@ const AdminProductForm = ({
       const uploadedImages = [];
 
       for (const file of files) {
-        const result = await uploadProductImage(file);
+        const optimizedFile = await optimizeImage(file, {
+          maxWidth: 1600,
+          maxHeight: 1600,
+          maxBytes: 500 * 1024,
+        });
+        const result = await uploadProductImage(optimizedFile);
 
         uploadedImages.push(result.url);
       }
