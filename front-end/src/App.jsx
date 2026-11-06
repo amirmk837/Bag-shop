@@ -326,7 +326,12 @@ const App = () => {
         localStorage.setItem("bag_shop_visitor_id", visitorId);
       }
       const apiUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/+$/, "");
-      const referrerHost = document.referrer ? new URL(document.referrer).hostname : "";
+      const lastVisitKey = sessionStorage.getItem("bag_shop_last_visit_key");
+      if (lastVisitKey === location.key) return;
+      sessionStorage.setItem("bag_shop_last_visit_key", location.key);
+      const referrerCaptured = sessionStorage.getItem("bag_shop_referrer_captured");
+      const referrerHost = !referrerCaptured && document.referrer ? new URL(document.referrer).hostname : "";
+      if (!referrerCaptured) sessionStorage.setItem("bag_shop_referrer_captured", "1");
       fetch(`${apiUrl}/analytics/track`, {
         method: "POST",
         credentials: "include",

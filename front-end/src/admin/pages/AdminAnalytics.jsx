@@ -32,6 +32,7 @@ export default function AdminAnalytics() {
   const [days, setDays] = useState("30");
   const [report, setReport] = useState(null);
   const [users, setUsers] = useState(null);
+  const [userPage, setUserPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -39,12 +40,12 @@ export default function AdminAnalytics() {
     setLoading(true); setError("");
     try {
       const [analytics, loggedUsers] = await Promise.all([
-        getAnalyticsReport(days), getLoggedInUsers({ page: 1, pageSize: 20 }),
+        getAnalyticsReport(days), getLoggedInUsers({ page: userPage, pageSize: 20 }),
       ]);
       setReport(analytics); setUsers(loggedUsers);
     } catch (e) { setError(e.message || "دریافت آمار ناموفق بود."); }
     finally { setLoading(false); }
-  }, [days]);
+  }, [days, userPage]);
 
   useEffect(() => { load(); }, [load]);
   const maxDaily = Math.max(1, ...(report?.daily || []).map((item) => Number(item.views || 0)));
@@ -83,7 +84,7 @@ export default function AdminAnalytics() {
         <BarList title="دستگاه و سیستم‌عامل" rows={report.devices.map((d) => ({ ...d, label: `${d.device} / ${d.os}` }))} labelKey="label" valueKey="views" />
       </div>
       <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#151d2a]">
-        <div className="border-b border-white/10 p-4"><h3 className="font-bold">آخرین بازدیدکنندگان</h3><p className="mt-1 text-xs text-zinc-500">شناسه ناشناس مرورگر ذخیره یا نمایش داده نمی‌شود.</p></div>
+        <div className="border-b border-white/10 p-4"><h3 className="font-bold">آخرین بازدیدکنندگان</h3><p className="mt-1 text-xs text-zinc-500">شناسه تصادفی مرورگر فقط برای شمارش بازدیدکننده یکتا استفاده می‌شود و در جدول نمایش داده نمی‌شود.</p></div>
         <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-right text-sm">
           <thead className="bg-black/20 text-zinc-400"><tr>{["کاربر","صفحه آخر","دستگاه","سیستم‌عامل","آخرین بازدید"].map((h) => <th key={h} className="px-4 py-3 font-medium">{h}</th>)}</tr></thead>
           <tbody>{report.recentVisitors.map((v, i) => <tr key={`${v.visitorId}-${v.userId || "guest"}-${i}`} className="border-t border-white/5">
@@ -100,6 +101,11 @@ export default function AdminAnalytics() {
         <tbody>{(users?.items || []).map((u) => <tr key={u.id} className="border-t border-white/5"><td className="px-4 py-3">{u.username}</td><td className="px-4 py-3">{u.phone || "—"}</td><td className="px-4 py-3">{u.role === "ADMIN" ? "مدیر" : "کاربر"}</td><td className="px-4 py-3">{date(u.createdAt)}</td><td className="px-4 py-3">{date(u.lastLoginAt)}</td></tr>)}
           {!users?.items?.length && <tr><td colSpan="5" className="p-6 text-center text-zinc-500">هنوز ورود ثبت‌شده‌ای وجود ندارد.</td></tr>}</tbody>
       </table></div>
+      {users?.pagination?.totalPages > 1 && <div className="flex items-center justify-between border-t border-white/10 p-3 text-xs text-zinc-400">
+        <button disabled={userPage <= 1} onClick={() => setUserPage((p) => p - 1)} className="rounded-lg bg-zinc-800 px-3 py-2 disabled:opacity-40">قبلی</button>
+        <span>صفحه {number(userPage)} از {number(users.pagination.totalPages)}</span>
+        <button disabled={userPage >= users.pagination.totalPages} onClick={() => setUserPage((p) => p + 1)} className="rounded-lg bg-zinc-800 px-3 py-2 disabled:opacity-40">بعدی</button>
+      </div>}
     </section>
   </div>;
 }
