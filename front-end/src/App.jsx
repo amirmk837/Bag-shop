@@ -2,7 +2,7 @@ import Header from "./layouts/header/Header";
 
 import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense } from "react";
 import DeferredMount from "./components/DeferredMount";
 
 const Footer = lazy(() => import("./layouts/footer/Footer"));
@@ -315,34 +315,6 @@ const routes = [
 
 const App = () => {
   const location = useLocation();
-
-  useEffect(() => {
-    const path = location.pathname;
-    if (path.startsWith("/admin") || ["/login", "/register", "/payment/result"].includes(path)) return;
-    try {
-      let visitorId = localStorage.getItem("bag_shop_visitor_id");
-      if (!visitorId) {
-        visitorId = crypto.randomUUID();
-        localStorage.setItem("bag_shop_visitor_id", visitorId);
-      }
-      const apiUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/+$/, "");
-      const lastVisitKey = sessionStorage.getItem("bag_shop_last_visit_key");
-      if (lastVisitKey === location.key) return;
-      sessionStorage.setItem("bag_shop_last_visit_key", location.key);
-      const referrerCaptured = sessionStorage.getItem("bag_shop_referrer_captured");
-      const referrerHost = !referrerCaptured && document.referrer ? new URL(document.referrer).hostname : "";
-      if (!referrerCaptured) sessionStorage.setItem("bag_shop_referrer_captured", "1");
-      fetch(`${apiUrl}/analytics/track`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ visitorId, path: path.slice(0, 180), referrerHost }),
-        keepalive: true,
-      }).catch(() => {});
-    } catch {
-      // Analytics must never interrupt storefront navigation.
-    }
-  }, [location.key, location.pathname]);
 
   const isProductPage = location.pathname.startsWith("/product/");
   const isAdminArea = location.pathname.startsWith("/admin");

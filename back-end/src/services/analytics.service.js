@@ -7,19 +7,6 @@ const parseDays = (value) => {
   return Number.isInteger(days) && days >= 1 ? Math.min(days, 90) : 30;
 };
 
-export const recordVisit = (data) => prisma.siteVisitEvent.create({
-  data: {
-    visitorId: data.visitorId,
-    userId: data.userId,
-    path: data.path,
-    referrerHost: data.referrerHost || null,
-    deviceType: data.deviceType,
-    operatingSystem: data.operatingSystem,
-    browser: data.browser,
-  },
-  select: { id: true },
-});
-
 // گزارش مدیریتی بر اساس داده‌های واقعی فروش، سفارش و مشتری
 export const getAnalyticsReport = async (requestedDays) => {
   const days = parseDays(requestedDays);
