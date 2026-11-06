@@ -321,6 +321,7 @@ export const createCategory = async (data) => {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(data),
   });
 
@@ -339,6 +340,7 @@ export const updateCategory = async (categoryId, data) => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify(data),
     },
   );
@@ -357,6 +359,7 @@ export const deleteCategory = async (categoryId, force = false) => {
     `/categories/${encodeURIComponent(categoryId)}${query}`,
     {
       method: "DELETE",
+      credentials: "include",
     },
   );
 
