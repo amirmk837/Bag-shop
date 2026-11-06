@@ -27,7 +27,7 @@ const invalidateReadCache = (path) => {
 const request = async (path, options = {}) => {
   const method = (options.method || "GET").toUpperCase();
   const cacheable =
-    method === "GET" && /^\\/(products|categories)(\\?|$)/.test(path);
+    method === "GET" && /^\/(products|categories)(\?|$)/.test(path);
 
   if (cacheable) {
     const cached = responseCache.get(path);
