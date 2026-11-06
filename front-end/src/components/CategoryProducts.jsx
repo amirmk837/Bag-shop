@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { getCategories, getProductsPage } from "../services/api";
 import ProductCard from "../productsTable/ProductCard";
 import BackPage from "./BackPage";
+import ProductGridSkeleton from "./ProductGridSkeleton";
 
 const PAGE_SIZE = 12;
 
@@ -129,9 +130,13 @@ const CategoryProducts = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center text-zinc-400">
-        در حال دریافت محصولات...
-      </div>
+      <main dir="rtl" className="min-h-screen px-4 py-10" aria-busy="true">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-5 h-9 w-24 animate-pulse rounded-lg bg-zinc-700/60" />
+          <div className="mb-8 h-8 w-40 animate-pulse rounded-lg bg-zinc-700/60 mx-auto" />
+          <ProductGridSkeleton count={8} />
+        </div>
+      </main>
     );
   }
 
