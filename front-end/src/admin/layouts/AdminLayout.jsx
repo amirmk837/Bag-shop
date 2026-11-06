@@ -9,6 +9,7 @@ const navItems = [
   { label: "سفارش‌ها", to: "/admin/orders" },
   { label: "دسته‌بندی‌ها", to: "/admin/categories" },
   { label: "کاربران", to: "/admin/users" },
+  { label: "بازدیدکنندگان و آمار", to: "/admin/analytics" },
   { label: "تنظیمات ظاهری سایت", to: "/admin/site-settings" },
   { label: "شبکه‌های اجتماعی", to: "/admin/social-links" },
   { label: "تنظیمات پرداخت", to: "/admin/payment-settings" },

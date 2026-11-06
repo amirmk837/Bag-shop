@@ -151,7 +151,10 @@ export const loginUser = async (identifier, password) => {
     throw error;
   }
 
-  return user;
+  return prisma.user.update({
+    where: { id: user.id },
+    data: { lastLoginAt: new Date() },
+  });
 };
 
 // =========================================
@@ -212,6 +215,7 @@ export const registerUser = async (username, phone, password) => {
       permissions: [],
       isActive: true,
       deletedAt: null,
+      lastLoginAt: new Date(),
     },
   });
 

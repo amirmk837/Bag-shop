@@ -79,7 +79,10 @@ model User {
   address UserAddress?
 
   createdAt DateTime @default(now())
+  lastLoginAt DateTime?
   updatedAt DateTime @updatedAt
+
+  siteVisitEvents SiteVisitEvent[]
 }
 
 model UserAddress {
@@ -336,4 +339,24 @@ model SiteSettings {
   footerAbout    String?
   footerCaption  String?
   updatedAt      DateTime @updatedAt
+}
+
+
+model SiteVisitEvent {
+  id              BigInt   @id @default(autoincrement())
+  visitorId       String
+  userId          Int?
+  user            User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  path            String
+  referrerHost    String?
+  deviceType      String
+  operatingSystem String
+  browser         String
+  createdAt       DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([visitorId, createdAt])
+  @@index([userId, createdAt])
+  @@index([path, createdAt])
+  @@index([referrerHost, createdAt])
 }

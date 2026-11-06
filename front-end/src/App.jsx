@@ -2,7 +2,7 @@ import Header from "./layouts/header/Header";
 
 import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import DeferredMount from "./components/DeferredMount";
 
 const Footer = lazy(() => import("./layouts/footer/Footer"));
@@ -35,6 +35,7 @@ const AdminPaymentSettings = lazy(() => import("./admin/pages/AdminPaymentSettin
 const PaymentResult = lazy(() => import("./pages/payment/PaymentResult"));
 const MyOrders = lazy(() => import("./pages/account/MyOrders"));
 const AdminShippingMethods = lazy(() => import("./admin/pages/AdminShippingMethods"));
+const AdminAnalytics = lazy(() => import("./admin/pages/AdminAnalytics"));
 // =========================================
 // ROUTES
 // =========================================
@@ -199,6 +200,18 @@ const routes = [
     ),
   },
 
+  // Admin analytics
+  {
+    path: "/admin/analytics",
+    element: (
+      <ProtectedRoute>
+        <AdminLayout>
+          <AdminAnalytics />
+        </AdminLayout>
+      </ProtectedRoute>
+    ),
+  },
+
   // Admin users
   {
     path: "/admin/users",
@@ -302,6 +315,29 @@ const routes = [
 
 const App = () => {
   const location = useLocation();
+
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.startsWith("/admin") || ["/login", "/register", "/payment/result"].includes(path)) return;
+    try {
+      let visitorId = localStorage.getItem("bag_shop_visitor_id");
+      if (!visitorId) {
+        visitorId = crypto.randomUUID();
+        localStorage.setItem("bag_shop_visitor_id", visitorId);
+      }
+      const apiUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/+$/, "");
+      const referrerHost = document.referrer ? new URL(document.referrer).hostname : "";
+      fetch(`${apiUrl}/analytics/track`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ visitorId, path: path.slice(0, 180), referrerHost }),
+        keepalive: true,
+      }).catch(() => {});
+    } catch {
+      // Analytics must never interrupt storefront navigation.
+    }
+  }, [location.key, location.pathname]);
 
   const isProductPage = location.pathname.startsWith("/product/");
   const isAdminArea = location.pathname.startsWith("/admin");
