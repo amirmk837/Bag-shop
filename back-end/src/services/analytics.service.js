@@ -1,5 +1,7 @@
 import prisma from "../config/prisma.js";
 
+const SALES_STATUSES = ["PAID", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED"];
+
 const parseDays = (value) => {
   const days = Number(value);
   return Number.isInteger(days) && days >= 1 ? Math.min(days, 90) : 30;
@@ -18,57 +20,84 @@ export const recordVisit = (data) => prisma.siteVisitEvent.create({
   select: { id: true },
 });
 
+// گزارش مدیریتی بر اساس داده‌های واقعی فروش، سفارش و مشتری
 export const getAnalyticsReport = async (requestedDays) => {
   const days = parseDays(requestedDays);
-  const filter = `"createdAt" >= NOW() - ($1::int * INTERVAL '1 day')`;
+  const from = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  const periodOrders = { createdAt: { gte: from } };
+  const successfulOrders = {
+    ...periodOrders,
+    status: { in: SALES_STATUSES },
+  };
 
-  const [summaryRows, daily, topPages, sources, devices, recentVisitors] = await Promise.all([
-    prisma.$queryRawUnsafe(`
-      SELECT COUNT(*)::int AS "pageViews",
-        COUNT(DISTINCT "visitorId")::int AS "uniqueVisitors",
-        COUNT(DISTINCT "userId") FILTER (WHERE "userId" IS NOT NULL)::int AS "identifiedUsers",
-        COUNT(*) FILTER (WHERE "userId" IS NULL)::int AS "anonymousPageViews"
-      FROM "SiteVisitEvent" WHERE ${filter}
-    `, days),
-    prisma.$queryRawUnsafe(`
-      SELECT TO_CHAR(DATE("createdAt"), 'YYYY-MM-DD') AS day,
-        COUNT(*)::int AS views, COUNT(DISTINCT "visitorId")::int AS visitors
-      FROM "SiteVisitEvent" WHERE ${filter}
-      GROUP BY DATE("createdAt") ORDER BY DATE("createdAt")
-    `, days),
-    prisma.$queryRawUnsafe(`
-      SELECT path, COUNT(*)::int AS views FROM "SiteVisitEvent"
-      WHERE ${filter} GROUP BY path ORDER BY views DESC LIMIT 8
-    `, days),
-    prisma.$queryRawUnsafe(`
-      SELECT COALESCE("referrerHost", 'ورود مستقیم') AS source, COUNT(*)::int AS views
-      FROM "SiteVisitEvent" WHERE ${filter}
-      GROUP BY "referrerHost" ORDER BY views DESC LIMIT 8
-    `, days),
-    prisma.$queryRawUnsafe(`
-      SELECT "deviceType" AS device, "operatingSystem" AS os, COUNT(*)::int AS views
-      FROM "SiteVisitEvent" WHERE ${filter}
-      GROUP BY "deviceType", "operatingSystem" ORDER BY views DESC LIMIT 8
-    `, days),
-    prisma.$queryRawUnsafe(`
-      WITH latest AS (
-        SELECT DISTINCT ON ("visitorId", "userId")
-          "visitorId", "userId", path, "deviceType", "operatingSystem", browser, "createdAt"
-        FROM "SiteVisitEvent" WHERE ${filter}
-        ORDER BY "visitorId", "userId", "createdAt" DESC
-      )
-      SELECT latest."visitorId", latest."userId", latest.path,
-        latest."deviceType", latest."operatingSystem", latest.browser, latest."createdAt",
-        u.username, u.phone
-      FROM latest LEFT JOIN "User" u ON u.id = latest."userId"
-      ORDER BY latest."createdAt" DESC LIMIT 50
-    `, days),
+  const [
+    orderCount,
+    successfulSales,
+    newCustomers,
+    totalCustomers,
+    statusGroups,
+    bestSellingGroups,
+  ] = await Promise.all([
+    prisma.order.count({ where: periodOrders }),
+    prisma.order.aggregate({
+      where: successfulOrders,
+      _sum: { totalAmount: true },
+      _count: { _all: true },
+    }),
+    prisma.user.count({
+      where: { role: "USER", isActive: true, deletedAt: null, createdAt: { gte: from } },
+    }),
+    prisma.user.count({
+      where: { role: "USER", isActive: true, deletedAt: null },
+    }),
+    prisma.order.groupBy({
+      by: ["status"],
+      where: periodOrders,
+      _count: { _all: true },
+      orderBy: { status: "asc" },
+    }),
+    prisma.orderItem.groupBy({
+      by: ["productCode", "title"],
+      where: {
+        order: {
+          createdAt: { gte: from },
+          status: { in: SALES_STATUSES },
+        },
+      },
+      _sum: { quantity: true, subtotal: true },
+      orderBy: [{ _sum: { quantity: "desc" } }, { productCode: "asc" }],
+      take: 8,
+    }),
   ]);
+
+  const paidOrders = successfulSales._count._all;
+  const paidRevenue = successfulSales._sum.totalAmount || 0;
+  const statusCounts = Object.fromEntries(
+    statusGroups.map((group) => [group.status, group._count._all]),
+  );
 
   return {
     rangeDays: days,
-    summary: summaryRows[0] || { pageViews: 0, uniqueVisitors: 0, identifiedUsers: 0, anonymousPageViews: 0 },
-    daily, topPages, sources, devices, recentVisitors,
+    summary: {
+      totalOrders: orderCount,
+      paidOrders,
+      paidRevenue,
+      averageOrderValue: paidOrders ? Math.round(paidRevenue / paidOrders) : 0,
+      newCustomers,
+      totalCustomers,
+      pendingOrders: statusCounts.PENDING || 0,
+      cancelledOrders: statusCounts.CANCELLED || 0,
+    },
+    orderStatuses: statusGroups.map((group) => ({
+      status: group.status,
+      count: group._count._all,
+    })),
+    bestSellingProducts: bestSellingGroups.map((group) => ({
+      productCode: group.productCode,
+      title: group.title,
+      quantitySold: group._sum.quantity || 0,
+      revenue: group._sum.subtotal || 0,
+    })),
   };
 };
 
