@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 import { getProducts } from "../services/api";
+import ProductGridSkeleton from "../components/ProductGridSkeleton";
 
 const BrandProducts = ({
   brand,
@@ -74,12 +75,11 @@ const BrandProducts = ({
 
   if (loading) {
     return (
-      <div
-        className="flex min-h-[50vh] items-center justify-center text-white"
-        dir="rtl"
-      >
-        در حال دریافت محصولات...
-      </div>
+      <section className="w-full px-3 py-6 sm:px-5 md:px-6" dir="rtl" aria-busy="true">
+        <div className="mx-auto w-full max-w-7xl">
+          <ProductGridSkeleton count={8} className="grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4 lg:gap-7" />
+        </div>
+      </section>
     );
   }
 
