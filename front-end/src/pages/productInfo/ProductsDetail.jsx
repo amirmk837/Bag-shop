@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import AddToCartButton from "../../components/cart/AddToCartButton";
 
 const ProductDetails = ({ product }) => {
@@ -18,11 +18,15 @@ const ProductDetails = ({ product }) => {
     ];
   }, [product.color]);
 
-  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedColor, setSelectedColor] = useState(() =>
+    colors.length === 1 ? colors[0] : "",
+  );
+  const [previousColors, setPreviousColors] = useState(colors);
 
-  useEffect(() => {
+  if (previousColors !== colors) {
+    setPreviousColors(colors);
     setSelectedColor(colors.length === 1 ? colors[0] : "");
-  }, [colors]);
+  }
 
   const hasMultipleColors = colors.length > 1;
   const hasColor = colors.length > 0;
