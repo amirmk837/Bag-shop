@@ -1,6 +1,6 @@
 import FooterTop from "./FooterTop";
 import FooterAbout from "./FooterAbout";
-import { useSiteSettings } from "../../context/SiteSettingsContext";
+import { useSiteSettings } from "../../context/useSiteSettings";
 
 const Footer = () => {
   const { siteSettings: site } = useSiteSettings();
