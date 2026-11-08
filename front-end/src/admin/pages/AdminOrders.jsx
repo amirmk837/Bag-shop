@@ -208,7 +208,7 @@ const AdminOrders = () => {
   useEffect(() => {
     const orderId = searchParams.get("orderId");
     if (orderId) openOrder(orderId);
-  }, [searchParams]);
+  }, [searchParams, openOrder]);
 
   const closeModal = () => {
     if (updatingStatus || updatingShipping || deletingOrderId !== null) {
