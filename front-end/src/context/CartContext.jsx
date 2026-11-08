@@ -1,13 +1,11 @@
 import {
   createContext,
   useCallback,
-  useContext,
   useState,
 } from "react";
 const loadCartApi = () => import("../services/cartApi");
 import { useAuth } from "./useAuth";
-
-const CartContext = createContext(null);
+import { CartContext } from "./cartContextValue";
 
 const emptyCart = {
   id: null,
@@ -105,12 +103,3 @@ export const CartProvider = ({ children }) => {
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
 
-export const useCart = () => {
-  const context = useContext(CartContext);
-
-  if (!context) {
-    throw new Error("useCart باید داخل CartProvider استفاده شود.");
-  }
-
-  return context;
-};
