@@ -13,6 +13,7 @@ const ProductInfoes = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeImage, setActiveImage] = useState(0);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -51,7 +52,7 @@ const ProductInfoes = () => {
     return () => {
       cancelled = true;
     };
-  }, [id]);
+  }, [id, retryKey]);
 
   const images = Array.isArray(product?.url)
     ? product.url.filter(Boolean)
@@ -86,9 +87,19 @@ const ProductInfoes = () => {
   if (error || !product) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-4">
-        <p className="text-center text-xl text-zinc-400">
-          {error || "محصول پیدا نشد"}
-        </p>
+        <div className="flex flex-col items-center gap-5 text-center">
+          <p className="text-xl text-zinc-400">{error || "محصول پیدا نشد"}</p>
+          {error && error !== "محصول پیدا نشد" && (
+            <button
+              type="button"
+              onClick={() => setRetryKey((current) => current + 1)}
+              className="rounded-xl border border-zinc-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
+            >
+              تلاش دوباره
+            </button>
+          )}
+          <BackPage fallback="/" />
+        </div>
       </div>
     );
   }
