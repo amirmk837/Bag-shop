@@ -5,7 +5,7 @@ import {
   useState,
 } from "react";
 const loadCartApi = () => import("../services/cartApi");
-import { useAuth } from "./AuthContext";
+import { useAuth } from "./useAuth";
 
 const CartContext = createContext(null);
 
