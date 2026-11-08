@@ -1,4 +1,4 @@
-import { useSiteSettings } from "../../context/SiteSettingsContext";
+import { useSiteSettings } from "../../context/useSiteSettings";
 
 const FooterAbout = () => {
   const { siteSettings: site } = useSiteSettings();
