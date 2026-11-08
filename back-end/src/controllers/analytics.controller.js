@@ -1,5 +1,5 @@
 import { getAuthUserById, verifyToken } from "../services/auth.service.js";
-import { getAnalyticsReport, getLoggedInUsers } from "../services/analytics.service.js";
+import { getAnalyticsReport, getLoggedInUsers, recordSiteVisit } from "../services/analytics.service.js";
 
 export const analyticsReportController = async (req, res) => {
   try { return res.json(await getAnalyticsReport(req.query.days)); }
@@ -14,5 +14,20 @@ export const loggedInUsersController = async (req, res) => {
   catch (error) {
     console.error("Logged-in users report failed:", { errorType: error?.name || "Error" });
     return res.status(500).json({ message: "دریافت فهرست کاربران واردشده ناموفق بود." });
+  }
+};
+
+export const recordSiteVisitController = async (req, res) => {
+  try {
+    await recordSiteVisit({
+      visitorId: req.body?.visitorId,
+      path: req.body?.path,
+      userAgent: req.get("user-agent"),
+      referer: req.get("referer"),
+    });
+    return res.status(204).end();
+  } catch (error) {
+    console.error("Site visit tracking failed:", { errorType: error?.name || "Error" });
+    return res.status(204).end();
   }
 };
