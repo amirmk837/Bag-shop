@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiMinus, FiPlus, FiTrash2, FiShoppingBag } from "react-icons/fi";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import { useCart } from "../context/CartContext";
 import BackPage from "../components/BackPage";
 
