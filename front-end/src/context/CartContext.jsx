@@ -2,7 +2,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useState,
 } from "react";
 const loadCartApi = () => import("../services/cartApi");
@@ -51,16 +50,6 @@ export const CartProvider = ({ children }) => {
     }
   }, [isAuthenticated]);
 
-  // فقط وضعیت خروج را پاک می‌کنیم؛ در بارگذاری عمومی سایت GET /cart نداریم.
-  useEffect(() => {
-    if (authLoading || isAuthenticated) return;
-
-    setCart(emptyCart);
-    setLoading(false);
-    setInitialized(false);
-    setLoadError("");
-  }, [isAuthenticated, authLoading]);
-
   const addToCart = async (productCode, quantity = 1, color = "") => {
     const { addToCart } = await loadCartApi();
     const data = await addToCart(productCode, quantity, color);
@@ -97,19 +86,20 @@ export const CartProvider = ({ children }) => {
     return data;
   };
 
+  const visibleCart = isAuthenticated ? cart : emptyCart;
   const value = {
-    cart,
-    items: Array.isArray(cart.items) ? cart.items : [],
-    loading,
-    initialized,
-    loadError,
+    cart: visibleCart,
+    items: Array.isArray(visibleCart.items) ? visibleCart.items : [],
+    loading: isAuthenticated ? loading : false,
+    initialized: isAuthenticated ? initialized : false,
+    loadError: isAuthenticated ? loadError : "",
     addToCart,
     updateCartItem,
     removeCartItem,
     clearCart,
     refreshCart,
-    totalItems: Number(cart.totalItems || 0),
-    subtotal: Number(cart.subtotal || 0),
+    totalItems: Number(visibleCart.totalItems || 0),
+    subtotal: Number(visibleCart.subtotal || 0),
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
