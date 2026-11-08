@@ -13,7 +13,7 @@ import {
 } from "react-icons/fi";
 
 import { useAuth } from "../context/useAuth";
-import { useCart } from "../context/CartContext";
+import { useCart } from "../context/useCart";
 import {
   getAddress,
   saveAddress,
