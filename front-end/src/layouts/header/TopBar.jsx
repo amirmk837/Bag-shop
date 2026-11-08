@@ -1,8 +1,8 @@
 import { FiShoppingCart, FiUser } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { useCart } from "../../context/CartContext";
-import { useSiteSettings } from "../../context/SiteSettingsContext";
+import { useAuth } from "../../context/useAuth";
+import { useCart } from "../../context/useCart";
+import { useSiteSettings } from "../../context/useSiteSettings";
 import HamburgerMenu from "./HamburgerMenu";
 
 const TopBar = () => {
