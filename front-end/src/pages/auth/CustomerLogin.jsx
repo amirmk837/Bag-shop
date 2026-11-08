@@ -4,6 +4,13 @@ import * as Yup from "yup";
 import { useAuth } from "../../context/AuthContext";
 import PasswordField from "../../components/forms/PasswordField";
 
+const normalizeLoginDigits = (value = "") =>
+  String(value)
+    .replace(/[۰-۹]/g, (digit) => "0123456789"["۰۱۲۳۴۵۶۷۸۹".indexOf(digit)])
+    .replace(/[٠-٩]/g, (digit) => "0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(digit)]);
+
+const iranianPhonePattern = /^(09\d{9}|\+989\d{9}|00989\d{9})$/;
+
 const loginSchema = Yup.object({
   identifier: Yup.string()
     .trim()
@@ -38,7 +45,12 @@ const CustomerLogin = () => {
           setStatus("");
 
           try {
-            const user = await login(values.identifier, values.password);
+            const normalizedIdentifier = normalizeLoginDigits(values.identifier).trim();
+            const isPhoneIdentifier = iranianPhonePattern.test(normalizedIdentifier);
+            const user = await login(
+              isPhoneIdentifier ? normalizedIdentifier : values.identifier,
+              values.password,
+            );
 
             const from = location.state?.from;
             const returnPath =
