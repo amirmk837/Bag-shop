@@ -1,5 +1,5 @@
 import { Formik, Form, Field } from "formik";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../context/AuthContext";
 import PasswordField from "../../components/forms/PasswordField";
@@ -20,6 +20,7 @@ const loginSchema = Yup.object({
 
 const CustomerLogin = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
 
   return (
@@ -39,7 +40,20 @@ const CustomerLogin = () => {
           try {
             const user = await login(values.identifier, values.password);
 
-            navigate(user.role === "ADMIN" ? "/admin" : "/");
+            const from = location.state?.from;
+            const returnPath =
+              typeof from?.pathname === "string" &&
+              from.pathname.startsWith("/") &&
+              !from.pathname.startsWith("//") &&
+              !from.pathname.startsWith("/admin") &&
+              from.pathname !== "/login" &&
+              from.pathname !== "/register"
+                ? `${from.pathname}${from.search || ""}${from.hash || ""}`
+                : "/";
+
+            navigate(user.role === "ADMIN" ? "/admin" : returnPath, {
+              replace: true,
+            });
           } catch (error) {
             setStatus(error.message || "ورود ناموفق بود.");
           } finally {
