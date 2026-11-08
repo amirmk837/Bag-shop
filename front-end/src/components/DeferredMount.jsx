@@ -11,12 +11,7 @@ const DeferredMount = ({
 
   useEffect(() => {
     const element = containerRef.current;
-    if (!element || isVisible) return;
-
-    if (typeof IntersectionObserver === "undefined") {
-      setIsVisible(true);
-      return;
-    }
+    if (!element || isVisible || typeof IntersectionObserver === "undefined") return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -31,13 +26,15 @@ const DeferredMount = ({
     return () => observer.disconnect();
   }, [isVisible, rootMargin]);
 
+  const shouldRender = isVisible || typeof IntersectionObserver === "undefined";
+
   return (
     <div
       ref={containerRef}
       className={className}
       style={minHeight ? { minHeight } : undefined}
     >
-      {isVisible ? children : null}
+      {shouldRender ? children : null}
     </div>
   );
 };
