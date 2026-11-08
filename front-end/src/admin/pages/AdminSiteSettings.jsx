@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getSiteSettings, saveSiteSettings } from "../../services/siteSettingsApi";
-import { useSiteSettings } from "../../context/SiteSettingsContext";
+import { useSiteSettings } from "../../context/useSiteSettings";
 
 const initial = { storeName: "فروشگاه کاظمی", phone: "", headerText: "", footerAbout: "", footerCaption: "", logoUrl: "", footerLogoUrl: "", logoFile: null, footerLogoFile: null };
 
