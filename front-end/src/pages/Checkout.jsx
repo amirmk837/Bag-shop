@@ -248,8 +248,10 @@ export default function Checkout() {
     if (authLoading) return;
 
     if (!user) {
-      setAddressLoading(false);
-      setShippingLoading(false);
+      void Promise.resolve().then(() => {
+        setAddressLoading(false);
+        setShippingLoading(false);
+      });
       return;
     }
 
