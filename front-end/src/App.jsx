@@ -37,11 +37,16 @@ const PaymentResult = lazy(() => import("./pages/payment/PaymentResult"));
 const MyOrders = lazy(() => import("./pages/account/MyOrders"));
 const AdminShippingMethods = lazy(() => import("./admin/pages/AdminShippingMethods"));
 const AdminAnalytics = lazy(() => import("./admin/pages/AdminAnalytics"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 // =========================================
 // ROUTES
 // =========================================
 
 const routes = [
+  {
+    path: "/privacy",
+    element: <PrivacyPolicy />,
+  },
   {
     path: "/",
     element: <Content />,
