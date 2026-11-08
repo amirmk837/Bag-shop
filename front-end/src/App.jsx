@@ -333,8 +333,17 @@ const App = () => {
       <main className="min-h-screen">
         <Suspense
           fallback={
-            <div className="flex min-h-[50vh] items-center justify-center text-sm text-white">
-              در حال بارگذاری...
+            <div className="mx-auto min-h-[50vh] w-full max-w-7xl px-4 py-10" aria-busy="true">
+              <div className="mx-auto mb-8 h-8 w-40 animate-pulse rounded-lg bg-zinc-700/60" />
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {Array.from({ length: 8 }, (_, index) => (
+                  <div key={index} className="rounded-2xl border border-zinc-700/60 bg-zinc-900 p-2">
+                    <div className="h-48 animate-pulse rounded-xl bg-zinc-700/60" />
+                    <div className="mt-4 h-4 w-3/4 animate-pulse rounded bg-zinc-700/60" />
+                    <div className="mt-3 h-3 w-1/2 animate-pulse rounded bg-zinc-800" />
+                  </div>
+                ))}
+              </div>
             </div>
           }
         >
