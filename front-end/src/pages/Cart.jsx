@@ -87,6 +87,7 @@ const Cart = () => {
 
           <Link
             to="/login"
+            state={{ from: { pathname: "/cart" } }}
             className="mt-7 inline-flex rounded-2xl bg-white px-6 py-3 font-bold text-zinc-900 transition hover:bg-zinc-200"
           >
             ورود به حساب
