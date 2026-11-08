@@ -96,9 +96,16 @@ const AdminOrders = () => {
   const [notice, setNotice] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [period, setPeriod] = useState(() => searchParams.get("period") || (searchParams.has("from") ? "custom" : "all"));
-  const [from, setFrom] = useState(() => searchParams.get("from") || "");
-  const [to, setTo] = useState(() => searchParams.get("to") || "");
+  const from = searchParams.get("from") || "";
+  const to = searchParams.get("to") || "";
+  const period = searchParams.get("period") || (from && to ? "custom" : "all");
+  const searchParamsKey = searchParams.toString();
+  const [previousSearchParamsKey, setPreviousSearchParamsKey] = useState(searchParamsKey);
+
+  if (previousSearchParamsKey !== searchParamsKey) {
+    setPreviousSearchParamsKey(searchParamsKey);
+    setPagination((current) => ({ ...current, page: 1 }));
+  }
 
   const [modalOpen, setModalOpen] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
@@ -127,16 +134,6 @@ const AdminOrders = () => {
 
     return () => clearTimeout(timer);
   }, [searchInput]);
-
-  useEffect(() => {
-    const nextFrom = searchParams.get("from") || "";
-    const nextTo = searchParams.get("to") || "";
-    const nextPeriod = searchParams.get("period") || (nextFrom && nextTo ? "custom" : "all");
-    setFrom(nextFrom);
-    setTo(nextTo);
-    setPeriod(nextPeriod);
-    setPagination((current) => ({ ...current, page: 1 }));
-  }, [searchParams]);
 
   // دریافت سفارش‌ها
   useEffect(() => {
@@ -441,7 +438,6 @@ const AdminOrders = () => {
           value={period}
           onChange={(event) => {
             const value = event.target.value;
-            setPeriod(value); setFrom(""); setTo("");
             setSearchParams(value === "all" ? {} : { period: value }, { replace: true });
             setPagination((current) => ({ ...current, page: 1 }));
           }}
