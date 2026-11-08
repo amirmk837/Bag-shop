@@ -149,7 +149,7 @@ const AdminUsers = () => {
   // =========================================
   useEffect(() => {
     const userId = searchParams.get("userId");
-    if (userId) openUser(userId);
+    if (userId) void Promise.resolve().then(() => openUser(userId));
   }, [searchParams, openUser]);
 
   const closeUser = () => {
