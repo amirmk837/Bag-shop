@@ -1,14 +1,11 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useState,
 } from "react";
 import { useLocation } from "react-router-dom";
 import { getSiteSettings } from "../services/siteSettingsApi";
-
-const SiteSettingsContext = createContext(null);
+import { SiteSettingsContext } from "./siteSettingsContextValue";
 
 export const SiteSettingsProvider = ({ children }) => {
   const location = useLocation();
@@ -47,12 +44,3 @@ export const SiteSettingsProvider = ({ children }) => {
   );
 };
 
-export const useSiteSettings = () => {
-  const context = useContext(SiteSettingsContext);
-
-  if (!context) {
-    throw new Error("useSiteSettings باید داخل SiteSettingsProvider استفاده شود.");
-  }
-
-  return context;
-};
