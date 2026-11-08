@@ -97,7 +97,7 @@ const AdminSocialLinks = () => {
   useEffect(() => {
     const controller = new AbortController();
 
-    loadLinks(controller.signal);
+    void Promise.resolve().then(() => loadLinks(controller.signal));
 
     return () => controller.abort();
   }, []);
