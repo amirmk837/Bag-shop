@@ -2,7 +2,7 @@ import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Formik, Form } from "formik";
 import { FiArrowRight, FiMapPin, FiSave, FiPackage } from "react-icons/fi";
 import { useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 import {
   getAddress,
   saveAddress,
