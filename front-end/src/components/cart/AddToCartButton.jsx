@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FiArrowLeft,
   FiCheck,
@@ -21,6 +21,7 @@ const AddToCartButton = ({
   disabled = false,
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, isAuthenticated } = useAuth();
   const { addToCart } = useCart();
   const [loading, setLoading] = useState(false);
@@ -76,7 +77,7 @@ const AddToCartButton = ({
     setSuccess(false);
 
     if (!isAuthenticated) {
-      navigate("/login");
+      navigate("/login", { state: { from: location } });
       return;
     }
 
