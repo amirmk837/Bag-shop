@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiSettings } from "react-icons/fi";
 import { getActiveBanners } from "../../services/bannerApi";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 
 const FALLBACK_IMAGE = "/images/banners/banner.webp";
 const SLIDE_INTERVAL = 5000;
