@@ -83,7 +83,7 @@ const getSiteVisitReport = async (from) => {
     `,
     prisma.$queryRaw`
       SELECT
-        TO_CHAR(DATE_TRUNC('day', "createdAt" AT TIME ZONE 'Asia/Tehran'), 'YYYY-MM-DD') AS "date",
+        TO_CHAR(DATE_TRUNC('day', ("createdAt" AT TIME ZONE 'UTC') AT TIME ZONE 'Asia/Tehran'), 'YYYY-MM-DD') AS "date",
         COUNT(*)::int AS "pageViews",
         COUNT(DISTINCT "visitorId")::int AS "uniqueVisitors"
       FROM "SiteVisitEvent"
