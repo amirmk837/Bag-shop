@@ -7,7 +7,99 @@ const parseDays = (value) => {
   return Number.isInteger(days) && days >= 1 ? Math.min(days, 90) : 30;
 };
 
-// گزارش مدیریتی بر اساس داده‌های واقعی فروش، سفارش و مشتری
+const parseUserAgent = (value = "") => {
+  const ua = String(value).slice(0, 1000);
+  const deviceType = /iPad|Tablet|Android(?!.*Mobile)/i.test(ua)
+    ? "tablet"
+    : /Mobi|Android|iPhone|iPod/i.test(ua)
+      ? "mobile"
+      : "desktop";
+  const operatingSystem = /Windows/i.test(ua) ? "Windows"
+    : /Android/i.test(ua) ? "Android"
+      : /iPhone|iPad|iPod/i.test(ua) ? "iOS"
+        : /Mac OS|Macintosh/i.test(ua) ? "macOS"
+          : /Linux/i.test(ua) ? "Linux" : "Other";
+  const browser = /Edg\//i.test(ua) ? "Edge"
+    : /OPR\//i.test(ua) ? "Opera"
+      : /Firefox\//i.test(ua) ? "Firefox"
+        : /Chrome\//i.test(ua) || /CriOS\//i.test(ua) ? "Chrome"
+          : /Safari\//i.test(ua) ? "Safari" : "Other";
+  return { deviceType, operatingSystem, browser };
+};
+
+export const recordSiteVisit = async ({ visitorId, path, userAgent, referer }) => {
+  if (typeof visitorId !== "string" ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(visitorId)) {
+    return false;
+  }
+
+  const safePath = typeof path === "string" ? path.split(/[?#]/, 1)[0] : "";
+  if (!safePath.startsWith("/") || safePath.startsWith("//") ||
+      safePath.length > 180 || /[\u0000-\u001f]/.test(safePath) ||
+      /^\/admin(?:\/|$)/i.test(safePath)) {
+    return false;
+  }
+
+  if (/bot|crawler|spider|headless|lighthouse|pagespeed/i.test(String(userAgent || ""))) {
+    return false;
+  }
+
+  const recentVisit = await prisma.siteVisitEvent.findFirst({
+    where: {
+      visitorId,
+      path: safePath,
+      createdAt: { gte: new Date(Date.now() - 10_000) },
+    },
+    select: { id: true },
+  });
+  if (recentVisit) return false;
+
+  let referrerHost = null;
+  try {
+    if (referer) referrerHost = new URL(referer).hostname.slice(0, 255) || null;
+  } catch {
+    referrerHost = null;
+  }
+
+  await prisma.siteVisitEvent.create({
+    data: {
+      visitorId,
+      path: safePath,
+      referrerHost,
+      ...parseUserAgent(userAgent),
+    },
+  });
+  return true;
+};
+
+const getSiteVisitReport = async (from) => {
+  const [summaryRows, daily] = await Promise.all([
+    prisma.$queryRaw`
+      SELECT
+        COUNT(*)::int AS "pageViews",
+        COUNT(DISTINCT "visitorId")::int AS "uniqueVisitors"
+      FROM "SiteVisitEvent"
+      WHERE "createdAt" >= ${from}
+    `,
+    prisma.$queryRaw`
+      SELECT
+        TO_CHAR(DATE_TRUNC('day', ("createdAt" AT TIME ZONE 'UTC') AT TIME ZONE 'Asia/Tehran'), 'YYYY-MM-DD') AS "date",
+        COUNT(*)::int AS "pageViews",
+        COUNT(DISTINCT "visitorId")::int AS "uniqueVisitors"
+      FROM "SiteVisitEvent"
+      WHERE "createdAt" >= ${from}
+      GROUP BY 1
+      ORDER BY 1 ASC
+    `,
+  ]);
+
+  return {
+    summary: summaryRows[0] || { pageViews: 0, uniqueVisitors: 0 },
+    daily,
+  };
+};
+
+// گزارش مدیریتی بر اساس داده‌های واقعی فروش، سفارش، مشتری و بازدید
 export const getAnalyticsReport = async (requestedDays) => {
   const days = parseDays(requestedDays);
   const from = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
@@ -24,6 +116,7 @@ export const getAnalyticsReport = async (requestedDays) => {
     totalCustomers,
     statusGroups,
     bestSellingGroups,
+    siteVisits,
   ] = await Promise.all([
     prisma.order.count({ where: periodOrders }),
     prisma.order.aggregate({
@@ -55,6 +148,7 @@ export const getAnalyticsReport = async (requestedDays) => {
       orderBy: [{ _sum: { quantity: "desc" } }, { productCode: "asc" }],
       take: 8,
     }),
+    getSiteVisitReport(from),
   ]);
 
   const paidOrders = successfulSales._count._all;
@@ -75,6 +169,7 @@ export const getAnalyticsReport = async (requestedDays) => {
       pendingOrders: statusCounts.PENDING || 0,
       cancelledOrders: statusCounts.CANCELLED || 0,
     },
+    siteVisits,
     orderStatuses: statusGroups.map((group) => ({
       status: group.status,
       count: group._count._all,

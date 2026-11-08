@@ -2,7 +2,8 @@ import Header from "./layouts/header/Header";
 
 import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
+import { trackPageView } from "./services/siteAnalyticsApi";
 import DeferredMount from "./components/DeferredMount";
 
 const Footer = lazy(() => import("./layouts/footer/Footer"));
@@ -315,6 +316,10 @@ const routes = [
 
 const App = () => {
   const location = useLocation();
+
+  useEffect(() => {
+    if (!location.pathname.startsWith("/admin")) trackPageView(location.pathname);
+  }, [location.pathname]);
 
   const isProductPage = location.pathname.startsWith("/product/");
   const isAdminArea = location.pathname.startsWith("/admin");
