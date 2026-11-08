@@ -1,4 +1,5 @@
 import FooterTop from "./FooterTop";
+import { Link } from "react-router-dom";
 import FooterAbout from "./FooterAbout";
 import { useSiteSettings } from "../../context/useSiteSettings";
 
@@ -26,6 +27,12 @@ const Footer = () => {
           <p className="text-xs text-zinc-500 sm:text-sm">
             {site?.footerCaption || `© ${site?.storeName || "فروشگاه کاظمی"} — تمامی حقوق محفوظ است.`}
           </p>
+          <Link
+            to="/privacy"
+            className="mt-3 inline-block text-xs text-zinc-400 underline-offset-4 transition hover:text-white hover:underline"
+          >
+            حریم خصوصی و آمار بازدید
+          </Link>
         </div>
       </div>
     </footer>
