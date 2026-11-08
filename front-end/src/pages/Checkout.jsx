@@ -12,8 +12,8 @@ import {
   FiChevronLeft,
 } from "react-icons/fi";
 
-import { useAuth } from "../context/AuthContext";
-import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/useAuth";
+import { useCart } from "../context/useCart";
 import {
   getAddress,
   saveAddress,
@@ -247,20 +247,36 @@ export default function Checkout() {
   useEffect(() => {
     if (authLoading) return;
 
-    if (!user) {
-      setAddressLoading(false);
-      setShippingLoading(false);
-      return;
-    }
+    let cancelled = false;
 
-    loadAddress();
-    loadShippingMethods();
+    const initializeCheckout = async () => {
+      await Promise.resolve();
 
-    if (!cartInitialized && !cartRequestLoading && refreshCart) {
-      refreshCart().catch((err) => {
-        setError(getErrorMessage(err, "دریافت سبد خرید ناموفق بود."));
-      });
-    }
+      if (cancelled) return;
+
+      if (!user) {
+        setAddressLoading(false);
+        setShippingLoading(false);
+        return;
+      }
+
+      loadAddress();
+      loadShippingMethods();
+
+      if (!cartInitialized && !cartRequestLoading && refreshCart) {
+        refreshCart().catch((err) => {
+          if (!cancelled) {
+            setError(getErrorMessage(err, "دریافت سبد خرید ناموفق بود."));
+          }
+        });
+      }
+    };
+
+    void initializeCheckout();
+
+    return () => {
+      cancelled = true;
+    };
   }, [
     authLoading,
     user,

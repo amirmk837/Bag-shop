@@ -47,20 +47,23 @@ const IranLocationPicker = ({
   const [cityOpen, setCityOpen] = useState(false);
 
   const [provinceQuery, setProvinceQuery] = useState(province || "");
-
+  const [previousProvince, setPreviousProvince] = useState(province);
   const [cityQuery, setCityQuery] = useState(city || "");
+  const [previousCity, setPreviousCity] = useState(city);
 
   // =========================================
   // SYNC INITIAL VALUES
   // =========================================
 
-  useEffect(() => {
+  if (previousProvince !== province) {
+    setPreviousProvince(province);
     setProvinceQuery(province || "");
-  }, [province]);
+  }
 
-  useEffect(() => {
+  if (previousCity !== city) {
+    setPreviousCity(city);
     setCityQuery(city || "");
-  }, [city]);
+  }
 
   // =========================================
   // CITIES

@@ -51,7 +51,7 @@ export default function AdminShippingMethods() {
   }, []);
 
   useEffect(() => {
-    loadItems();
+    void Promise.resolve().then(loadItems);
   }, [loadItems]);
 
   const handleSubmit = async (event) => {

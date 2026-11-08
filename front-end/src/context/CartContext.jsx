@@ -1,14 +1,10 @@
 import {
-  createContext,
   useCallback,
-  useContext,
-  useEffect,
   useState,
 } from "react";
 const loadCartApi = () => import("../services/cartApi");
-import { useAuth } from "./AuthContext";
-
-const CartContext = createContext(null);
+import { useAuth } from "./useAuth";
+import { CartContext } from "./cartContextValue";
 
 const emptyCart = {
   id: null,
@@ -18,12 +14,23 @@ const emptyCart = {
 };
 
 export const CartProvider = ({ children }) => {
-  const { isAuthenticated, loading: authLoading } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [cart, setCart] = useState(emptyCart);
   const [loading, setLoading] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [loadError, setLoadError] = useState("");
+  const [previousAuthentication, setPreviousAuthentication] = useState(isAuthenticated);
+
+  if (previousAuthentication !== isAuthenticated) {
+    setPreviousAuthentication(isAuthenticated);
+    if (!isAuthenticated) {
+      setCart(emptyCart);
+      setLoading(false);
+      setInitialized(false);
+      setLoadError("");
+    }
+  }
 
   // دریافت سبد فقط هنگام ورود به صفحه سبد/تسویه یا درخواست صریح.
   const refreshCart = useCallback(async () => {
@@ -50,16 +57,6 @@ export const CartProvider = ({ children }) => {
       setInitialized(true);
     }
   }, [isAuthenticated]);
-
-  // فقط وضعیت خروج را پاک می‌کنیم؛ در بارگذاری عمومی سایت GET /cart نداریم.
-  useEffect(() => {
-    if (authLoading || isAuthenticated) return;
-
-    setCart(emptyCart);
-    setLoading(false);
-    setInitialized(false);
-    setLoadError("");
-  }, [isAuthenticated, authLoading]);
 
   const addToCart = async (productCode, quantity = 1, color = "") => {
     const { addToCart } = await loadCartApi();
@@ -97,9 +94,10 @@ export const CartProvider = ({ children }) => {
     return data;
   };
 
+  const visibleCart = cart;
   const value = {
-    cart,
-    items: Array.isArray(cart.items) ? cart.items : [],
+    cart: visibleCart,
+    items: Array.isArray(visibleCart.items) ? visibleCart.items : [],
     loading,
     initialized,
     loadError,
@@ -108,19 +106,10 @@ export const CartProvider = ({ children }) => {
     removeCartItem,
     clearCart,
     refreshCart,
-    totalItems: Number(cart.totalItems || 0),
-    subtotal: Number(cart.subtotal || 0),
+    totalItems: Number(visibleCart.totalItems || 0),
+    subtotal: Number(visibleCart.subtotal || 0),
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
 
-export const useCart = () => {
-  const context = useContext(CartContext);
-
-  if (!context) {
-    throw new Error("useCart باید داخل CartProvider استفاده شود.");
-  }
-
-  return context;
-};

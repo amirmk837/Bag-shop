@@ -138,7 +138,7 @@ export default function MyOrders() {
   }, []);
 
   useEffect(() => {
-    loadOrders();
+    void Promise.resolve().then(loadOrders);
   }, [loadOrders, retry]);
 
   return (
