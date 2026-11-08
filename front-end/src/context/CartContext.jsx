@@ -1,5 +1,4 @@
 import {
-  createContext,
   useCallback,
   useState,
 } from "react";
@@ -15,7 +14,7 @@ const emptyCart = {
 };
 
 export const CartProvider = ({ children }) => {
-  const { isAuthenticated, loading: authLoading } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [cart, setCart] = useState(emptyCart);
   const [loading, setLoading] = useState(false);
