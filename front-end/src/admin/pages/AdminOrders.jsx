@@ -175,7 +175,7 @@ const AdminOrders = () => {
       }
     };
 
-    loadOrders();
+    void Promise.resolve().then(loadOrders);
 
     return () => {
       ignore = true;
@@ -207,7 +207,7 @@ const AdminOrders = () => {
 
   useEffect(() => {
     const orderId = searchParams.get("orderId");
-    if (orderId) openOrder(orderId);
+    if (orderId) void Promise.resolve().then(() => openOrder(orderId));
   }, [searchParams, openOrder]);
 
   const closeModal = () => {
