@@ -247,22 +247,36 @@ export default function Checkout() {
   useEffect(() => {
     if (authLoading) return;
 
-    if (!user) {
-      void Promise.resolve().then(() => {
+    let cancelled = false;
+
+    const initializeCheckout = async () => {
+      await Promise.resolve();
+
+      if (cancelled) return;
+
+      if (!user) {
         setAddressLoading(false);
         setShippingLoading(false);
-      });
-      return;
-    }
+        return;
+      }
 
-    loadAddress();
-    loadShippingMethods();
+      loadAddress();
+      loadShippingMethods();
 
-    if (!cartInitialized && !cartRequestLoading && refreshCart) {
-      refreshCart().catch((err) => {
-        setError(getErrorMessage(err, "دریافت سبد خرید ناموفق بود."));
-      });
-    }
+      if (!cartInitialized && !cartRequestLoading && refreshCart) {
+        refreshCart().catch((err) => {
+          if (!cancelled) {
+            setError(getErrorMessage(err, "دریافت سبد خرید ناموفق بود."));
+          }
+        });
+      }
+    };
+
+    void initializeCheckout();
+
+    return () => {
+      cancelled = true;
+    };
   }, [
     authLoading,
     user,
