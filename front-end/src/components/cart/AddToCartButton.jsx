@@ -27,6 +27,7 @@ const AddToCartButton = ({
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [previousColor, setPreviousColor] = useState(color);
 
   const [toast, setToast] = useState(null);
   const [toastVisible, setToastVisible] = useState(false);
@@ -35,10 +36,11 @@ const AddToCartButton = ({
   const removeTimer = useRef(null);
   const successTimer = useRef(null);
 
-  // با انتخاب رنگ، پیام خطا پاک می‌شود
-  useEffect(() => {
+  // با تغییر رنگ، پیام خطای مربوط به انتخاب قبلی پاک می‌شود.
+  if (previousColor !== color) {
+    setPreviousColor(color);
     setError("");
-  }, [color]);
+  }
 
   // پاک‌سازی تایمرها هنگام خروج از صفحه
   useEffect(() => {
