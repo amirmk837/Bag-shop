@@ -1,12 +1,11 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { AuthContext } from "./authContextValue";
 import {
   getMe,
   login as loginRequest,
   logout as logoutRequest,
   registerCustomer,
 } from "../services/authApi";
-
-const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -91,12 +90,3 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error("useAuth باید داخل AuthProvider استفاده شود.");
-  }
-
-  return context;
-};
