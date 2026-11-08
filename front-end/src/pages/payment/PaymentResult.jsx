@@ -33,7 +33,7 @@ const PaymentResult = () => {
   }, [orderId]);
 
   useEffect(() => {
-    loadStatus();
+    void Promise.resolve().then(loadStatus);
   }, [loadStatus]);
 
   const isPaid =
