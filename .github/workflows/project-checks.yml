@@ -19,6 +19,12 @@ jobs:
       - name: Install frontend dependencies
         working-directory: front-end
         run: npm ci
+      - name: Report all frontend dependency vulnerabilities
+        working-directory: front-end
+        continue-on-error: true
+        run: |
+          npm audit --json > audit-full-report.json || true
+          node -e 'const fs=require("node:fs"); let a={}; try { a=JSON.parse(fs.readFileSync("audit-full-report.json","utf8")); } catch { console.error("Could not parse full npm audit report"); process.exit(0); } const entries=Object.entries(a.vulnerabilities || {}); for (const [name,v] of entries) console.log(`${name}: severity=${v.severity}; direct=${v.isDirect}; fix=${JSON.stringify(v.fixAvailable)}`); console.log(`Full dependency audit totals: ${JSON.stringify(a.metadata?.vulnerabilities || {})}`);'
       - name: Audit frontend production dependencies
         working-directory: front-end
         run: |
