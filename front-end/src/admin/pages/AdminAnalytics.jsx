@@ -93,7 +93,9 @@ export default function AdminAnalytics() {
     }
   }, [days, userPage]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    void Promise.resolve().then(load);
+  }, [load]);
 
   return (
     <div dir="rtl" className="space-y-6 text-white">
