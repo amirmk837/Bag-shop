@@ -128,7 +128,21 @@ export default function AdminAnalytics() {
             <Metric title="کل مشتریان" value={number(report.summary.totalCustomers)} note="حساب‌های مشتری فعال و حذف‌نشده" />
             <Metric title="در انتظار پرداخت" value={number(report.summary.pendingOrders)} note="نیازمند بررسی وضعیت پرداخت" />
             <Metric title="سفارش‌های لغوشده" value={number(report.summary.cancelledOrders)} note="در بازه انتخابی" />
+            <Metric title="بازدید صفحات" value={number(report.siteVisits?.summary?.pageViews)} note="بازدیدهای ثبت‌شده در بازه انتخابی" />
+            <Metric title="بازدیدکنندگان یکتا" value={number(report.siteVisits?.summary?.uniqueVisitors)} note="شناسه‌های ناشناس بازدیدکننده" />
           </div>
+
+          <Slider title="روند بازدید روزانه" description="تعداد بازدید صفحات و بازدیدکنندگان یکتا به تفکیک روز" empty="هنوز بازدیدی در این بازه ثبت نشده است." isEmpty={!report.siteVisits?.daily?.length}>
+            {(report.siteVisits?.daily || []).map((day) => (
+              <SlideCard key={day.date}>
+                <p className="text-sm font-semibold">{new Date(`${day.date}T12:00:00`).toLocaleDateString("fa-IR")}</p>
+                <p className="mt-3 text-2xl font-black">{number(day.pageViews)}</p>
+                <p className="mt-1 text-xs text-zinc-500">بازدید صفحه</p>
+                <p className="mt-3 text-lg font-bold text-cyan-300">{number(day.uniqueVisitors)}</p>
+                <p className="mt-1 text-xs text-zinc-500">بازدیدکننده یکتا</p>
+              </SlideCard>
+            ))}
+          </Slider>
 
           <Slider title="وضعیت سفارش‌ها" description="توزیع سفارش‌های ثبت‌شده در بازه انتخابی" empty="در این بازه سفارشی ثبت نشده است." isEmpty={!report.orderStatuses?.length}>
             {(report.orderStatuses || []).map((item) => (
