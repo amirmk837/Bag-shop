@@ -1,4 +1,5 @@
 import prisma from "../config/prisma.js";
+import { createMonthlySalesAggregateQuery } from "../utils/monthlySalesQuery.js";
 
 // فقط سفارش‌هایی که فروش محسوب می‌شوند.
 const SALES_STATUSES = [
@@ -107,14 +108,13 @@ export const getAdminDashboard = async () => {
     throw new Error("ساخت بازه ماه‌های داشبورد ناموفق بود.");
   }
 
-  const firstMonthStart = monthlySales[0].start;
-  const nextMonthStart = monthlySales[monthlySales.length - 1].end;
-  const monthlySalesMap = new Map(
-    monthlySales.map((month) => [month.key, month]),
+  const monthlySalesQuery = createMonthlySalesAggregateQuery(
+    monthlySales,
+    SALES_STATUSES,
   );
 
   const [
-    monthlyOrders,
+    monthlySalesRows,
     recentOrders,
     customerGroups,
     bestSellingGroups,
@@ -125,13 +125,10 @@ export const getAdminDashboard = async () => {
     totalProducts,
     totalOrders,
   ] = await Promise.all([
-    prisma.order.findMany({
-      where: {
-        status: { in: SALES_STATUSES },
-        createdAt: { gte: firstMonthStart, lt: nextMonthStart },
-      },
-      select: { createdAt: true, totalAmount: true },
-    }),
+    prisma.$queryRawUnsafe(
+      monthlySalesQuery.query,
+      ...monthlySalesQuery.params,
+    ),
 
     prisma.order.findMany({
       take: 3,
@@ -206,12 +203,12 @@ export const getAdminDashboard = async () => {
     prisma.order.count(),
   ]);
 
-  for (const order of monthlyOrders) {
-    const month = monthlySalesMap.get(getPersianMonthKey(order.createdAt));
+  for (const row of monthlySalesRows) {
+    const month = monthlySales[Number(row.monthIndex)];
     if (!month) continue;
 
-    month.total += order.totalAmount;
-    month.orderCount += 1;
+    month.total = Number(row.total);
+    month.orderCount = Number(row.orderCount);
   }
 
   const activeCustomerGroups = customerGroups.filter((group) => group.userId !== null);
