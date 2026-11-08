@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FiPhone } from "react-icons/fi";
 import { FaInstagram, FaTelegramPlane, FaWhatsapp } from "react-icons/fa";
-import { useSiteSettings } from "../../context/SiteSettingsContext";
+import { useSiteSettings } from "../../context/useSiteSettings";
 
 const API_BASE_URL = (
   import.meta.env.VITE_API_URL || "http://localhost:5000/api"
