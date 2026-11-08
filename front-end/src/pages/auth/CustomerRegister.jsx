@@ -6,6 +6,11 @@ import { useAuth } from "../../context/AuthContext";
 
 const passwordRule = /^[\x21-\x7E]+$/;
 
+const normalizePhoneDigits = (value = "") =>
+  String(value)
+    .replace(/[۰-۹]/g, (digit) => "0123456789"["۰۱۲۳۴۵۶۷۸۹".indexOf(digit)])
+    .replace(/[٠-٩]/g, (digit) => "0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(digit)]);
+
 const phoneRule = /^(09\d{9}|\+989\d{9}|00989\d{9})$/;
 
 const registerSchema = Yup.object({
@@ -16,6 +21,7 @@ const registerSchema = Yup.object({
     .max(30, "نام کاربری بیش از ۳۰ کاراکتر نباشد."),
 
   phone: Yup.string()
+    .transform((value) => normalizePhoneDigits(value).trim())
     .trim()
     .required("شماره تماس را وارد کنید.")
     .matches(phoneRule, "شماره تماس معتبر وارد کنید."),
@@ -55,7 +61,7 @@ const CustomerRegister = () => {
           setStatus("");
 
           try {
-            await register(values.username, values.phone, values.password);
+            await register(values.username, normalizePhoneDigits(values.phone).trim(), values.password);
 
             navigate("/");
           } catch (error) {
