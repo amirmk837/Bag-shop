@@ -17,6 +17,7 @@ const Cart = () => {
     clearCart,
     loading: cartLoading,
     initialized: cartInitialized,
+    loadError: cartLoadError,
     refreshCart,
   } = useCart();
 
@@ -113,12 +114,22 @@ const Cart = () => {
         <div className="mx-auto max-w-xl rounded-3xl border border-zinc-800 bg-zinc-900 p-8 text-center shadow-2xl">
           <FiShoppingBag className="mx-auto mb-5 text-6xl text-zinc-600" />
 
-          <h1 className="text-2xl font-bold">سبد خرید شما خالی است</h1>
+          <h1 className="text-2xl font-bold">{cartLoadError ? "دریافت سبد خرید ناموفق بود" : "سبد خرید شما خالی است"}</h1>
 
           <p className="mt-3 text-sm text-zinc-400">
-            هنوز محصولی به سبد خرید اضافه نکرده‌اید.
+            {cartLoadError ? "اتصال به سرور برقرار نشد. اطلاعات سبد خرید حذف نشده است؛ دوباره تلاش کنید." : "هنوز محصولی به سبد خرید اضافه نکرده‌اید."}
           </p>
-          {error && <p role="alert" className="mt-3 text-sm text-red-400">{error}</p>}
+          {(error || cartLoadError) && <p role="alert" className="mt-3 text-sm text-red-400">{error || cartLoadError}</p>}
+          {cartLoadError && (
+            <button
+              type="button"
+              onClick={() => refreshCart().catch((requestError) => setError(requestError.message || "دریافت سبد خرید ناموفق بود."))}
+              disabled={cartLoading}
+              className="mt-4 inline-flex rounded-xl border border-zinc-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10 disabled:opacity-50"
+            >
+              تلاش دوباره
+            </button>
+          )}
 
           <Link
             to="/"
@@ -164,12 +175,12 @@ const Cart = () => {
           </button>
         </div>
 
-        {error && (
+        {(error || cartLoadError) && (
           <div
             role="alert"
             className="mb-6 rounded-2xl border border-red-900/50 bg-red-950/30 p-4 text-sm text-red-400"
           >
-            {error}
+            {error || cartLoadError}
           </div>
         )}
 
