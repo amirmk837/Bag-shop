@@ -1,7 +1,7 @@
 import { Formik, Form, Field } from "formik";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 import PasswordField from "../../components/forms/PasswordField";
 
 const normalizeLoginDigits = (value = "") =>
