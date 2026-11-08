@@ -1,7 +1,7 @@
 import { FiShoppingCart, FiUser } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../context/useCart";
 import { useSiteSettings } from "../../context/SiteSettingsContext";
 import HamburgerMenu from "./HamburgerMenu";
 
