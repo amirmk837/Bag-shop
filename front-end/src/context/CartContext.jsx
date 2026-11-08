@@ -20,6 +20,17 @@ export const CartProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [loadError, setLoadError] = useState("");
+  const [previousAuthentication, setPreviousAuthentication] = useState(isAuthenticated);
+
+  if (previousAuthentication !== isAuthenticated) {
+    setPreviousAuthentication(isAuthenticated);
+    if (!isAuthenticated) {
+      setCart(emptyCart);
+      setLoading(false);
+      setInitialized(false);
+      setLoadError("");
+    }
+  }
 
   // دریافت سبد فقط هنگام ورود به صفحه سبد/تسویه یا درخواست صریح.
   const refreshCart = useCallback(async () => {
@@ -83,13 +94,13 @@ export const CartProvider = ({ children }) => {
     return data;
   };
 
-  const visibleCart = isAuthenticated ? cart : emptyCart;
+  const visibleCart = cart;
   const value = {
     cart: visibleCart,
     items: Array.isArray(visibleCart.items) ? visibleCart.items : [],
-    loading: isAuthenticated ? loading : false,
-    initialized: isAuthenticated ? initialized : false,
-    loadError: isAuthenticated ? loadError : "",
+    loading,
+    initialized,
+    loadError,
     addToCart,
     updateCartItem,
     removeCartItem,
