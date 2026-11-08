@@ -2,7 +2,7 @@ import { Formik, Form, Field } from "formik";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import PasswordField from "../../components/forms/PasswordField";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 
 const passwordRule = /^[\x21-\x7E]+$/;
 
