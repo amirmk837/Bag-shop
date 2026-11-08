@@ -6,7 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import {
   getAddress,
   saveAddress,
-} from "../../../../back-end/src/services/addressApi";
+} from "../../services/addressApi";
 import IranLocationPicker from "../../components/address/IranLocationPicker";
 import BackPage from "../../components/BackPage";
 

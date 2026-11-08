@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import BackPage from "../../components/BackPage";
-import { getCustomerOrders } from "../../../../back-end/src/services/orderApi";
+import { getCustomerOrders } from "../../services/orderApi";
 
 const STATUS_LABELS = {
   PENDING: "در انتظار پرداخت",

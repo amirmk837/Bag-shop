@@ -11,6 +11,10 @@ const Banner = () => {
   const [banners, setBanners] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [previousIndex, setPreviousIndex] = useState(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [documentVisible, setDocumentVisible] = useState(true);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const { user } = useAuth();
 
 
@@ -43,10 +47,34 @@ const Banner = () => {
     };
   }, []);
 
-  // تعویض خودکار هر ۵ ثانیه
+  // توقف چرخش خودکار هنگام تعامل کاربر، مخفی بودن تب یا فعال بودن کاهش حرکت.
+  useEffect(() => {
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotionPreference = () => setReducedMotion(motionQuery.matches);
+    const updateVisibility = () => setDocumentVisible(!document.hidden);
+
+    updateMotionPreference();
+    updateVisibility();
+
+    motionQuery.addEventListener?.("change", updateMotionPreference);
+    document.addEventListener("visibilitychange", updateVisibility);
+
+    return () => {
+      motionQuery.removeEventListener?.("change", updateMotionPreference);
+      document.removeEventListener("visibilitychange", updateVisibility);
+    };
+  }, []);
+
+  // تعویض خودکار هر ۵ ثانیه؛ در زمان تعامل یا عدم مشاهده صفحه متوقف می‌شود.
   // پس از جابه‌جایی دستی، تایمر از نو شروع می‌شود.
   useEffect(() => {
-    if (banners.length < 2) return;
+    if (
+      banners.length < 2 ||
+      isHovered ||
+      isFocused ||
+      !documentVisible ||
+      reducedMotion
+    ) return;
 
     const timer = window.setTimeout(() => {
       setPreviousIndex(activeIndex);
@@ -54,7 +82,7 @@ const Banner = () => {
     }, SLIDE_INTERVAL);
 
     return () => window.clearTimeout(timer);
-  }, [activeIndex, banners.length]);
+  }, [activeIndex, banners.length, isHovered, isFocused, documentVisible, reducedMotion]);
 
   // فقط تصویر اسلاید بعدی را پیش‌بارگذاری می‌کنیم؛ نه تمام اسلایدها را.
   useEffect(() => {
@@ -158,7 +186,17 @@ const Banner = () => {
   const slides = banners.length > 0 ? banners : [null];
 
   return (
-    <section className="w-full px-3 sm:px-5 md:px-6">
+    <section
+      className="w-full px-3 sm:px-5 md:px-6"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocusCapture={() => setIsFocused(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setIsFocused(false);
+        }
+      }}
+    >
       <div
         dir="ltr"
         role="region"

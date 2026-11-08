@@ -1,10 +1,15 @@
 import { Formik, Form, Field } from "formik";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import PasswordField from "../../components/forms/PasswordField";
 import { useAuth } from "../../context/AuthContext";
 
 const passwordRule = /^[\x21-\x7E]+$/;
+
+const normalizePhoneDigits = (value = "") =>
+  String(value)
+    .replace(/[۰-۹]/g, (digit) => "0123456789"["۰۱۲۳۴۵۶۷۸۹".indexOf(digit)])
+    .replace(/[٠-٩]/g, (digit) => "0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(digit)]);
 
 const phoneRule = /^(09\d{9}|\+989\d{9}|00989\d{9})$/;
 
@@ -16,6 +21,7 @@ const registerSchema = Yup.object({
     .max(30, "نام کاربری بیش از ۳۰ کاراکتر نباشد."),
 
   phone: Yup.string()
+    .transform((value) => normalizePhoneDigits(value).trim())
     .trim()
     .required("شماره تماس را وارد کنید.")
     .matches(phoneRule, "شماره تماس معتبر وارد کنید."),
@@ -36,6 +42,7 @@ const registerSchema = Yup.object({
 
 const CustomerRegister = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { register } = useAuth();
 
   return (
@@ -55,9 +62,20 @@ const CustomerRegister = () => {
           setStatus("");
 
           try {
-            await register(values.username, values.phone, values.password);
+            await register(values.username, normalizePhoneDigits(values.phone).trim(), values.password);
 
-            navigate("/");
+            const from = location.state?.from;
+            const returnPath =
+              typeof from?.pathname === "string" &&
+              from.pathname.startsWith("/") &&
+              !from.pathname.startsWith("//") &&
+              !from.pathname.startsWith("/admin") &&
+              from.pathname !== "/login" &&
+              from.pathname !== "/register"
+                ? `${from.pathname}${from.search || ""}${from.hash || ""}`
+                : "/";
+
+            navigate(returnPath, { replace: true });
           } catch (error) {
             setStatus(error.message || "ثبت‌نام ناموفق بود.");
           } finally {

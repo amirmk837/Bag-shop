@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getCategories, getProductsPage } from "../services/api";
 import ProductCard from "../productsTable/ProductCard";
@@ -13,11 +13,6 @@ const CategoryProducts = () => {
   const loadingMoreRef = useRef(false);
   const currentSlugRef = useRef(slug);
 
-  if (currentSlugRef.current !== slug) {
-    currentSlugRef.current = slug;
-    loadingMoreRef.current = false;
-  }
-
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState(null);
   const [pagination, setPagination] = useState(null);
@@ -25,6 +20,11 @@ const CategoryProducts = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState("");
   const [loadMoreError, setLoadMoreError] = useState("");
+
+  useLayoutEffect(() => {
+    currentSlugRef.current = slug;
+    loadingMoreRef.current = false;
+  }, [slug]);
 
   useEffect(() => {
     let ignore = false;

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { getPaymentStatus } from "../../../../back-end/src/services/paymentApi";
+import { getPaymentStatus } from "../../services/paymentApi";
 
 const formatPrice = (value) => Number(value || 0).toLocaleString("fa-IR");
 

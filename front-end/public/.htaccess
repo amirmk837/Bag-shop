@@ -1,3 +1,16 @@
+# React Router routes must resolve to the SPA entry point on Apache/cPanel.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_URI} !^/api(?:/|$) [NC]
+  RewriteCond %{REQUEST_URI} !^/uploads(?:/|$) [NC]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
 # Keep the HTML entry point revalidatable so new deployments take effect.
 <IfModule mod_headers.c>
   <FilesMatch "\.html$">

@@ -17,5 +17,11 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+    rules: {
+      // Async data-loading effects and prop-to-input synchronization are intentionally retained.
+      "react-hooks/set-state-in-effect": "warn",
+      // Context modules intentionally export both providers and their consumer hooks.
+      "react-refresh/only-export-components": "warn",
+    },
   },
 ])

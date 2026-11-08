@@ -1,8 +1,15 @@
 import { Formik, Form, Field } from "formik";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../context/AuthContext";
 import PasswordField from "../../components/forms/PasswordField";
+
+const normalizeLoginDigits = (value = "") =>
+  String(value)
+    .replace(/[۰-۹]/g, (digit) => "0123456789"["۰۱۲۳۴۵۶۷۸۹".indexOf(digit)])
+    .replace(/[٠-٩]/g, (digit) => "0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(digit)]);
+
+const iranianPhonePattern = /^(09\d{9}|\+989\d{9}|00989\d{9})$/;
 
 const loginSchema = Yup.object({
   identifier: Yup.string()
@@ -20,6 +27,7 @@ const loginSchema = Yup.object({
 
 const CustomerLogin = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
 
   return (
@@ -37,9 +45,27 @@ const CustomerLogin = () => {
           setStatus("");
 
           try {
-            const user = await login(values.identifier, values.password);
+            const normalizedIdentifier = normalizeLoginDigits(values.identifier).trim();
+            const isPhoneIdentifier = iranianPhonePattern.test(normalizedIdentifier);
+            const user = await login(
+              isPhoneIdentifier ? normalizedIdentifier : values.identifier,
+              values.password,
+            );
 
-            navigate(user.role === "ADMIN" ? "/admin" : "/");
+            const from = location.state?.from;
+            const returnPath =
+              typeof from?.pathname === "string" &&
+              from.pathname.startsWith("/") &&
+              !from.pathname.startsWith("//") &&
+              !from.pathname.startsWith("/admin") &&
+              from.pathname !== "/login" &&
+              from.pathname !== "/register"
+                ? `${from.pathname}${from.search || ""}${from.hash || ""}`
+                : "/";
+
+            navigate(user.role === "ADMIN" ? "/admin" : returnPath, {
+              replace: true,
+            });
           } catch (error) {
             setStatus(error.message || "ورود ناموفق بود.");
           } finally {

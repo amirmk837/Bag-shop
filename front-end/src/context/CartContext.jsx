@@ -23,12 +23,14 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState(emptyCart);
   const [loading, setLoading] = useState(false);
   const [initialized, setInitialized] = useState(false);
+  const [loadError, setLoadError] = useState("");
 
   // دریافت سبد فقط هنگام ورود به صفحه سبد/تسویه یا درخواست صریح.
   const refreshCart = useCallback(async () => {
     if (!isAuthenticated) {
       setCart(emptyCart);
       setInitialized(true);
+      setLoadError("");
       return emptyCart;
     }
 
@@ -37,10 +39,11 @@ export const CartProvider = ({ children }) => {
       const { getCart } = await loadCartApi();
       const data = await getCart();
       setCart(data);
+      setLoadError("");
       return data;
     } catch (error) {
       console.error("Refresh cart error:", error);
-      setCart(emptyCart);
+      setLoadError(error?.message || "دریافت سبد خرید ناموفق بود.");
       throw error;
     } finally {
       setLoading(false);
@@ -55,6 +58,7 @@ export const CartProvider = ({ children }) => {
     setCart(emptyCart);
     setLoading(false);
     setInitialized(false);
+    setLoadError("");
   }, [isAuthenticated, authLoading]);
 
   const addToCart = async (productCode, quantity = 1, color = "") => {
@@ -62,6 +66,7 @@ export const CartProvider = ({ children }) => {
     const data = await addToCart(productCode, quantity, color);
     setCart(data);
     setInitialized(true);
+    setLoadError("");
     return data;
   };
 
@@ -70,6 +75,7 @@ export const CartProvider = ({ children }) => {
     const data = await updateCartItem(productCode, quantity, color);
     setCart(data);
     setInitialized(true);
+    setLoadError("");
     return data;
   };
 
@@ -78,6 +84,7 @@ export const CartProvider = ({ children }) => {
     const data = await removeCartItem(productCode, color);
     setCart(data);
     setInitialized(true);
+    setLoadError("");
     return data;
   };
 
@@ -86,6 +93,7 @@ export const CartProvider = ({ children }) => {
     const data = await clearCart();
     setCart(data);
     setInitialized(true);
+    setLoadError("");
     return data;
   };
 
@@ -94,6 +102,7 @@ export const CartProvider = ({ children }) => {
     items: Array.isArray(cart.items) ? cart.items : [],
     loading,
     initialized,
+    loadError,
     addToCart,
     updateCartItem,
     removeCartItem,
