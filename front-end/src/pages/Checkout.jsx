@@ -17,8 +17,8 @@ import { useCart } from "../context/CartContext";
 import {
   getAddress,
   saveAddress,
-} from "../../../back-end/src/services/addressApi";
-import { startPayment } from "../../../back-end/src/services/paymentApi";
+} from "../services/addressApi";
+import { startPayment } from "../services/paymentApi";
 import BackPage from "../components/BackPage";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
@@ -104,6 +104,7 @@ export default function Checkout() {
   const cartLoading = Boolean(cartRequestLoading || !cartContext?.initialized);
   const refreshCart = cartContext?.refreshCart;
   const cartInitialized = Boolean(cartContext?.initialized);
+  const cartLoadError = cartContext?.loadError || "";
 
   const [address, setAddress] = useState(null);
   const [form, setForm] = useState({ ...initialAddress });
@@ -435,6 +436,22 @@ export default function Checkout() {
 
   if (cartLoading) {
     return <PageMessage message="در حال بارگذاری سبد خرید..." />;
+  }
+
+  if (cartLoadError && !cartItems.length) {
+    return (
+      <main dir="rtl" className="flex min-h-[60vh] items-center justify-center bg-cyan-950 px-4 text-white">
+        <div className="w-full max-w-xl rounded-3xl border border-zinc-800 bg-zinc-900 p-8 text-center">
+          <h1 className="text-xl font-bold">دریافت سبد خرید ناموفق بود</h1>
+          <p role="alert" className="mt-3 text-sm leading-7 text-red-300">{cartLoadError}</p>
+          <p className="mt-2 text-sm text-zinc-400">اطلاعات سبد خرید حذف نشده است. اتصال را بررسی و دوباره تلاش کنید.</p>
+          <button type="button" onClick={() => refreshCart?.().catch(() => {})} disabled={cartRequestLoading} className="mt-6 rounded-xl bg-white px-5 py-3 font-bold text-zinc-900 disabled:opacity-50">
+            تلاش دوباره
+          </button>
+          <Link to="/cart" className="mt-4 block text-sm text-zinc-400 hover:text-white">بازگشت به سبد خرید</Link>
+        </div>
+      </main>
+    );
   }
 
   if (!cartItems.length) {
