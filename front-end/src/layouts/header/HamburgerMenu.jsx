@@ -16,6 +16,7 @@ const HamburgerMenu = () => {
   const { user, isAuthenticated, loading, logout } = useAuth();
 
   const [open, setOpen] = useState(false);
+  const [previousPathname, setPreviousPathname] = useState(location.pathname);
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
 
@@ -24,9 +25,10 @@ const HamburgerMenu = () => {
 
   const closeMenu = () => setOpen(false);
 
-  useEffect(() => {
-    closeMenu();
-  }, [location.pathname]);
+  if (previousPathname !== location.pathname) {
+    setPreviousPathname(location.pathname);
+    setOpen(false);
+  }
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
