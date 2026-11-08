@@ -7,7 +7,7 @@ import {
   FiShoppingCart,
   FiX,
 } from "react-icons/fi";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 import { useCart } from "../../context/CartContext";
 
 const TOAST_DURATION = 5000;
