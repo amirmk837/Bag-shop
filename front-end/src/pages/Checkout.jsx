@@ -148,6 +148,7 @@ export default function Checkout() {
     !shippingLoading &&
     !placingOrder &&
     !cartLoading &&
+    !cartLoadError &&
     cartItems.length > 0;
 
   const loadAddress = useCallback(async () => {
@@ -514,6 +515,16 @@ export default function Checkout() {
             }`}
           >
             {error || success}
+            {cartLoadError && (
+              <button
+                type="button"
+                onClick={() => refreshCart?.().catch(() => {})}
+                disabled={cartRequestLoading}
+                className="mt-3 block rounded-lg border border-zinc-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/10 disabled:opacity-50"
+              >
+                تلاش دوباره برای دریافت سبد
+              </button>
+            )}
           </div>
         )}
 
