@@ -73,10 +73,16 @@ const SupportWidgetContent = ({ user, authLoading }) => {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [settings, setSettings] = useState({ supportHours: null, supportResponseText: "" });
+  const [clock, setClock] = useState(() => Date.now());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setClock(Date.now()), 60000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const supportStatus = useMemo(
     () => getTehranSupportStatus(settings.supportHours),
-    [settings.supportHours, open],
+    [settings.supportHours, clock],
   );
 
   const loadSettings = useCallback(async () => {
