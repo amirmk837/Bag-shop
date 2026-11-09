@@ -52,6 +52,9 @@ export const updateAdminProductComment = (id, payload) =>
     body: JSON.stringify(payload),
   });
 
+export const deleteAdminProductComment = (id) =>
+  request(`/admin/product-comments/${id}`, { method: "DELETE" });
+
 export const getAdminSupportTickets = (params = {}) => {
   const query = new URLSearchParams(params);
   return request(`/admin/support?${query.toString()}`);
