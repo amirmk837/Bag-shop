@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { getAdminSupportTicket, getAdminSupportTickets, replyAdminSupportTicket, updateAdminSupportTicket } from "../../services/feedbackApi";
+import { getAdminFeedbackSummary, getAdminSupportTicket, getAdminSupportTickets, replyAdminSupportTicket, updateAdminSupportTicket } from "../../services/feedbackApi";
 
 const STATUS = { NEW: "جدید", IN_PROGRESS: "در حال بررسی", ANSWERED: "پاسخ داده‌شده", CLOSED: "بسته‌شده" };
 const PRIORITY = { URGENT: "فوری", HIGH: "بالا", NORMAL: "عادی", LOW: "پایین" };
@@ -17,6 +17,7 @@ const AdminSupport = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [summary, setSummary] = useState({ pendingComments: 0, newTickets: 0, unansweredTickets: 0 });
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -37,6 +38,21 @@ const AdminSupport = () => {
   }, [filter]);
 
   useEffect(() => { const timer = window.setTimeout(() => { void load(); }, 0); return () => window.clearTimeout(timer); }, [load]);
+
+  useEffect(() => {
+    let active = true;
+    const refresh = async () => {
+      try {
+        const result = await getAdminFeedbackSummary();
+        if (active) setSummary(result || {});
+      } catch {
+        // Keep the last known counters if the summary endpoint is temporarily unavailable.
+      }
+    };
+    void refresh();
+    const timer = window.setInterval(refresh, 30000);
+    return () => { active = false; window.clearInterval(timer); };
+  }, []);
 
   const choose = async (item) => {
     setError("");
@@ -90,9 +106,9 @@ const AdminSupport = () => {
 
   return (
     <div dir="rtl" className="space-y-5 text-white">
-      <header><h1 className="text-2xl font-black">پشتیبانی مشتریان</h1><p className="mt-2 text-sm text-zinc-400">درخواست‌ها بر اساس آخرین پیام مرتب شده‌اند.</p></header>
+      <header><h1 className="text-2xl font-black">پشتیبانی مشتریان</h1><p className="mt-2 text-sm text-zinc-400">درخواست‌ها بر اساس آخرین پیام مرتب شده‌اند.</p><div className="mt-3 flex flex-wrap gap-2 text-xs"><span className="rounded-lg bg-rose-950/40 px-3 py-2 text-rose-300">جدید: {Number(summary.newTickets || 0).toLocaleString("fa-IR")}</span><span className="rounded-lg bg-amber-950/40 px-3 py-2 text-amber-300">بدون پاسخ: {Number(summary.unansweredTickets || 0).toLocaleString("fa-IR")}</span></div></header>
       <div className="flex flex-wrap gap-2 rounded-xl border border-zinc-800 bg-zinc-900 p-3">
-        {["OPEN", "IN_PROGRESS", "ANSWERED", "CLOSED"].map((value) => <button key={value} type="button" onClick={() => setFilter(value)} className={`rounded-lg px-3 py-2 text-xs font-semibold ${filter === value ? "bg-cyan-500 text-zinc-950" : "bg-zinc-800 text-zinc-300"}`}>{value === "OPEN" ? "جدید" : STATUS[value]}</button>)}
+        {["OPEN", "IN_PROGRESS", "ANSWERED", "CLOSED"].map((value) => <button key={value} type="button" onClick={() => setFilter(value)} className={`rounded-lg px-3 py-2 text-xs font-semibold ${filter === value ? "bg-cyan-500 text-zinc-950" : "bg-zinc-800 text-zinc-300"}`}>{value === "OPEN" ? "باز / بدون پاسخ" : STATUS[value]}</button>)}
         <button type="button" onClick={load} className="mr-auto rounded-lg border border-zinc-700 px-3 py-2 text-xs text-zinc-300">تازه‌سازی</button>
       </div>
       {error && <p role="alert" className="rounded-lg bg-red-950/40 p-3 text-sm text-red-300">{error}</p>}
