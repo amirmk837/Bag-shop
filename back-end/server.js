@@ -19,6 +19,7 @@ import shippingMethodRoutes from "./src/routes/shippingMethod.routes.js";
 import siteSettingsRoutes from "./src/routes/siteSettings.routes.js";
 import adminAnalyticsRoutes from "./src/routes/adminAnalytics.routes.js";
 import siteAnalyticsRoutes from "./src/routes/siteAnalytics.routes.js";
+import feedbackRoutes from "./src/routes/feedback.routes.js";
 import { csrfProtection } from "./src/middlewares/csrf.middleware.js";
 import { securityHeaders } from "./src/middlewares/securityHeaders.middleware.js";
 import { requireHttpsInProduction } from "./src/middlewares/https.middleware.js";
@@ -90,6 +91,7 @@ app.use("/api/banners", bannerRoutes);
 
 // ثبت سفارش توسط مشتری
 app.use("/api/orders", orderRoutes);
+app.use("/api", feedbackRoutes);
 
 // =========================================
 // STATIC FILES
