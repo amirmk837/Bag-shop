@@ -75,3 +75,12 @@ export const updateAdminSupportTicket = (id, payload) =>
   });
 
 export const getAdminFeedbackSummary = () => request("/admin/feedback-summary");
+
+
+export const getSupportSettings = () => request("/support/settings");
+
+export const updateSupportSettings = (payload) =>
+  request("/admin/support/settings", {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
