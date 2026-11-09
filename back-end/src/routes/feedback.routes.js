@@ -33,9 +33,29 @@ const adminCommentSchema = z.object({
 }).refine((value) => Object.keys(value).length > 0);
 
 const adminTicketSchema = z.object({
-  status: z.enum(["NEW", "IN_PROGRESS", "ANSWERED", "CLOSED"]).optional(),
-  priority: z.enum(["URGENT", "HIGH", "NORMAL", "LOW"]).optional(),
-}).refine((value) => Object.keys(value).length > 0);
+  status: z.enum(["NEW", "IN_PROGRESS", "ANSWERED", "CLOSED"]),
+}).strict();
+
+const supportDaySchema = z.object({
+  enabled: z.boolean(),
+  start: z.string().regex(/^([01]\\d|2[0-3]):[0-5]\\d$/),
+  end: z.string().regex(/^([01]\\d|2[0-3]):[0-5]\\d$/),
+}).strict().refine((day) => !day.enabled || day.start < day.end);
+
+const supportHoursSchema = z.object({
+  saturday: supportDaySchema,
+  sunday: supportDaySchema,
+  monday: supportDaySchema,
+  tuesday: supportDaySchema,
+  wednesday: supportDaySchema,
+  thursday: supportDaySchema,
+  friday: supportDaySchema,
+}).strict();
+
+const supportSettingsSchema = z.object({
+  supportHours: supportHoursSchema,
+  supportResponseText: z.string().trim().max(240),
+}).strict();
 
 const parseId = (value) => {
   const id = Number(value);
@@ -225,14 +245,80 @@ router.delete("/admin/product-comments/:id", requireAuth, requireAdmin, async (r
   }
 });
 
+// Public support information. Sending or reading conversations still requires login.
+router.get("/support/settings", async (_req, res) => {
+  try {
+    const settings = await prisma.siteSettings.findUnique({
+      where: { id: 1 },
+      select: { supportHours: true, supportResponseText: true },
+    });
+    return res.json({
+      success: true,
+      data: {
+        supportHours: settings?.supportHours ?? null,
+        supportResponseText: settings?.supportResponseText ?? "",
+      },
+    });
+  } catch (error) {
+    console.error("Public support settings error:", error);
+    return sendError(res, 500, "دریافت وضعیت پشتیبانی ممکن نیست.");
+  }
+});
+
+router.put("/admin/support/settings", requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const validation = supportSettingsSchema.safeParse(req.body);
+    if (!validation.success) return sendError(res, 400, "ساعات کاری یا متن پاسخگویی نامعتبر است.");
+
+    const saved = await prisma.siteSettings.upsert({
+      where: { id: 1 },
+      create: {
+        id: 1,
+        supportHours: validation.data.supportHours,
+        supportResponseText: validation.data.supportResponseText,
+      },
+      update: validation.data,
+      select: { supportHours: true, supportResponseText: true },
+    });
+    return res.json({ success: true, data: saved, message: "تنظیمات پشتیبانی ذخیره شد." });
+  } catch (error) {
+    console.error("Update support settings error:", error);
+    return sendError(res, 500, "ذخیره تنظیمات پشتیبانی انجام نشد.");
+  }
+});
+
 // Customer support: one ticket per conversation, with a persistent message history.
 router.post("/support", ...customerOnly, limitCustomerMessage, async (req, res) => {
   try {
     const validation = supportCreateSchema.safeParse(req.body);
     if (!validation.success) return sendError(res, 400, "موضوع یا متن پیام نامعتبر است.");
 
-    const customerName = String(req.user.username || "").trim();
-    const customerPhone = req.user.phone ? String(req.user.phone) : null;
+    const account = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      select: {
+        username: true,
+        phone: true,
+        address: {
+          select: {
+            province: true, city: true, addressLine: true, postalCode: true,
+            plateNumber: true, unitNumber: true,
+          },
+        },
+      },
+    });
+    const customerName = String(account?.username || "").trim();
+    const customerPhone = account?.phone ? String(account.phone) : null;
+    const address = account?.address;
+    const customerAddress = address
+      ? [
+          address.province,
+          address.city,
+          address.addressLine,
+          address.plateNumber ? `پلاک ${address.plateNumber}` : null,
+          address.unitNumber ? `واحد ${address.unitNumber}` : null,
+          address.postalCode ? `کدپستی ${address.postalCode}` : null,
+        ].filter(Boolean).join("، ")
+      : null;
     if (!customerName) return sendError(res, 400, "اطلاعات حساب کاربری کامل نیست.");
 
     const ticket = await prisma.supportTicket.create({
@@ -241,6 +327,7 @@ router.post("/support", ...customerOnly, limitCustomerMessage, async (req, res) 
         topic: validation.data.topic,
         customerName,
         customerPhone,
+        customerAddress,
         messages: {
           create: {
             senderId: req.user.id,
@@ -265,7 +352,7 @@ router.get("/support", ...customerOnly, async (req, res) => {
       orderBy: { lastMessageAt: "desc" },
       take: 50,
       select: {
-        id: true, topic: true, status: true, priority: true,
+        id: true, topic: true, status: true,
         lastMessageAt: true, createdAt: true,
         messages: { orderBy: { createdAt: "desc" }, take: 1, select: { content: true, senderRole: true, createdAt: true } },
       },
@@ -332,7 +419,6 @@ router.get("/admin/support", requireAuth, requireAdmin, async (req, res) => {
     const where = {};
     if (req.query.status === "OPEN") where.status = { in: ["NEW", "IN_PROGRESS"] };
     else if (["NEW", "IN_PROGRESS", "ANSWERED", "CLOSED"].includes(req.query.status)) where.status = req.query.status;
-    if (["URGENT", "HIGH", "NORMAL", "LOW"].includes(req.query.priority)) where.priority = req.query.priority;
     if (["ORDER", "PAYMENT", "PRODUCT", "SHIPPING", "ACCOUNT", "OTHER"].includes(req.query.topic)) where.topic = req.query.topic;
 
     const [items, total] = await prisma.$transaction([
@@ -405,7 +491,7 @@ router.patch("/admin/support/:id", requireAuth, requireAdmin, async (req, res) =
     const id = parseId(req.params.id);
     if (!id) return sendError(res, 400, "شناسه درخواست نامعتبر است.");
     const validation = adminTicketSchema.safeParse(req.body);
-    if (!validation.success) return sendError(res, 400, "وضعیت یا اولویت نامعتبر است.");
+    if (!validation.success) return sendError(res, 400, "وضعیت نامعتبر است.");
     const ticket = await prisma.supportTicket.update({ where: { id }, data: validation.data });
     return res.json({ success: true, data: ticket });
   } catch (error) {
