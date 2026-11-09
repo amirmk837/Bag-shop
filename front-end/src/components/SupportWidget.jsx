@@ -57,7 +57,7 @@ const getTehranSupportStatus = (hours) => {
 const SupportWidget = () => {
   const { user, loading: authLoading } = useAuth();
   const customer = !authLoading && user?.role === "USER" ? user : null;
-  return <SupportWidgetContent user={customer} authLoading={authLoading} />;
+  return <SupportWidgetContent key={customer?.id ?? (authLoading ? "loading" : "guest")} user={customer} authLoading={authLoading} />;
 };
 
 const SupportWidgetContent = ({ user, authLoading }) => {
