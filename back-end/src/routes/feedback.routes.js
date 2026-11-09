@@ -28,9 +28,8 @@ const messageSchema = z.object({
 
 const adminCommentSchema = z.object({
   status: z.enum(["PENDING", "APPROVED", "REJECTED"]).optional(),
-  priority: z.enum(["URGENT", "HIGH", "NORMAL", "LOW"]).optional(),
   adminReply: z.string().trim().min(1).max(1500).nullable().optional(),
-}).refine((value) => Object.keys(value).length > 0);
+}).strict().refine((value) => Object.keys(value).length > 0);
 
 const adminTicketSchema = z.object({
   status: z.enum(["NEW", "IN_PROGRESS", "ANSWERED", "CLOSED"]),
@@ -159,7 +158,7 @@ router.post("/products/:productCode/comments", ...customerOnly, limitCustomerMes
   }
 });
 
-// Admin: chronological moderation queue with explicit priority control.
+// Admin: chronological moderation queue.
 router.get("/admin/product-comments", requireAuth, requireAdmin, async (req, res) => {
   try {
     const pagination = parsePagination(req.query);
@@ -167,7 +166,6 @@ router.get("/admin/product-comments", requireAuth, requireAdmin, async (req, res
 
     const where = {};
     if (["PENDING", "APPROVED", "REJECTED"].includes(req.query.status)) where.status = req.query.status;
-    if (["URGENT", "HIGH", "NORMAL", "LOW"].includes(req.query.priority)) where.priority = req.query.priority;
 
     const [items, total] = await prisma.$transaction([
       prisma.productComment.findMany({
