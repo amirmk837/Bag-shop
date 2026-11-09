@@ -49,7 +49,15 @@ const AdminProductComments = () => {
     setError("");
     setNotice("");
     try {
-      const updated = await updateAdminProductComment(selected.id, { status, priority, ...(reply.trim() ? { adminReply: reply.trim() } : {}) });
+      const updated = await updateAdminProductComment(selected.id, {
+        status,
+        priority,
+        ...(reply.trim()
+          ? { adminReply: reply.trim() }
+          : selected.adminReply
+            ? { adminReply: null }
+            : {}),
+      });
       setItems((current) => current.map((item) => item.id === updated.id ? updated : item));
       setSelected(updated);
       setNotice("تغییرات ذخیره شد.");
@@ -70,7 +78,11 @@ const AdminProductComments = () => {
       await deleteAdminProductComment(selected.id);
       setSelected(null);
       setNotice("دیدگاه حذف شد.");
-      await load();
+      if (items.length === 1 && page > 1) {
+        setPage((current) => current - 1);
+      } else {
+        await load();
+      }
     } catch (deleteError) {
       setError(deleteError.message || "حذف دیدگاه انجام نشد.");
     } finally {
