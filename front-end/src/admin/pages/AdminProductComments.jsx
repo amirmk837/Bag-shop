@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { getAdminProductComments, updateAdminProductComment } from "../../services/feedbackApi";
+import { deleteAdminProductComment, getAdminProductComments, updateAdminProductComment } from "../../services/feedbackApi";
 
 const STATUS = { PENDING: "در انتظار بررسی", APPROVED: "تأییدشده", REJECTED: "ردشده" };
 const PRIORITY = { URGENT: "فوری", HIGH: "بالا", NORMAL: "عادی", LOW: "پایین" };
@@ -12,6 +12,8 @@ const AdminProductComments = () => {
   const [priority, setPriority] = useState("NORMAL");
   const [reply, setReply] = useState("");
   const [filter, setFilter] = useState("PENDING");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -21,14 +23,15 @@ const AdminProductComments = () => {
     setLoading(true);
     setError("");
     try {
-      const result = await getAdminProductComments({ page: "1", limit: "50", ...(filter !== "ALL" ? { status: filter } : {}) });
-      setItems(result || []);
+      const result = await getAdminProductComments({ page: String(page), limit: "50", ...(filter !== "ALL" ? { status: filter } : {}) });
+      setItems(Array.isArray(result?.data) ? result.data : []);
+      setTotalPages(Math.max(1, Number(result?.pagination?.totalPages) || 1));
     } catch (loadError) {
       setError(loadError.message || "دریافت دیدگاه‌ها ناموفق بود.");
     } finally {
       setLoading(false);
     }
-  }, [filter]);
+  }, [filter, page]);
 
   useEffect(() => { const timer = window.setTimeout(() => { void load(); }, 0); return () => window.clearTimeout(timer); }, [load]);
 
@@ -58,16 +61,38 @@ const AdminProductComments = () => {
     }
   };
 
+  const removeSelected = async () => {
+    if (!selected || !window.confirm("این دیدگاه به‌طور کامل حذف شود؟ این عملیات قابل بازگشت نیست.")) return;
+    setSaving(true);
+    setError("");
+    setNotice("");
+    try {
+      await deleteAdminProductComment(selected.id);
+      setSelected(null);
+      setNotice("دیدگاه حذف شد.");
+      await load();
+    } catch (deleteError) {
+      setError(deleteError.message || "حذف دیدگاه انجام نشد.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div dir="rtl" className="space-y-5 text-white">
       <header><h1 className="text-2xl font-black">نظرات و پرسش‌های محصولات</h1><p className="mt-2 text-sm text-zinc-400">بررسی، پاسخ‌گویی و تعیین اولویت دیدگاه‌های مشتریان</p></header>
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-3">
         <div className="flex flex-wrap gap-2">
-          {["PENDING", "APPROVED", "REJECTED", "ALL"].map((value) => <button key={value} type="button" onClick={() => setFilter(value)} className={`rounded-lg px-3 py-2 text-xs font-semibold ${filter === value ? "bg-cyan-500 text-zinc-950" : "bg-zinc-800 text-zinc-300"}`}>{value === "ALL" ? "همه" : STATUS[value]}</button>)}
+          {["PENDING", "APPROVED", "REJECTED", "ALL"].map((value) => <button key={value} type="button" onClick={() => { setFilter(value); setPage(1); setSelected(null); }} className={`rounded-lg px-3 py-2 text-xs font-semibold ${filter === value ? "bg-cyan-500 text-zinc-950" : "bg-zinc-800 text-zinc-300"}`}>{value === "ALL" ? "همه" : STATUS[value]}</button>)}
         </div>
         <button type="button" onClick={load} className="rounded-lg border border-zinc-700 px-3 py-2 text-xs text-zinc-300">تازه‌سازی</button>
       </div>
       {error && <p role="alert" className="rounded-lg bg-red-950/40 p-3 text-sm text-red-300">{error}</p>}
+      <div className="flex items-center justify-center gap-3 text-sm text-zinc-400">
+        <button type="button" disabled={page <= 1 || loading} onClick={() => setPage((value) => Math.max(1, value - 1))} className="rounded-lg border border-zinc-700 px-3 py-2 disabled:opacity-40">صفحه قبل</button>
+        <span>صفحه {page.toLocaleString("fa-IR")} از {totalPages.toLocaleString("fa-IR")}</span>
+        <button type="button" disabled={page >= totalPages || loading} onClick={() => setPage((value) => Math.min(totalPages, value + 1))} className="rounded-lg border border-zinc-700 px-3 py-2 disabled:opacity-40">صفحه بعد</button>
+      </div>
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(320px,0.85fr)]">
         <section className="space-y-3">
           {loading ? <p className="p-6 text-center text-zinc-500">در حال دریافت...</p> : items.length === 0 ? <p className="rounded-xl border border-zinc-800 bg-zinc-900 p-6 text-center text-zinc-500">موردی وجود ندارد.</p> : items.map((item) => (
@@ -90,6 +115,7 @@ const AdminProductComments = () => {
             <label className="mt-4 block text-xs text-zinc-400">پاسخ فروشگاه<textarea value={reply} onChange={(event) => setReply(event.target.value)} maxLength={1500} rows={5} className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-950 p-3 text-sm leading-6 text-white outline-none focus:border-cyan-500" placeholder="پاسخ خود را بنویسید..." /></label>
             {notice && <p role="status" className="mt-3 text-sm text-emerald-300">{notice}</p>}
             <button type="button" disabled={saving} onClick={save} className="mt-4 w-full rounded-lg bg-cyan-500 py-3 text-sm font-bold text-zinc-950 disabled:opacity-50">{saving ? "در حال ذخیره..." : "ذخیره تغییرات"}</button>
+            <button type="button" disabled={saving} onClick={removeSelected} className="mt-2 w-full rounded-lg border border-red-800/70 bg-red-950/30 py-3 text-sm font-bold text-red-300 hover:bg-red-950/60 disabled:opacity-50">حذف کامل دیدگاه</button>
           </>}
         </section>
       </div>
