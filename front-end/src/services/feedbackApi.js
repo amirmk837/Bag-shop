@@ -19,8 +19,8 @@ const request = async (path, options = {}, includeMeta = false) => {
   return includeMeta ? data : data?.data ?? data;
 };
 
-export const getProductComments = (productCode) =>
-  request(`/products/${encodeURIComponent(productCode)}/comments?limit=50`);
+export const getProductComments = (productCode, page = 1) =>
+  request(`/products/${encodeURIComponent(productCode)}/comments?page=${page}&limit=50`, {}, true);
 
 export const submitProductComment = (productCode, payload) =>
   request(`/products/${encodeURIComponent(productCode)}/comments`, {
