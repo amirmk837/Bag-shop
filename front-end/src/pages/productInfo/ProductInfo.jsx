@@ -156,7 +156,7 @@ const ProductInfoes = () => {
             <ProductDetails product={product} />
           </div>
         </div>
-        <ProductComments productCode={product.productCode ?? product.id} />
+        <ProductComments key={product.productCode ?? product.id} productCode={product.productCode ?? product.id} />
       </div>
     </div>
   );
