@@ -15,18 +15,21 @@ const ProductComments = ({ productCode }) => {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const loadComments = useCallback(async () => {
     try {
       setLoading(true);
-      const result = await getProductComments(productCode);
-      setComments(Array.isArray(result) ? result : []);
+      const result = await getProductComments(productCode, page);
+      setComments(Array.isArray(result?.data) ? result.data : []);
+      setTotalPages(Math.max(1, Number(result?.pagination?.totalPages) || 1));
     } catch (loadError) {
       setError(loadError.message || "دریافت دیدگاه‌ها ممکن نیست.");
     } finally {
       setLoading(false);
     }
-  }, [productCode]);
+  }, [productCode, page]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => { void loadComments(); }, 0);
@@ -101,6 +104,13 @@ const ProductComments = ({ productCode }) => {
               {comment.adminReply && <div className="mt-4 rounded-lg border-r-2 border-cyan-500 bg-cyan-950/20 p-3"><p className="mb-1 text-xs font-bold text-cyan-300">پاسخ فروشگاه</p><p className="whitespace-pre-wrap text-sm leading-7 text-zinc-200">{comment.adminReply}</p></div>}
             </article>
           ))}
+        </div>
+      )}
+      {totalPages > 1 && (
+        <div className="mt-5 flex items-center justify-center gap-3 text-sm text-zinc-400">
+          <button type="button" disabled={page <= 1 || loading} onClick={() => setPage((value) => Math.max(1, value - 1))} className="rounded-lg border border-zinc-700 px-3 py-2 disabled:opacity-40">قدیمی‌تر</button>
+          <span>صفحه {page.toLocaleString("fa-IR")} از {totalPages.toLocaleString("fa-IR")}</span>
+          <button type="button" disabled={page >= totalPages || loading} onClick={() => setPage((value) => Math.min(totalPages, value + 1))} className="rounded-lg border border-zinc-700 px-3 py-2 disabled:opacity-40">جدیدتر</button>
         </div>
       )}
     </section>
