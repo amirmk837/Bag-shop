@@ -211,6 +211,20 @@ router.patch("/admin/product-comments/:id", requireAuth, requireAdmin, async (re
   }
 });
 
+router.delete("/admin/product-comments/:id", requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const id = parseId(req.params.id);
+    if (!id) return sendError(res, 400, "شناسه دیدگاه نامعتبر است.");
+
+    await prisma.productComment.delete({ where: { id } });
+    return res.json({ success: true, message: "دیدگاه حذف شد." });
+  } catch (error) {
+    if (error?.code === "P2025") return sendError(res, 404, "دیدگاه پیدا نشد.");
+    console.error("Delete product comment error:", error);
+    return sendError(res, 500, "حذف دیدگاه انجام نشد.");
+  }
+});
+
 // Customer support: one ticket per conversation, with a persistent message history.
 router.post("/support", ...customerOnly, limitCustomerMessage, async (req, res) => {
   try {
