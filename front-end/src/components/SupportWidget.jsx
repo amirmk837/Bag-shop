@@ -14,6 +14,13 @@ const TOPICS = [
 
 const SupportWidget = () => {
   const { user, loading: authLoading } = useAuth();
+
+  if (authLoading || user?.role !== "USER") return null;
+
+  return <SupportWidgetContent key={user.id} user={user} />;
+};
+
+const SupportWidgetContent = ({ user }) => {
   const [open, setOpen] = useState(false);
   const [tickets, setTickets] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
@@ -96,8 +103,6 @@ const SupportWidget = () => {
       setSending(false);
     }
   };
-
-  if (authLoading || user?.role !== "USER") return null;
 
   return (
     <div className="fixed bottom-4 right-4 z-[80]" dir="rtl">
