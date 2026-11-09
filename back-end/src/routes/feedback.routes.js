@@ -316,7 +316,8 @@ router.get("/admin/support", requireAuth, requireAdmin, async (req, res) => {
     if (!pagination) return sendError(res, 400, "صفحه‌بندی نامعتبر است.");
 
     const where = {};
-    if (["NEW", "IN_PROGRESS", "ANSWERED", "CLOSED"].includes(req.query.status)) where.status = req.query.status;
+    if (req.query.status === "OPEN") where.status = { in: ["NEW", "IN_PROGRESS"] };
+    else if (["NEW", "IN_PROGRESS", "ANSWERED", "CLOSED"].includes(req.query.status)) where.status = req.query.status;
     if (["URGENT", "HIGH", "NORMAL", "LOW"].includes(req.query.priority)) where.priority = req.query.priority;
     if (["ORDER", "PAYMENT", "PRODUCT", "SHIPPING", "ACCOUNT", "OTHER"].includes(req.query.topic)) where.topic = req.query.topic;
 
