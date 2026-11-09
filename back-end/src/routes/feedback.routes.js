@@ -38,8 +38,8 @@ const adminTicketSchema = z.object({
 
 const supportDaySchema = z.object({
   enabled: z.boolean(),
-  start: z.string().regex(/^([01]\\d|2[0-3]):[0-5]\\d$/),
-  end: z.string().regex(/^([01]\\d|2[0-3]):[0-5]\\d$/),
+  start: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+  end: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
 }).strict().refine((day) => !day.enabled || day.start < day.end);
 
 const supportHoursSchema = z.object({
