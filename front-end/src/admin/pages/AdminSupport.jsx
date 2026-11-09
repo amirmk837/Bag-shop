@@ -5,7 +5,7 @@ import {
   getAdminSupportTickets,
   getSupportSettings,
   replyAdminSupportTicket,
-  updateAdminSupportSettings,
+  updateSupportSettings,
   updateAdminSupportTicket,
 } from "../../services/feedbackApi";
 
@@ -127,7 +127,7 @@ const AdminSupport = () => {
     setSettingsError("");
     setSettingsNotice("");
     try {
-      await updateAdminSupportSettings({ supportHours: hours, supportResponseText: responseText });
+      await updateSupportSettings({ supportHours: hours, supportResponseText: responseText });
       setSettingsNotice("ساعات کاری و متن پاسخگویی ذخیره شد.");
     } catch (saveError) {
       setSettingsError(saveError.message || "ذخیره تنظیمات پشتیبانی انجام نشد.");
