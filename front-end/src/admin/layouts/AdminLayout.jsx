@@ -81,7 +81,8 @@ const AdminLayout = ({ children }) => {
         >
           {navItems.map((item) => (
             <NavLink key={item.to} to={item.to} end={item.to === "/admin"} className={linkClass}>
-              {item.label}
+              <span>{item.label}</span>
+              {renderBadge(item)}
             </NavLink>
           ))}
         </nav>
@@ -104,7 +105,8 @@ const AdminLayout = ({ children }) => {
                   ].join(" ")
                 }
               >
-                {item.label}
+                <span>{item.label}</span>
+                {renderBadge(item)}
               </NavLink>
             ))}
           </nav>
