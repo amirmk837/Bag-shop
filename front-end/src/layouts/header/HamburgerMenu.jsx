@@ -15,20 +15,18 @@ import { useAuth } from "../../context/useAuth";
 const HamburgerMenu = () => {
   const { user, isAuthenticated, loading, logout } = useAuth();
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [open, setOpen] = useState(false);
-  const [previousPathname, setPreviousPathname] = useState(location.pathname);
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-
   const closeMenu = () => setOpen(false);
 
-  if (previousPathname !== location.pathname) {
-    setPreviousPathname(location.pathname);
+  useEffect(() => {
     setOpen(false);
-  }
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
