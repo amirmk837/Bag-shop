@@ -25,7 +25,7 @@ const HamburgerMenu = () => {
   const closeMenu = () => setOpen(false);
 
   useEffect(() => {
-    closeMenu();
+    setOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
