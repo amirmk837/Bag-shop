@@ -13,6 +13,8 @@ const AdminSupport = () => {
   const [priority, setPriority] = useState("NORMAL");
   const [reply, setReply] = useState("");
   const [filter, setFilter] = useState("OPEN");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -23,19 +25,20 @@ const AdminSupport = () => {
     setLoading(true);
     setError("");
     try {
-      const params = { page: "1", limit: "50" };
+      const params = { page: String(page), limit: "50" };
       if (filter === "OPEN") params.status = "OPEN";
       if (filter === "IN_PROGRESS") params.status = "IN_PROGRESS";
       if (filter === "ANSWERED") params.status = "ANSWERED";
       if (filter === "CLOSED") params.status = "CLOSED";
       const result = await getAdminSupportTickets(params);
-      setItems(result || []);
+      setItems(Array.isArray(result?.data) ? result.data : []);
+      setTotalPages(Math.max(1, Number(result?.pagination?.totalPages) || 1));
     } catch (loadError) {
       setError(loadError.message || "دریافت درخواست‌ها ناموفق بود.");
     } finally {
       setLoading(false);
     }
-  }, [filter]);
+  }, [filter, page]);
 
   useEffect(() => { const timer = window.setTimeout(() => { void load(); }, 0); return () => window.clearTimeout(timer); }, [load]);
 
@@ -108,10 +111,15 @@ const AdminSupport = () => {
     <div dir="rtl" className="space-y-5 text-white">
       <header><h1 className="text-2xl font-black">پشتیبانی مشتریان</h1><p className="mt-2 text-sm text-zinc-400">درخواست‌ها بر اساس آخرین پیام مرتب شده‌اند.</p><div className="mt-3 flex flex-wrap gap-2 text-xs"><span className="rounded-lg bg-rose-950/40 px-3 py-2 text-rose-300">جدید: {Number(summary.newTickets || 0).toLocaleString("fa-IR")}</span><span className="rounded-lg bg-amber-950/40 px-3 py-2 text-amber-300">بدون پاسخ: {Number(summary.unansweredTickets || 0).toLocaleString("fa-IR")}</span></div></header>
       <div className="flex flex-wrap gap-2 rounded-xl border border-zinc-800 bg-zinc-900 p-3">
-        {["OPEN", "IN_PROGRESS", "ANSWERED", "CLOSED"].map((value) => <button key={value} type="button" onClick={() => setFilter(value)} className={`rounded-lg px-3 py-2 text-xs font-semibold ${filter === value ? "bg-cyan-500 text-zinc-950" : "bg-zinc-800 text-zinc-300"}`}>{value === "OPEN" ? "باز / بدون پاسخ" : STATUS[value]}</button>)}
+        {["OPEN", "IN_PROGRESS", "ANSWERED", "CLOSED"].map((value) => <button key={value} type="button" onClick={() => { setFilter(value); setPage(1); setSelected(null); }} className={`rounded-lg px-3 py-2 text-xs font-semibold ${filter === value ? "bg-cyan-500 text-zinc-950" : "bg-zinc-800 text-zinc-300"}`}>{value === "OPEN" ? "باز / بدون پاسخ" : STATUS[value]}</button>)}
         <button type="button" onClick={load} className="mr-auto rounded-lg border border-zinc-700 px-3 py-2 text-xs text-zinc-300">تازه‌سازی</button>
       </div>
       {error && <p role="alert" className="rounded-lg bg-red-950/40 p-3 text-sm text-red-300">{error}</p>}
+      <div className="flex items-center justify-center gap-3 text-sm text-zinc-400">
+        <button type="button" disabled={page <= 1 || loading} onClick={() => setPage((value) => Math.max(1, value - 1))} className="rounded-lg border border-zinc-700 px-3 py-2 disabled:opacity-40">صفحه قبل</button>
+        <span>صفحه {page.toLocaleString("fa-IR")} از {totalPages.toLocaleString("fa-IR")}</span>
+        <button type="button" disabled={page >= totalPages || loading} onClick={() => setPage((value) => Math.min(totalPages, value + 1))} className="rounded-lg border border-zinc-700 px-3 py-2 disabled:opacity-40">صفحه بعد</button>
+      </div>
       <div className="grid gap-4 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <section className="space-y-3">
           {loading ? <p className="p-6 text-center text-zinc-500">در حال دریافت...</p> : items.length === 0 ? <p className="rounded-xl border border-zinc-800 bg-zinc-900 p-6 text-center text-zinc-500">درخواستی وجود ندارد.</p> : items.map((item) => (
