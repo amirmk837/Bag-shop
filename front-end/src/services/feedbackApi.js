@@ -1,6 +1,6 @@
 const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/+$/, "");
 
-const request = async (path, options = {}) => {
+const request = async (path, options = {}, includeMeta = false) => {
   const response = await fetch(`${API_URL}${path}`, {
     credentials: "include",
     cache: options.method && options.method !== "GET" ? "no-store" : "no-store",
@@ -16,7 +16,7 @@ const request = async (path, options = {}) => {
     error.status = response.status;
     throw error;
   }
-  return data?.data ?? data;
+  return includeMeta ? data : data?.data ?? data;
 };
 
 export const getProductComments = (productCode) =>
@@ -43,7 +43,7 @@ export const sendSupportMessage = (id, content) =>
 
 export const getAdminProductComments = (params = {}) => {
   const query = new URLSearchParams(params);
-  return request(`/admin/product-comments?${query.toString()}`);
+  return request(`/admin/product-comments?${query.toString()}`, {}, true);
 };
 
 export const updateAdminProductComment = (id, payload) =>
@@ -57,7 +57,7 @@ export const deleteAdminProductComment = (id) =>
 
 export const getAdminSupportTickets = (params = {}) => {
   const query = new URLSearchParams(params);
-  return request(`/admin/support?${query.toString()}`);
+  return request(`/admin/support?${query.toString()}`, {}, true);
 };
 
 export const getAdminSupportTicket = (id) => request(`/admin/support/${id}`);
