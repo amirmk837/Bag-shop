@@ -49,8 +49,9 @@ const SupportWidget = () => {
   }, []);
 
   useEffect(() => {
-    if (!open || user?.role !== "USER") return;
-    loadTickets();
+    if (!open || user?.role !== "USER") return undefined;
+    const timer = window.setTimeout(() => { void loadTickets(); }, 0);
+    return () => window.clearTimeout(timer);
   }, [open, user, loadTickets]);
 
   useEffect(() => {
@@ -114,6 +115,7 @@ const SupportWidget = () => {
                 <span className="text-[11px] text-zinc-500">درخواست #{selectedId.toLocaleString("fa-IR")}</span>
               </div>
               <div className="flex-1 space-y-3 overflow-y-auto p-3">
+                {loading && <p className="text-center text-xs text-zinc-500">در حال دریافت گفت‌وگو...</p>}
                 {ticket.messages?.map((item) => (
                   <div key={item.id} className={`max-w-[88%] rounded-xl p-3 text-sm leading-6 ${item.senderRole === "ADMIN" ? "ml-auto bg-cyan-950/60 text-cyan-50" : "mr-auto bg-zinc-800 text-zinc-100"}`}>
                     <p className="mb-1 text-[10px] opacity-60">{item.senderRole === "ADMIN" ? "پشتیبانی" : "شما"}</p>
