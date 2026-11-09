@@ -23,7 +23,7 @@ const AdminSupport = () => {
     setError("");
     try {
       const params = { page: "1", limit: "50" };
-      if (filter === "OPEN") params.status = "NEW";
+      if (filter === "OPEN") params.status = "OPEN";
       if (filter === "IN_PROGRESS") params.status = "IN_PROGRESS";
       if (filter === "ANSWERED") params.status = "ANSWERED";
       if (filter === "CLOSED") params.status = "CLOSED";
