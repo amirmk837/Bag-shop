@@ -17,6 +17,7 @@ const ProductComments = ({ productCode }) => {
   const [notice, setNotice] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   const loadComments = useCallback(async () => {
     try {
@@ -24,6 +25,7 @@ const ProductComments = ({ productCode }) => {
       const result = await getProductComments(productCode, page);
       setComments(Array.isArray(result?.data) ? result.data : []);
       setTotalPages(Math.max(1, Number(result?.pagination?.totalPages) || 1));
+      setTotalCount(Math.max(0, Number(result?.pagination?.total) || 0));
     } catch (loadError) {
       setError(loadError.message || "دریافت دیدگاه‌ها ممکن نیست.");
     } finally {
@@ -63,7 +65,7 @@ const ProductComments = ({ productCode }) => {
           <h2 className="text-lg font-bold sm:text-xl">دیدگاه‌ها و پرسش‌ها</h2>
           <p className="mt-1 text-xs text-zinc-500">دیدگاه‌ها پس از بررسی مدیر برای همه نمایش داده می‌شوند.</p>
         </div>
-        <span className="rounded-full bg-zinc-800 px-3 py-1 text-xs text-zinc-300">{comments.length.toLocaleString("fa-IR")} دیدگاه</span>
+        <span className="rounded-full bg-zinc-800 px-3 py-1 text-xs text-zinc-300">{totalCount.toLocaleString("fa-IR")} دیدگاه</span>
       </div>
 
       {authLoading ? null : user?.role === "USER" ? (
