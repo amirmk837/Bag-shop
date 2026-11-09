@@ -7,6 +7,8 @@ const navItems = [
   { label: "محصولات", to: "/admin/products" },
   { label: "بنرها", to: "/admin/banners" },
   { label: "سفارش‌ها", to: "/admin/orders" },
+  { label: "نظرات و پرسش‌ها", to: "/admin/product-comments" },
+  { label: "پشتیبانی مشتریان", to: "/admin/support" },
   { label: "دسته‌بندی‌ها", to: "/admin/categories" },
   { label: "کاربران", to: "/admin/users" },
   { label: "بازدیدکنندگان و آمار", to: "/admin/analytics" },
