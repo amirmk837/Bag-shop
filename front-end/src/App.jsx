@@ -5,6 +5,7 @@ import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import { trackPageView } from "./services/siteAnalyticsApi";
 import DeferredMount from "./components/DeferredMount";
+import SupportWidget from "./components/SupportWidget";
 
 const Footer = lazy(() => import("./layouts/footer/Footer"));
 
@@ -37,6 +38,8 @@ const PaymentResult = lazy(() => import("./pages/payment/PaymentResult"));
 const MyOrders = lazy(() => import("./pages/account/MyOrders"));
 const AdminShippingMethods = lazy(() => import("./admin/pages/AdminShippingMethods"));
 const AdminAnalytics = lazy(() => import("./admin/pages/AdminAnalytics"));
+const AdminProductComments = lazy(() => import("./admin/pages/AdminProductComments"));
+const AdminSupport = lazy(() => import("./admin/pages/AdminSupport"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 // =========================================
 // ROUTES
@@ -206,6 +209,28 @@ const routes = [
     ),
   },
 
+  // Product feedback moderation
+  {
+    path: "/admin/product-comments",
+    element: (
+      <ProtectedRoute>
+        <AdminLayout>
+          <AdminProductComments />
+        </AdminLayout>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/admin/support",
+    element: (
+      <ProtectedRoute>
+        <AdminLayout>
+          <AdminSupport />
+        </AdminLayout>
+      </ProtectedRoute>
+    ),
+  },
+
   // Admin analytics
   {
     path: "/admin/analytics",
@@ -364,6 +389,8 @@ const App = () => {
           </Routes>
         </Suspense>
       </main>
+
+      {!isAdminArea && <SupportWidget />}
 
       {!isAdminArea && (
         <DeferredMount rootMargin="700px 0px" minHeight={300}>
