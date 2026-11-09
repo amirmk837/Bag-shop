@@ -380,13 +380,6 @@ enum ProductCommentStatus {
   REJECTED
 }
 
-enum SupportPriority {
-  URGENT
-  HIGH
-  NORMAL
-  LOW
-}
-
 enum SupportTopic {
   ORDER
   PAYMENT
@@ -415,7 +408,6 @@ model ProductComment {
   type        ProductCommentType  @default(COMMENT)
   content     String
   status      ProductCommentStatus @default(PENDING)
-  priority    SupportPriority      @default(NORMAL)
   adminReply  String?
   repliedAt   DateTime?
   repliedById Int?
@@ -429,7 +421,7 @@ model ProductComment {
 
   @@index([productId, status, createdAt])
   @@index([userId, createdAt])
-  @@index([status, priority, createdAt])
+  @@index([status, createdAt])
 }
 
 model SupportTicket {
