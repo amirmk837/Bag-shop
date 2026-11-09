@@ -36,7 +36,7 @@ const AdminSupport = () => {
     }
   }, [filter]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { const timer = window.setTimeout(() => { void load(); }, 0); return () => window.clearTimeout(timer); }, [load]);
 
   const choose = async (item) => {
     setError("");
