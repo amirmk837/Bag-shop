@@ -335,15 +335,17 @@ model AdminAuditLog {
 
 
 model SiteSettings {
-  id             Int      @id @default(1)
-  storeName      String   @default("فروشگاه کاظمی")
-  logoUrl        String?
-  footerLogoUrl  String?
-  phone          String?
-  headerText     String?
-  footerAbout    String?
-  footerCaption  String?
-  updatedAt      DateTime @updatedAt
+  id                  Int      @id @default(1)
+  storeName           String   @default("فروشگاه کاظمی")
+  logoUrl             String?
+  footerLogoUrl       String?
+  phone               String?
+  headerText          String?
+  footerAbout         String?
+  footerCaption       String?
+  supportHours        Json?
+  supportResponseText String?  @db.VarChar(240)
+  updatedAt           DateTime @updatedAt
 }
 
 
@@ -431,14 +433,14 @@ model ProductComment {
 }
 
 model SupportTicket {
-  id           Int                @id @default(autoincrement())
-  userId       Int
-  topic        SupportTopic
-  status       SupportTicketStatus @default(NEW)
-  priority     SupportPriority     @default(NORMAL)
-  customerName  String
-  customerPhone String?
-  lastMessageAt DateTime           @default(now())
+  id              Int                 @id @default(autoincrement())
+  userId          Int
+  topic           SupportTopic
+  status          SupportTicketStatus @default(NEW)
+  customerName    String
+  customerPhone   String?
+  customerAddress String?
+  lastMessageAt   DateTime            @default(now())
 
   user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   messages SupportMessage[]
@@ -447,7 +449,7 @@ model SupportTicket {
   updatedAt DateTime @updatedAt
 
   @@index([userId, lastMessageAt])
-  @@index([status, priority, lastMessageAt])
+  @@index([status, lastMessageAt])
   @@index([status, createdAt])
 }
 
