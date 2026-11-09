@@ -501,6 +501,20 @@ router.patch("/admin/support/:id", requireAuth, requireAdmin, async (req, res) =
   }
 });
 
+router.delete("/admin/support/:id", requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const id = parseId(req.params.id);
+    if (!id) return sendError(res, 400, "شناسه درخواست نامعتبر است.");
+
+    await prisma.supportTicket.delete({ where: { id } });
+    return res.json({ success: true, message: "گفت‌وگو و پیام‌های آن حذف شدند." });
+  } catch (error) {
+    if (error?.code === "P2025") return sendError(res, 404, "درخواست پشتیبانی پیدا نشد.");
+    console.error("Delete support ticket error:", error);
+    return sendError(res, 500, "حذف گفت‌وگو انجام نشد.");
+  }
+});
+
 router.get("/admin/feedback-summary", requireAuth, requireAdmin, async (_req, res) => {
   try {
     const [pendingComments, newTickets, unansweredTickets] = await prisma.$transaction([
