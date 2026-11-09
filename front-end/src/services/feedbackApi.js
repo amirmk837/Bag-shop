@@ -84,3 +84,7 @@ export const updateSupportSettings = (payload) =>
     method: "PUT",
     body: JSON.stringify(payload),
   });
+
+
+export const deleteAdminSupportTicket = (id) =>
+  request(`/admin/support/${id}`, { method: "DELETE" });
