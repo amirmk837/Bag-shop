@@ -29,7 +29,8 @@ const ProductComments = ({ productCode }) => {
   }, [productCode]);
 
   useEffect(() => {
-    loadComments();
+    const timer = window.setTimeout(() => { void loadComments(); }, 0);
+    return () => window.clearTimeout(timer);
   }, [loadComments]);
 
   const handleSubmit = async (event) => {
