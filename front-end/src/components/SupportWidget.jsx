@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { FiMessageCircle, FiX, FiArrowRight, FiRefreshCw } from "react-icons/fi";
 import { useAuth } from "../context/useAuth";
 import { createSupportTicket, getSupportTicket, getSupportTickets, sendSupportMessage } from "../services/feedbackApi";
