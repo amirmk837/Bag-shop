@@ -29,10 +29,37 @@ const getProductsController = async (req, res) => {
       });
     }
 
+    const discountedOnly = req.query.discountedOnly;
+    if (
+      discountedOnly !== undefined &&
+      discountedOnly !== "true" &&
+      discountedOnly !== "false"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "فیلتر تخفیف نامعتبر است",
+      });
+    }
+
+    const search = req.query.search;
+    if (
+      search !== undefined &&
+      (typeof search !== "string" || search.trim().length > 100)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "عبارت جست‌وجو نامعتبر است",
+      });
+    }
+
     const hasPagination =
       req.query.page !== undefined || req.query.limit !== undefined;
 
-    let filters = categorySlug ? { categorySlug } : {};
+    let filters = {
+      ...(categorySlug ? { categorySlug } : {}),
+      ...(discountedOnly === "true" ? { discountedOnly: true } : {}),
+      ...(search?.trim() ? { search: search.trim() } : {}),
+    };
 
     if (hasPagination) {
       const page = Number(req.query.page ?? 1);
