@@ -14,11 +14,15 @@ const AdminCategories = () => {
   const [categories, setCategories] = useState([]);
   const [name, setName] = useState("");
   const [image, setImage] = useState("");
+  const [parentId, setParentId] = useState("");
+  const [sortOrder, setSortOrder] = useState("0");
   const [editingCategory, setEditingCategory] = useState(null);
   const [editForm, setEditForm] = useState({
     name: "",
     slug: "",
     image: "",
+    parentId: "",
+    sortOrder: "0",
   });
   const [dialog, setDialog] = useState({
     open: false,
@@ -190,8 +194,8 @@ const AdminCategories = () => {
       return;
     }
 
-    if (!image) {
-      setError("برای دسته‌بندی تصویر انتخاب کنید.");
+    if (!image && !parentId) {
+      setError("برای دسته‌بندی مادر تصویر انتخاب کنید.");
       return;
     }
 
@@ -202,16 +206,13 @@ const AdminCategories = () => {
 
       const slug = trimmedName.toLowerCase().replace(/\s+/g, "-");
 
-      const category = await createCategory({
-        name: trimmedName,
-        slug,
-        image,
-      });
-
-      setCategories((prev) => [...prev, category]);
+      await createCategory({name:trimmedName,slug,image:image||null,parentId:parentId?Number(parentId):null,sortOrder:Number(sortOrder)||0});
+      setCategories(await getCategories());
 
       setName("");
       setImage("");
+      setParentId("");
+      setSortOrder("0");
 
       setSuccess("دسته‌بندی با موفقیت ایجاد شد.");
     } catch (error) {
@@ -234,6 +235,8 @@ const AdminCategories = () => {
       name: category.name || "",
       slug: category.slug || "",
       image: category.image || "",
+      parentId: category.parentId ? String(category.parentId) : "",
+      sortOrder: String(category.sortOrder ?? 0),
     });
 
     setError("");
@@ -273,8 +276,8 @@ const AdminCategories = () => {
       return;
     }
 
-    if (!editForm.image) {
-      setError("دسته‌بندی باید تصویر داشته باشد.");
+    if (!editForm.image && !editForm.parentId) {
+      setError("برای دسته‌بندی مادر تصویر انتخاب کنید.");
       return;
     }
 
@@ -283,17 +286,8 @@ const AdminCategories = () => {
       setError("");
       setSuccess("");
 
-      const updatedCategory = await updateCategory(editingCategory.id, {
-        name: trimmedName,
-        slug: trimmedSlug,
-        image: editForm.image,
-      });
-
-      setCategories((prev) =>
-        prev.map((category) =>
-          category.id === updatedCategory.id ? updatedCategory : category,
-        ),
-      );
+      await updateCategory(editingCategory.id,{name:trimmedName,slug:trimmedSlug,image:editForm.image||null,parentId:editForm.parentId?Number(editForm.parentId):null,sortOrder:Number(editForm.sortOrder)||0});
+      setCategories(await getCategories());
 
       setEditingCategory(null);
 
@@ -321,6 +315,10 @@ const AdminCategories = () => {
   // =================================================
 
   const handleDelete = async (category) => {
+    if (category.children?.length) {
+      showError("این گروه زیرمجموعه دارد. ابتدا زیرمجموعه‌ها را به گروه دیگری منتقل کنید.");
+      return;
+    }
     try {
       setDeletingCategoryId(category.id);
 
@@ -481,8 +479,13 @@ const AdminCategories = () => {
             />
           </div>
 
+          <div>
+            <label className="mb-2 block text-sm text-zinc-300">ترتیب نمایش</label>
+            <input type="number" min="0" max="10000" value={sortOrder} onChange={e=>setSortOrder(e.target.value)} className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white"/>
+            <label className="mb-2 mt-4 block text-sm text-zinc-300">دسته‌بندی مادر</label>
+            <select value={parentId} onChange={e=>setParentId(e.target.value)} className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white"><option value="">بدون والد (گروه اصلی)</option>{categories.filter(item=>!item.parentId).map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</select>
+          </div>
           {/* Image */}
-
           <div>
             <label className="mb-2 block text-sm text-zinc-300">
               تصویر دسته‌بندی
@@ -639,8 +642,13 @@ const AdminCategories = () => {
             </div>
           </div>
 
+          <div className="mt-5">
+            <label className="mb-2 block text-sm text-zinc-300">ترتیب نمایش</label>
+            <input name="sortOrder" type="number" min="0" max="10000" value={editForm.sortOrder} onChange={handleEditChange} className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white"/>
+            <label className="mb-2 mt-4 block text-sm text-zinc-300">دسته‌بندی مادر</label>
+            <select name="parentId" value={editForm.parentId} onChange={handleEditChange} disabled={Boolean(editingCategory?.children?.length)} className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white disabled:opacity-50"><option value="">بدون والد (گروه اصلی)</option>{categories.filter(item=>!item.parentId&&item.id!==editingCategory?.id).map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</select>
+          </div>
           {/* Image */}
-
           <div className="mt-5">
             <label className="mb-2 block text-sm text-zinc-300">
               تصویر دسته‌بندی
@@ -780,7 +788,7 @@ const AdminCategories = () => {
 
               <div className="p-4">
                 <h3 className="font-bold text-white">{category.name}</h3>
-
+                {category.parent?.name && <p className="mt-1 text-xs text-cyan-300/70">{category.parent.name}</p>}
                 <p className="mt-1 text-sm text-zinc-500">مشاهده محصولات</p>
               </div>
             </Link>

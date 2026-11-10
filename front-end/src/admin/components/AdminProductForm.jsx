@@ -425,9 +425,9 @@ const AdminProductForm = ({
                 : "انتخاب دسته‌بندی"}
             </option>
 
-            {categories.map((category) => (
+            {categories.filter((category) => !category.children?.length || Number(category.id) === Number(form.categoryId)).map((category) => (
               <option key={category.id} value={category.id}>
-                {category.name}
+                {category.parent?.name ? `${category.parent.name} / ${category.name}` : category.name}
               </option>
             ))}
           </select>

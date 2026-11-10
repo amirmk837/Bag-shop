@@ -161,6 +161,7 @@ const normalizeProduct = (product) => {
           name: product.category.name,
           slug: product.category.slug,
           image: product.category.image,
+          parentId: product.category.parentId ?? null,
         }
       : null,
 
