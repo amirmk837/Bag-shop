@@ -20,7 +20,7 @@ const DiscountShowcase = () => {
             const original = Number(product.price);
             const final = Number(product.discountedPrice);
             return Number.isSafeInteger(original) && Number.isSafeInteger(final) && original > 0 && final > 0 && final < original;
-          }));
+          }).slice(0, 10));
         }
       } catch (loadError) {
         if (active) setError(loadError.message || "دریافت پیشنهادهای ویژه ناموفق بود.");
@@ -69,7 +69,11 @@ const DiscountShowcase = () => {
 
   const scrollProducts = (direction) => {
     const scroller = scrollerRef.current;
-    if (scroller) scroller.scrollBy({ left: direction * Math.max(260, scroller.clientWidth * 0.82), behavior: "smooth" });
+    const firstCard = scroller?.querySelector("[data-discount-card]");
+    if (!scroller || !firstCard) return;
+    const cardWidth = firstCard.getBoundingClientRect().width;
+    const gap = Number.parseFloat(getComputedStyle(scroller).columnGap) || 0;
+    scroller.scrollBy({ left: direction * (cardWidth + gap), behavior: "smooth" });
   };
 
   return (
@@ -113,12 +117,7 @@ const DiscountShowcase = () => {
             </div>
             <p className="pr-3 text-[10px] text-zinc-500 sm:text-xs">برای دیدن محصولات بیشتر، به چپ و راست حرکت کن.</p>
           </div>
-          {!loading && !error && products.length > 4 && (
-            <div className="flex shrink-0 items-center gap-2">
-              <button type="button" onClick={() => scrollProducts(-1)} aria-label="مشاهده محصولات سمت چپ" className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-lg text-zinc-200 transition hover:border-orange-300/50 hover:bg-orange-300/10 hover:text-orange-200">←</button>
-              <button type="button" onClick={() => scrollProducts(1)} aria-label="مشاهده محصولات بیشتر" className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-lg text-zinc-200 transition hover:border-orange-300/50 hover:bg-orange-300/10 hover:text-orange-200">→</button>
-            </div>
-          )}
+}
         </div>
 
         {loading ? (
@@ -140,12 +139,30 @@ const DiscountShowcase = () => {
             <p className="mt-2 text-xs text-zinc-500 sm:text-sm">به‌محض ثبت تخفیف معتبر، محصولات این بخش نمایش داده می‌شوند.</p>
           </div>
         ) : (
-          <div ref={scrollerRef} dir="rtl" className="flex cursor-grab select-none snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-smooth pb-3 active:cursor-grabbing [scrollbar-color:rgba(249,115,22,.55)_transparent] [scrollbar-width:thin] sm:gap-4" onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} onClickCapture={preventClickAfterDrag}>
-            {products.map((product) => (
-              <div key={product.productCode} className="w-[calc((100%-0.75rem)/2)] shrink-0 snap-start sm:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-3rem)/4)]">
-                <DiscountProductCard product={product} />
-              </div>
-            ))}
+          <div className="relative">
+            <div ref={scrollerRef} dir="rtl" className="flex cursor-grab select-none snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-smooth pb-3 active:cursor-grabbing [scrollbar-color:rgba(249,115,22,.55)_transparent] [scrollbar-width:thin] sm:gap-4" onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} onClickCapture={preventClickAfterDrag}>
+              {products.map((product) => (
+                <div data-discount-card key={product.productCode} className="w-[calc((100%-0.75rem)/2)] shrink-0 snap-start sm:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-3rem)/4)]">
+                  <DiscountProductCard product={product} />
+                </div>
+              ))}
+              {products.length === 10 && (
+                <div className="w-[calc((100%-0.75rem)/2)] shrink-0 snap-start sm:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-3rem)/4)]">
+                  <Link to="/discounts" className="group flex h-full min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed border-orange-300/35 bg-gradient-to-br from-[#321c28] via-[#211b29] to-[#111824] p-5 text-center transition hover:border-orange-300/70 hover:from-[#49202d] sm:rounded-[1.4rem]">
+                    <span className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-orange-200/20 bg-orange-300/10 text-3xl font-black text-orange-200 transition group-hover:scale-110">٪</span>
+                    <strong className="text-base font-black text-white">هنوز تخفیف‌های بیشتری هست!</strong>
+                    <span className="mt-2 text-xs leading-6 text-zinc-400">همه محصولات تخفیف‌دار را یک‌جا ببین.</span>
+                    <span className="mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-amber-300 to-orange-400 px-4 py-2.5 text-xs font-black text-[#21130a]">مشاهده همه تخفیف‌ها <span aria-hidden="true">←</span></span>
+                  </Link>
+                </div>
+              )}
+            </div>
+            {products.length > 4 && (
+              <>
+                <button type="button" onClick={() => scrollProducts(-1)} aria-label="یک محصول به عقب" className="absolute right-1 top-1/2 z-10 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#111824]/90 text-xl text-white shadow-xl backdrop-blur transition hover:border-orange-300/60 hover:bg-orange-400 hover:text-[#21130a]">›</button>
+                <button type="button" onClick={() => scrollProducts(1)} aria-label="یک محصول به جلو" className="absolute left-1 top-1/2 z-10 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#111824]/90 text-xl text-white shadow-xl backdrop-blur transition hover:border-orange-300/60 hover:bg-orange-400 hover:text-[#21130a]">‹</button>
+              </>
+            )}
           </div>
         )}
       </div>
