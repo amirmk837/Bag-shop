@@ -11,6 +11,7 @@ const getInitialForm = (initialValues) => ({
   color: initialValues?.color || "",
   price: initialValues?.price ?? "",
   description: initialValues?.description || "",
+  specifications: Array.isArray(initialValues?.specifications) ? initialValues.specifications : [],
   images: Array.isArray(initialValues?.images) ? initialValues.images : [],
 });
 
@@ -235,6 +236,9 @@ const AdminProductForm = ({
       color: form.color.trim() || null,
       price,
       description: form.description.trim() || null,
+      specifications: form.specifications
+        .map((item) => ({ label: String(item.label || "").trim(), value: String(item.value || "").trim() }))
+        .filter((item) => item.label && item.value),
       images: form.images.filter(Boolean),
     };
 
@@ -503,6 +507,24 @@ const AdminProductForm = ({
               focus:border-zinc-400
             "
           />
+        </div>
+
+        {/* مشخصات فنی */}
+        <div className="md:col-span-2 rounded-xl border border-zinc-800 bg-zinc-950/50 p-4">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div><label className="block text-sm font-semibold text-zinc-200">مشخصات محصول</label><p className="mt-1 text-xs text-zinc-500">ویژگی‌هایی مثل جنس، ابعاد، وزن و ظرفیت را وارد کن.</p></div>
+            <button type="button" onClick={() => setForm((prev) => ({ ...prev, specifications: [...prev.specifications, { label: "", value: "" }] }))} className="rounded-lg bg-zinc-700 px-3 py-2 text-xs font-bold text-white hover:bg-zinc-600">افزودن مشخصه</button>
+          </div>
+          <div className="space-y-3">
+            {form.specifications.map((item, index) => (
+              <div key={index} className="grid gap-2 sm:grid-cols-[1fr_1.5fr_auto]">
+                <input value={item.label} onChange={(event) => setForm((prev) => ({ ...prev, specifications: prev.specifications.map((spec, i) => i === index ? { ...spec, label: event.target.value } : spec) }))} maxLength={80} placeholder="عنوان؛ مثلاً جنس" className="min-w-0 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white outline-none focus:border-zinc-400" />
+                <input value={item.value} onChange={(event) => setForm((prev) => ({ ...prev, specifications: prev.specifications.map((spec, i) => i === index ? { ...spec, value: event.target.value } : spec) }))} maxLength={500} placeholder="مقدار؛ مثلاً برزنت" className="min-w-0 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white outline-none focus:border-zinc-400" />
+                <button type="button" onClick={() => setForm((prev) => ({ ...prev, specifications: prev.specifications.filter((_, i) => i !== index) }))} aria-label="حذف مشخصه" className="rounded-lg px-3 py-2 text-sm text-red-400 hover:bg-red-950/40">حذف</button>
+              </div>
+            ))}
+            {form.specifications.length === 0 && <p className="text-sm text-zinc-500">هنوز مشخصه‌ای اضافه نشده است.</p>}
+          </div>
         </div>
 
         {/* توضیحات */}
