@@ -7,8 +7,12 @@ const DiscountShowcase = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [documentVisible, setDocumentVisible] = useState(true);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const scrollerRef = useRef(null);
-  const dragRef = useRef({ active: false, startX: 0, startScrollLeft: 0, moved: false });
 
   useEffect(() => {
     let active = true;
@@ -32,40 +36,27 @@ const DiscountShowcase = () => {
     return () => { active = false; };
   }, []);
 
-  const handlePointerDown = (event) => {
-    if (event.pointerType !== "mouse" || event.button !== 0) return;
-    const scroller = scrollerRef.current;
-    if (!scroller) return;
-    dragRef.current = {
-      active: true,
-      startX: event.clientX,
-      startScrollLeft: scroller.scrollLeft,
-      moved: false,
+  // توقف خودکارسازی در زمان تعامل، مخفی بودن تب و کاهش حرکت.
+  useEffect(() => {
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotionPreference = () => setReducedMotion(motionQuery.matches);
+    const updateVisibility = () => setDocumentVisible(!document.hidden);
+    updateMotionPreference();
+    updateVisibility();
+    motionQuery.addEventListener?.("change", updateMotionPreference);
+    document.addEventListener("visibilitychange", updateVisibility);
+    return () => {
+      motionQuery.removeEventListener?.("change", updateMotionPreference);
+      document.removeEventListener("visibilitychange", updateVisibility);
     };
-    scroller.setPointerCapture(event.pointerId);
-  };
+  }, []);
 
-  const handlePointerMove = (event) => {
-    const drag = dragRef.current;
-    const scroller = scrollerRef.current;
-    if (!drag.active || !scroller) return;
-    const deltaX = event.clientX - drag.startX;
-    if (Math.abs(deltaX) > 5) drag.moved = true;
-    if (drag.moved) {
-      scroller.scrollLeft = drag.startScrollLeft + deltaX;
-    }
-  };
-
-  const handlePointerUp = () => {
-    dragRef.current.active = false;
-  };
-
-  const preventClickAfterDrag = (event) => {
-    if (!dragRef.current.moved) return;
-    event.preventDefault();
-    event.stopPropagation();
-    dragRef.current.moved = false;
-  };
+  // حرکت خودکار هر ۵ ثانیه؛ بعد از تعامل دستی، تایمر از نو شروع می‌شود.
+  useEffect(() => {
+    if (products.length < 2 || isHovered || isFocused || !documentVisible || reducedMotion) return;
+    const timer = window.setTimeout(() => scrollProducts(1), 5000);
+    return () => window.clearTimeout(timer);
+  }, [activeIndex, products.length, isHovered, isFocused, documentVisible, reducedMotion]);
 
   const scrollProducts = (direction) => {
     const scroller = scrollerRef.current;
@@ -73,11 +64,12 @@ const DiscountShowcase = () => {
     if (!scroller || !firstCard) return;
     const cardWidth = firstCard.getBoundingClientRect().width;
     const gap = Number.parseFloat(getComputedStyle(scroller).columnGap) || 0;
-    scroller.scrollBy({ left: direction * (cardWidth + gap), behavior: "smooth" });
+    scroller.scrollBy({ left: direction * (cardWidth + gap), behavior: reducedMotion ? "auto" : "smooth" });
+    setActiveIndex((current) => (current + direction + products.length) % products.length);
   };
 
   return (
-    <section dir="rtl" className="relative isolate mx-auto my-14 w-full max-w-7xl overflow-hidden px-3 sm:my-20 sm:px-5">
+    <section dir="rtl" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} onFocusCapture={() => setIsFocused(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setIsFocused(false); }} className="relative isolate mx-auto my-14 w-full max-w-7xl overflow-hidden px-3 sm:my-20 sm:px-5">
       <div aria-hidden="true" className="pointer-events-none absolute -left-24 top-8 -z-10 h-72 w-72 rounded-full bg-rose-500/20 blur-[110px]" />
       <div aria-hidden="true" className="pointer-events-none absolute -right-20 top-20 -z-10 h-72 w-72 rounded-full bg-orange-400/15 blur-[110px]" />
 
@@ -158,8 +150,18 @@ const DiscountShowcase = () => {
             </div>
             {products.length > 4 && (
               <>
-                <button type="button" onClick={() => scrollProducts(1)} aria-label="حرکت به راست" className="group absolute right-2 top-1/2 z-20 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-2xl border border-white/15 bg-gradient-to-br from-[#263044]/95 to-[#101722]/95 text-2xl font-black text-orange-100 shadow-[0_8px_28px_rgba(0,0,0,.45)] backdrop-blur-md transition duration-300 hover:-translate-y-1/2 hover:scale-110 hover:border-orange-300/70 hover:from-orange-300 hover:to-rose-400 hover:text-[#24130c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b1019]"><span className="transition-transform duration-300 group-hover:-translate-x-0.5">‹</span></button>
-                <button type="button" onClick={() => scrollProducts(-1)} aria-label="حرکت به چپ" className="group absolute left-2 top-1/2 z-20 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-2xl border border-white/15 bg-gradient-to-br from-[#263044]/95 to-[#101722]/95 text-2xl font-black text-orange-100 shadow-[0_8px_28px_rgba(0,0,0,.45)] backdrop-blur-md transition duration-300 hover:-translate-y-1/2 hover:scale-110 hover:border-orange-300/70 hover:from-orange-300 hover:to-rose-400 hover:text-[#24130c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b1019]"><span className="transition-transform duration-300 group-hover:translate-x-0.5">&gt;</span></button>
+                <button type="button" onClick={() => scrollProducts(1)} aria-label="محصول بعدی" className="absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/45 text-2xl text-white backdrop-blur-sm transition hover:bg-black/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-11 sm:w-11">‹</button>
+                <button type="button" onClick={() => scrollProducts(-1)} aria-label="محصول قبلی" className="absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/45 text-2xl text-white backdrop-blur-sm transition hover:bg-black/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-11 sm:w-11">›</button>
+                <div dir="ltr" className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full bg-black/45 px-3 py-2 backdrop-blur-sm">
+                  {products.map((product, index) => (
+                    <button key={product.productCode} type="button" onClick={() => {
+                      const card = scrollerRef.current?.querySelectorAll("[data-discount-card]")[index];
+                      card?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "nearest", inline: "start" });
+                      setActiveIndex(index);
+                    }} aria-label={`رفتن به محصول ${index + 1}`} aria-current={index === activeIndex ? "true" : undefined}
+                      className={`h-2 rounded-full transition-all duration-300 ${index === activeIndex ? "w-6 bg-white" : "w-2 bg-white/50 hover:bg-white/80"}`} />
+                  ))}
+                </div>
               </>
             )}
           </div>
