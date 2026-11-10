@@ -52,6 +52,30 @@ const getProductsController = async (req, res) => {
       });
     }
 
+    const sortBy = req.query.sortBy;
+    if (
+      sortBy !== undefined &&
+      sortBy !== "discountPercent" &&
+      sortBy !== "discountedPrice"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "نوع مرتب‌سازی نامعتبر است",
+      });
+    }
+
+    const sortOrder = req.query.sortOrder;
+    if (
+      sortOrder !== undefined &&
+      sortOrder !== "asc" &&
+      sortOrder !== "desc"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "ترتیب مرتب‌سازی نامعتبر است",
+      });
+    }
+
     const hasPagination =
       req.query.page !== undefined || req.query.limit !== undefined;
 
@@ -59,6 +83,8 @@ const getProductsController = async (req, res) => {
       ...(categorySlug ? { categorySlug } : {}),
       ...(discountedOnly === "true" ? { discountedOnly: true } : {}),
       ...(search?.trim() ? { search: search.trim() } : {}),
+      ...(sortBy ? { sortBy } : {}),
+      ...(sortOrder ? { sortOrder } : {}),
     };
 
     if (hasPagination) {
