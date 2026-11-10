@@ -28,9 +28,9 @@ const DiscountProductCard = ({ product }) => {
           <div className="flex h-full items-center justify-center text-xs text-zinc-600">تصویر موجود نیست</div>
         )}
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#111824]/90 to-transparent" />
-        <div className="absolute right-3 top-3 flex items-center gap-1 rounded-xl border border-white/20 bg-gradient-to-br from-rose-500 via-red-500 to-orange-500 px-3 py-2 text-white shadow-[0_8px_24px_rgba(239,68,68,.4)]">
-          <span className="text-xl font-black leading-none sm:text-2xl">{discountPercent.toLocaleString("fa-IR")}٪</span>
-          <span className="text-[9px] font-extrabold leading-tight sm:text-[10px]">تخفیف</span>
+        <div className="absolute right-3 top-3 flex min-h-[76px] min-w-[88px] flex-col items-center justify-center gap-1 rounded-2xl border border-white/25 bg-gradient-to-br from-rose-500 via-red-500 to-orange-500 px-4 py-3 text-white shadow-[0_10px_30px_rgba(239,68,68,.5)] ring-1 ring-white/10 sm:min-h-[88px] sm:min-w-[104px] sm:rounded-[1.35rem]">
+          <span className="text-3xl font-black leading-none tracking-tight sm:text-4xl">{discountPercent.toLocaleString("fa-IR")}٪</span>
+          <span className="text-[11px] font-extrabold leading-tight sm:text-xs">تخفیف</span>
         </div>
         <span className="absolute bottom-3 left-3 rounded-lg border border-emerald-300/20 bg-[#071b17]/90 px-2.5 py-1.5 text-[9px] font-bold text-emerald-300 backdrop-blur-sm sm:text-[10px]">
           {formatPrice(saving)} تومان کمتر
