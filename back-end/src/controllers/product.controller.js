@@ -29,10 +29,15 @@ const getProductsController = async (req, res) => {
       });
     }
 
-    const hasPagination =
-      req.query.page !== undefined || req.query.limit !== undefined;
+    const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
+    if (search.length > 100) {
+      return res.status(400).json({ success: false, message: "عبارت جست‌وجو بیش از حد طولانی است" });
+    }
 
-    let filters = categorySlug ? { categorySlug } : {};
+    const hasPagination =
+      req.query.page !== undefined || req.query.limit !== undefined || req.query.search !== undefined;
+
+    let filters = { ...(categorySlug ? { categorySlug } : {}), ...(search ? { search } : {}) };
 
     if (hasPagination) {
       const page = Number(req.query.page ?? 1);
