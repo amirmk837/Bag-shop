@@ -5,6 +5,7 @@ import DeferredMount from "../../components/DeferredMount";
 
 const Brands = lazy(() => import("./Brands"));
 const DiscountShowcase = lazy(() => import("./DiscountShowcase"));
+const PopularShowcase = lazy(() => import("./PopularShowcase"));
 
 const Content = () => {
   return (
@@ -57,6 +58,9 @@ const Content = () => {
           ))}
         </div>
 
+        <Suspense fallback={<div aria-hidden="true" className="min-h-[260px]" />}>
+          <PopularShowcase />
+        </Suspense>
         <Suspense fallback={<div aria-hidden="true" className="min-h-[260px]" />}>
           <DiscountShowcase />
         </Suspense>
