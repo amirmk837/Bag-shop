@@ -1,5 +1,5 @@
 import { getAuthUserById, verifyToken } from "../services/auth.service.js";
-import { getAnalyticsReport, getLoggedInUsers, recordSiteVisit } from "../services/analytics.service.js";
+import { getAnalyticsReport, getLoggedInUsers, getMostViewedProducts, recordSiteVisit } from "../services/analytics.service.js";
 
 export const analyticsReportController = async (req, res) => {
   try { return res.json(await getAnalyticsReport(req.query.days)); }
@@ -29,5 +29,15 @@ export const recordSiteVisitController = async (req, res) => {
   } catch (error) {
     console.error("Site visit tracking failed:", { errorType: error?.name || "Error" });
     return res.status(204).end();
+  }
+};
+
+export const popularProductsController = async (req, res) => {
+  try {
+    const products = await getMostViewedProducts(req.query.days);
+    return res.json({ items: products, rangeDays: Math.min(Math.max(Number(req.query.days) || 30, 1), 90) });
+  } catch (error) {
+    console.error("Popular products report failed:", { errorType: error?.name || "Error" });
+    return res.status(500).json({ message: "دریافت محصولات پربازدید ناموفق بود." });
   }
 };
