@@ -18,45 +18,37 @@ const DiscountProductCard = ({ product }) => {
   return (
     <Link
       to={`/product/${encodeURIComponent(product.productCode)}`}
-      className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-white/[0.09] bg-[#111722] transition duration-300 hover:-translate-y-1 hover:border-amber-300/35 hover:shadow-[0_18px_45px_rgba(0,0,0,.28)]"
+      className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-white/[0.09] bg-[#111824] shadow-[0_10px_30px_rgba(0,0,0,.18)] transition duration-300 hover:-translate-y-1 hover:border-amber-300/35 hover:shadow-[0_20px_48px_rgba(0,0,0,.38)] sm:rounded-[1.35rem]"
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-[#0b1018]">
+      <div className="relative aspect-[4/3] overflow-hidden bg-[radial-gradient(ellipse_at_50%_45%,rgba(255,255,255,.07),transparent_65%),linear-gradient(145deg,#182231,#0b1018)]">
         {image ? (
-          <img
-            src={image}
-            alt={product.title || "محصول تخفیف‌دار"}
-            loading="lazy"
-            className="h-full w-full object-contain p-3 transition duration-500 group-hover:scale-[1.04] sm:p-5"
-          />
+          <img src={image} alt={product.title || "محصول تخفیف‌دار"} loading="lazy" className="h-full w-full object-contain p-3 transition duration-500 group-hover:scale-105 sm:p-5" />
         ) : (
-          <div className="flex h-full items-center justify-center text-xs text-zinc-600">
-            تصویر موجود نیست
-          </div>
+          <div className="flex h-full items-center justify-center text-xs text-zinc-600">تصویر موجود نیست</div>
         )}
-        <span className="absolute right-3 top-3 rounded-md border border-amber-300/25 bg-[#171a20]/95 px-2.5 py-1 text-[11px] font-black text-amber-200 shadow-lg">
-          {discountPercent.toLocaleString("fa-IR")}٪ تخفیف
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#111824]/70 to-transparent" />
+        <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-lg border border-rose-300/25 bg-gradient-to-l from-rose-500 to-orange-500 px-2.5 py-1.5 text-[10px] font-black text-white shadow-[0_6px_18px_rgba(244,63,94,.25)] sm:text-xs">
+          <span aria-hidden="true">٪</span>{discountPercent.toLocaleString("fa-IR")} تخفیف
         </span>
+        <span className="absolute left-3 top-3 rounded-md border border-white/10 bg-black/45 px-2 py-1 text-[9px] font-bold tracking-wider text-zinc-300 backdrop-blur-sm">SPECIAL</span>
       </div>
 
       <div className="flex flex-1 flex-col p-3 sm:p-4">
-        <p className="mb-1 truncate text-[10px] font-semibold tracking-wide text-zinc-500 sm:text-[11px]">
-          {product.brand}
-        </p>
-        <h3 className="line-clamp-2 min-h-10 text-xs font-bold leading-5 text-zinc-100 sm:text-sm sm:leading-6">
-          {product.title || product.productCode}
-        </h3>
+        <p className="mb-1 truncate text-[10px] font-bold tracking-wide text-amber-200/70 sm:text-[11px]">{product.brand || "KAZEMI STORE"}</p>
+        <h3 className="line-clamp-2 min-h-10 text-xs font-bold leading-5 text-zinc-100 transition group-hover:text-amber-100 sm:text-sm sm:leading-6">{product.title || product.productCode}</h3>
 
-        <div className="mt-auto border-t border-white/[0.07] pt-3">
-          <div className="flex flex-wrap items-center justify-between gap-1.5">
-            <span className="text-[10px] text-zinc-500 line-through sm:text-xs">
-              {formatPrice(originalPrice)} تومان
-            </span>
-            <span className="text-sm font-black tracking-tight text-amber-200 sm:text-base">
-              {formatPrice(finalPrice)} <span className="text-[10px] font-medium text-zinc-400">تومان</span>
-            </span>
+        <div className="mt-auto border-t border-white/[0.08] pt-3">
+          <div className="mb-1 flex items-center justify-between gap-1">
+            <span className="text-[10px] text-zinc-500 line-through sm:text-xs">{formatPrice(originalPrice)} تومان</span>
+            <span className="rounded-md bg-emerald-400/[0.09] px-1.5 py-0.5 text-[9px] font-bold text-emerald-300">قیمت ویژه</span>
+          </div>
+          <div className="flex items-baseline justify-between gap-1">
+            <span className="text-sm font-black tracking-tight text-white sm:text-base">{formatPrice(finalPrice)}</span>
+            <span className="text-[10px] font-semibold text-zinc-400">تومان</span>
           </div>
         </div>
       </div>
+      <span aria-hidden="true" className="pointer-events-none absolute inset-x-5 bottom-0 h-px bg-gradient-to-l from-transparent via-amber-300/50 to-transparent opacity-0 transition group-hover:opacity-100" />
     </Link>
   );
 };
