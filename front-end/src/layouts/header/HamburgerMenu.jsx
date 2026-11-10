@@ -18,15 +18,12 @@ const HamburgerMenu = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [open, setOpen] = useState(false);
+  const [menuState, setMenuState] = useState({ locationKey: null, open: false });
+  const open = menuState.locationKey === location.key && menuState.open;
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
 
-  const closeMenu = () => setOpen(false);
-
-  useEffect(() => {
-    setOpen(false);
-  }, [location.pathname]);
+  const closeMenu = () => setMenuState({ locationKey: location.key, open: false });
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -71,7 +68,7 @@ const HamburgerMenu = () => {
       <button
         ref={buttonRef}
         type="button"
-        onClick={() => setOpen((previous) => !previous)}
+        onClick={() => setMenuState({ locationKey: location.key, open: !open })}
         aria-label={open ? "بستن منو" : "باز کردن منو"}
         aria-expanded={open}
         aria-controls="account-menu"
