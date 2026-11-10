@@ -9,9 +9,6 @@ const DiscountShowcase = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
-  const [documentVisible, setDocumentVisible] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
   const scrollerRef = useRef(null);
   const { user } = useAuth();
@@ -66,34 +63,14 @@ const DiscountShowcase = () => {
   useEffect(() => {
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const updateMotionPreference = () => setReducedMotion(motionQuery.matches);
-    const updateVisibility = () => setDocumentVisible(!document.hidden);
-
     updateMotionPreference();
-    updateVisibility();
     motionQuery.addEventListener?.("change", updateMotionPreference);
-    document.addEventListener("visibilitychange", updateVisibility);
-
-    return () => {
-      motionQuery.removeEventListener?.("change", updateMotionPreference);
-      document.removeEventListener("visibilitychange", updateVisibility);
-    };
+    return () => motionQuery.removeEventListener?.("change", updateMotionPreference);
   }, []);
-
-  useEffect(() => {
-    if (products.length < 2 || isHovered || isFocused || !documentVisible || reducedMotion) return;
-    const timer = window.setTimeout(() => scrollProducts(1), 5000);
-    return () => window.clearTimeout(timer);
-  }, [activeIndex, products.length, isHovered, isFocused, documentVisible, reducedMotion, scrollProducts]);
 
   return (
     <section
       dir="rtl"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onFocusCapture={() => setIsFocused(true)}
-      onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setIsFocused(false);
-      }}
       className="mx-auto my-12 w-full max-w-[1600px] px-3 sm:my-16 sm:px-5"
     >
       <div className="relative overflow-hidden rounded-[1.35rem] border border-orange-300/30 bg-gradient-to-l from-[#ff7138] via-[#ff5b35] to-[#ff7438] p-3 shadow-[0_18px_55px_rgba(194,65,30,.2)] sm:rounded-[1.7rem] sm:p-5 lg:p-6">
@@ -169,7 +146,7 @@ const DiscountShowcase = () => {
                 <div
                   ref={scrollerRef}
                   dir="rtl"
-                  className="discount-carousel-scrollbar flex snap-x snap-mandatory gap-2 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth pb-1 motion-reduce:scroll-auto sm:gap-3"
+                  className="discount-carousel-scrollbar flex snap-x snap-mandatory gap-2 overflow-x-hidden overflow-y-hidden pb-1 transition-transform duration-500 ease-in-out motion-reduce:transition-none sm:gap-3"
                 >
                   {products.map((product) => (
                     <div
@@ -186,16 +163,16 @@ const DiscountShowcase = () => {
                   <>
                     <button
                       type="button"
-                      onClick={() => scrollProducts(1)}
-                      aria-label="محصول بعدی"
-                      className="absolute right-2 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/55 text-2xl text-white shadow-xl backdrop-blur-sm transition hover:scale-105 hover:bg-black/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:right-3 sm:h-11 sm:w-11"
-                    >‹</button>
-                    <button
-                      type="button"
                       onClick={() => scrollProducts(-1)}
                       aria-label="محصول قبلی"
-                      className="absolute left-2 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/55 text-2xl text-white shadow-xl backdrop-blur-sm transition hover:scale-105 hover:bg-black/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:left-3 sm:h-11 sm:w-11"
+                      className="absolute right-2 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/55 text-2xl text-white shadow-xl backdrop-blur-sm transition hover:scale-105 hover:bg-black/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:right-3 sm:h-11 sm:w-11"
                     >›</button>
+                    <button
+                      type="button"
+                      onClick={() => scrollProducts(1)}
+                      aria-label="محصول بعدی"
+                      className="absolute left-2 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/55 text-2xl text-white shadow-xl backdrop-blur-sm transition hover:scale-105 hover:bg-black/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:left-3 sm:h-11 sm:w-11"
+                    >‹</button>
                   </>
                 )}
               </div>
