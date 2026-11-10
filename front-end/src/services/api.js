@@ -71,6 +71,13 @@ const request = async (path, options = {}) => {
 
       error.status = response.status;
       error.productCount = result?.productCount;
+      error.details = Array.isArray(result?.errors) ? result.errors : [];
+      if (error.details.length) {
+        const messages = error.details
+          .map((issue) => issue?.message)
+          .filter(Boolean);
+        if (messages.length) error.message = `${error.message}: ${messages.join("، ")}`;
+      }
       throw error;
     }
 
