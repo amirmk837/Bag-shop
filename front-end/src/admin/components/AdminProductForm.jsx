@@ -131,8 +131,37 @@ const AdminProductForm = ({
     setForm((prev) => {
       if (name === "price") {
         const basePrice = Number(value);
+        const percent = Number(prev.discountPercent);
         const discountedPrice = Number(prev.discountedPrice);
-        return { ...prev, price: value, discountPercent: basePrice > 0 && discountedPrice > 0 && discountedPrice < basePrice ? String(Math.round((1 - discountedPrice / basePrice) * 100)) : "" };
+
+        if (
+          prev.discountPercent !== "" &&
+          Number.isInteger(percent) &&
+          percent >= 1 &&
+          percent <= 99 &&
+          basePrice > 0
+        ) {
+          return {
+            ...prev,
+            price: value,
+            discountedPrice: String(Math.round(basePrice * (100 - percent) / 100)),
+          };
+        }
+
+        return {
+          ...prev,
+          price: value,
+          discountPercent:
+            basePrice > 0 &&
+            discountedPrice > 0 &&
+            discountedPrice < basePrice
+              ? String(Math.round((1 - discountedPrice / basePrice) * 100))
+              : "",
+          discountedPrice:
+            discountedPrice > 0 && discountedPrice < basePrice
+              ? prev.discountedPrice
+              : "",
+        };
       }
       if (name === "discountPercent") {
         const percent = value === "" ? "" : Number(value);
@@ -514,7 +543,7 @@ const AdminProductForm = ({
           <input name="discountPercent" type="number" min="1" max="99" step="1" value={form.discountPercent} onChange={handleChange} placeholder="بدون تخفیف خالی بماند" className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none focus:border-zinc-400" />
         </div>
         <div>
-          <label className="mb-2 block text-sm text-zinc-300">قیمت نهایی تخفیف (تومان)</label>
+          <label className="mb-2 block text-sm text-zinc-300">قیمت پس از تخفیف (تومان)</label>
           <input name="discountedPrice" type="number" min="1" step="1" value={form.discountedPrice} onChange={handleChange} placeholder="یا قیمت نهایی را وارد کنید" className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none focus:border-zinc-400" />
           <p className="mt-2 text-xs text-zinc-500">با وارد کردن درصد یا قیمت نهایی، مقدار دیگر محاسبه می‌شود. برای حذف تخفیف هر دو فیلد را خالی کنید.</p>
         </div>
