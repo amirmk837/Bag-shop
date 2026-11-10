@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FiLogIn,
@@ -23,7 +23,10 @@ const HamburgerMenu = () => {
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
 
-  const closeMenu = () => setMenuState({ locationKey: location.key, open: false });
+  const closeMenu = useCallback(
+    () => setMenuState({ locationKey: location.key, open: false }),
+    [location.key],
+  );
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -46,7 +49,7 @@ const HamburgerMenu = () => {
       document.removeEventListener("pointerdown", handleOutsideClick);
       document.removeEventListener("keydown", handleEscape);
     };
-  }, [open]);
+  }, [open, closeMenu]);
 
   const handleLogout = async () => {
     closeMenu();
