@@ -117,7 +117,6 @@ const DiscountShowcase = () => {
             </div>
             <p className="pr-3 text-[10px] text-zinc-500 sm:text-xs">برای دیدن محصولات بیشتر، به چپ و راست حرکت کن.</p>
           </div>
-}
         </div>
 
         {loading ? (
@@ -140,7 +139,7 @@ const DiscountShowcase = () => {
           </div>
         ) : (
           <div className="relative">
-            <div ref={scrollerRef} dir="rtl" className="flex cursor-grab select-none snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-smooth pb-3 active:cursor-grabbing [scrollbar-color:rgba(249,115,22,.55)_transparent] [scrollbar-width:thin] sm:gap-4" onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} onClickCapture={preventClickAfterDrag}>
+            <div ref={scrollerRef} dir="rtl" className="flex cursor-grab select-none snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-smooth pb-1 active:cursor-grabbing [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:gap-4" onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} onClickCapture={preventClickAfterDrag}>
               {products.map((product) => (
                 <div data-discount-card key={product.productCode} className="w-[calc((100%-0.75rem)/2)] shrink-0 snap-start sm:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-3rem)/4)]">
                   <DiscountProductCard product={product} />
@@ -159,8 +158,8 @@ const DiscountShowcase = () => {
             </div>
             {products.length > 4 && (
               <>
-                <button type="button" onClick={() => scrollProducts(1)} aria-label="یک محصول به عقب" className="absolute right-1 top-1/2 z-10 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#111824]/90 text-xl text-white shadow-xl backdrop-blur transition hover:border-orange-300/60 hover:bg-orange-400 hover:text-[#21130a]">‹</button>
-                <button type="button" onClick={() => scrollProducts(-1)} aria-label="یک محصول به جلو" className="absolute left-1 top-1/2 z-10 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#111824]/90 text-xl text-white shadow-xl backdrop-blur transition hover:border-orange-300/60 hover:bg-orange-400 hover:text-[#21130a]">&gt;</button>
+                <button type="button" onClick={() => scrollProducts(1)} aria-label="حرکت به راست" className="group absolute right-2 top-1/2 z-20 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-2xl border border-white/15 bg-gradient-to-br from-[#263044]/95 to-[#101722]/95 text-2xl font-black text-orange-100 shadow-[0_8px_28px_rgba(0,0,0,.45)] backdrop-blur-md transition duration-300 hover:-translate-y-1/2 hover:scale-110 hover:border-orange-300/70 hover:from-orange-300 hover:to-rose-400 hover:text-[#24130c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b1019]"><span className="transition-transform duration-300 group-hover:-translate-x-0.5">‹</span></button>
+                <button type="button" onClick={() => scrollProducts(-1)} aria-label="حرکت به چپ" className="group absolute left-2 top-1/2 z-20 inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-2xl border border-white/15 bg-gradient-to-br from-[#263044]/95 to-[#101722]/95 text-2xl font-black text-orange-100 shadow-[0_8px_28px_rgba(0,0,0,.45)] backdrop-blur-md transition duration-300 hover:-translate-y-1/2 hover:scale-110 hover:border-orange-300/70 hover:from-orange-300 hover:to-rose-400 hover:text-[#24130c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b1019]"><span className="transition-transform duration-300 group-hover:translate-x-0.5">&gt;</span></button>
               </>
             )}
           </div>
