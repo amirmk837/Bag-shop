@@ -324,7 +324,7 @@ const AdminCategories = () => {
 
       await deleteCategory(category.id);
 
-      setCategories((prev) => prev.filter((item) => item.id !== category.id));
+      setCategories(await getCategories());
 
       setSuccess("دسته‌بندی با موفقیت حذف شد.");
       setDeletingCategoryId(null);
@@ -354,9 +354,7 @@ const AdminCategories = () => {
             try {
               await deleteCategory(category.id, true);
 
-              setCategories((prev) =>
-                prev.filter((item) => item.id !== category.id),
-              );
+              setCategories(await getCategories());
 
               setSuccess(
                 productCount === 0
