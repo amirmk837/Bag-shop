@@ -1,4 +1,5 @@
 import prisma from "../config/prisma.js";
+import { createPopularProductsQuery } from "../utils/popularProductsQuery.js";
 
 const SALES_STATUSES = ["PAID", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED"];
 
@@ -100,6 +101,14 @@ const getSiteVisitReport = async (from) => {
 };
 
 // گزارش مدیریتی بر اساس داده‌های واقعی فروش، سفارش، مشتری و بازدید
+export const getPopularProducts = async (requestedDays) => {
+  const days = parseDays(requestedDays);
+  const from = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  const { query, params } = createPopularProductsQuery(from, 8);
+  const products = await prisma.$queryRawUnsafe(query, ...params);
+  return { rangeDays: days, products };
+};
+
 export const getAnalyticsReport = async (requestedDays) => {
   const days = parseDays(requestedDays);
   const from = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
