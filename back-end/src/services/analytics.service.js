@@ -99,6 +99,40 @@ const getSiteVisitReport = async (from) => {
   };
 };
 
+
+/**
+ * محصولات پربازدید بر اساس رویدادهای واقعی بازدید صفحه جزئیات.
+ * بازه زمانی و تعداد خروجی محدود است تا گزارش عمومی هزینه نامحدود نداشته باشد.
+ */
+export const getMostViewedProducts = async (requestedDays = 30) => {
+  const days = parseDays(requestedDays);
+  const from = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+  const rows = await prisma.$queryRaw`
+    SELECT
+      p."productCode" AS "productCode",
+      p."title" AS "title",
+      p."price" AS "price",
+      p."images"[1] AS "imageUrl",
+      COUNT(v."id")::int AS "viewCount",
+      COUNT(DISTINCT v."visitorId")::int AS "uniqueVisitors"
+    FROM "Product" p
+    INNER JOIN "SiteVisitEvent" v
+      ON v."path" = '/product/' || p."productCode"
+      AND v."createdAt" >= ${from}
+    GROUP BY p."id", p."productCode", p."title", p."price", p."images"
+    ORDER BY "viewCount" DESC, "uniqueVisitors" DESC, p."productCode" ASC
+    LIMIT 8
+  `;
+
+  return rows.map((row) => ({
+    ...row,
+    price: Number(row.price || 0),
+    viewCount: Number(row.viewCount || 0),
+    uniqueVisitors: Number(row.uniqueVisitors || 0),
+  }));
+};
+
 // گزارش مدیریتی بر اساس داده‌های واقعی فروش، سفارش، مشتری و بازدید
 export const getAnalyticsReport = async (requestedDays) => {
   const days = parseDays(requestedDays);
