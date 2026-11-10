@@ -42,17 +42,34 @@ const joinColors = (stocks) => stocks.map((item) => item.color).join("، ");
 // =========================================
 
 const getProducts = async (filters = {}) => {
-  const where = filters.categorySlug
-    ? { category: { slug: filters.categorySlug } }
-    : undefined;
+  const conditions = [];
 
+  if (filters.categorySlug) {
+    conditions.push({ category: { slug: filters.categorySlug } });
+  }
+
+  if (filters.discountedOnly) {
+    conditions.push({ discountedPrice: { not: null } });
+  }
+
+  if (filters.search) {
+    conditions.push({
+      OR: [
+        { title: { contains: filters.search, mode: "insensitive" } },
+        { productCode: { contains: filters.search, mode: "insensitive" } },
+        { brand: { contains: filters.search, mode: "insensitive" } },
+      ],
+    });
+  }
+
+  const where = conditions.length ? { AND: conditions } : undefined;
   const query = {
     where,
     include: productInclude,
     orderBy: { id: "asc" },
   };
 
-  // درخواست‌های قدیمی (از جمله پنل مدیریت) همچنان همه محصولات را می‌گیرند.
+  // درخواست‌های قدیمی همچنان همه محصولات را بدون صفحه‌بندی دریافت می‌کنند.
   if (filters.page === undefined && filters.limit === undefined) {
     return prisma.product.findMany(query);
   }
