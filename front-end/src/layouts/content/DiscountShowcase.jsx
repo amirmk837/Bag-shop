@@ -159,8 +159,8 @@ const DiscountShowcase = () => {
             </div>
             {products.length > 4 && (
               <>
-                <button type="button" onClick={() => scrollProducts(-1)} aria-label="یک محصول به عقب" className="absolute right-1 top-1/2 z-10 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#111824]/90 text-xl text-white shadow-xl backdrop-blur transition hover:border-orange-300/60 hover:bg-orange-400 hover:text-[#21130a]">›</button>
-                <button type="button" onClick={() => scrollProducts(1)} aria-label="یک محصول به جلو" className="absolute left-1 top-1/2 z-10 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#111824]/90 text-xl text-white shadow-xl backdrop-blur transition hover:border-orange-300/60 hover:bg-orange-400 hover:text-[#21130a]">‹</button>
+                <button type="button" onClick={() => scrollProducts(1)} aria-label="یک محصول به عقب" className="absolute right-1 top-1/2 z-10 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#111824]/90 text-xl text-white shadow-xl backdrop-blur transition hover:border-orange-300/60 hover:bg-orange-400 hover:text-[#21130a]">‹</button>
+                <button type="button" onClick={() => scrollProducts(-1)} aria-label="یک محصول به جلو" className="absolute left-1 top-1/2 z-10 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[#111824]/90 text-xl text-white shadow-xl backdrop-blur transition hover:border-orange-300/60 hover:bg-orange-400 hover:text-[#21130a]">&gt;</button>
               </>
             )}
           </div>
