@@ -125,6 +125,7 @@ const createProduct = async (data) => {
       count: hasColors ? sumStocks(stocks) : data.count,
       color: hasColors ? joinColors(stocks) : null,
       price: data.price,
+      discountedPrice: data.discountedPrice ?? null,
       description: data.description,
       images: data.images,
 
