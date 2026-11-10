@@ -56,3 +56,16 @@
 *::-webkit-scrollbar-corner {
   background: #18181b;
 }
+
+
+/* Hide only the discount carousel scrollbar; keep scrolling enabled. */
+.discount-carousel-scrollbar {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.discount-carousel-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
