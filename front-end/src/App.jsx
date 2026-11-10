@@ -18,6 +18,8 @@ const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminLayout = lazy(() => import("./admin/layouts/AdminLayout"));
 const AdminDashboard = lazy(() => import("./admin/pages/AdminDashboard"));
 const AdminProducts = lazy(() => import("./admin/pages/AdminProducts"));
+const AdminDiscounts = lazy(() => import("./admin/pages/AdminDiscounts"));
+const DiscountProducts = lazy(() => import("./pages/DiscountProducts"));
 const AdminProductCreate = lazy(() => import("./admin/pages/AdminProductCreate"));
 const AdminProductEdit = lazy(() => import("./admin/pages/AdminProductEdit"));
 const AdminCategories = lazy(() => import("./admin/pages/AdminCategories"));
@@ -57,6 +59,10 @@ const routes = [
   {
     path: "/category/:slug",
     element: <CategoryProducts />,
+  },
+  {
+    path: "/discounts",
+    element: <DiscountProducts />,
   },
   {
     path: "/product/:id",
@@ -150,6 +156,16 @@ const routes = [
       <ProtectedRoute>
         <AdminLayout>
           <AdminProducts />
+        </AdminLayout>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/admin/discounts",
+    element: (
+      <ProtectedRoute>
+        <AdminLayout>
+          <AdminDiscounts />
         </AdminLayout>
       </ProtectedRoute>
     ),
