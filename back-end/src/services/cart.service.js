@@ -54,13 +54,15 @@ const getCartData = (cart) => {
       id: item.id,
       productCode: item.product.productCode,
       title: item.product.title,
-      price: item.product.price,
+      price: item.product.discountedPrice ?? item.product.price,
+      originalPrice: item.product.discountedPrice ? item.product.price : null,
+      discountPercent: item.product.discountedPrice ? Math.round((1 - item.product.discountedPrice / item.product.price) * 100) : null,
       images: item.product.images,
       availableQuantity: stock,
       maxQuantity: stock,
       quantity: item.quantity,
       color: item.color,
-      subtotal: item.product.price * item.quantity,
+      subtotal: (item.product.discountedPrice ?? item.product.price) * item.quantity,
     };
   });
 
@@ -85,6 +87,7 @@ const getCartInclude = {
           productCode: true,
           title: true,
           price: true,
+          discountedPrice: true,
           images: true,
           count: true,
           color: true,
