@@ -15,8 +15,9 @@ model Product {
   count       Int      @default(0)
   color       String?
   price       Int
-  description String?
-  images      String[]
+  description     String?
+  specifications Json?
+  images          String[]
 
   categoryId Int?
   category   Category? @relation(fields: [categoryId], references: [id])
