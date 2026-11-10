@@ -247,6 +247,29 @@ export const getProductByCode = async (productCode) => {
 };
 
 // =================================================
+// GET /api/products/popular
+// =================================================
+
+export const getPopularProducts = async ({ days = 30 } = {}) => {
+  const safeDays = Math.max(1, Math.min(Number.parseInt(days, 10) || 30, 90));
+  const result = await request(`/products/popular?days=${safeDays}`);
+  const data = getData(result);
+
+  if (!Array.isArray(data?.products)) {
+    throw new Error("ساختار پاسخ محصولات محبوب معتبر نیست.");
+  }
+
+  return {
+    rangeDays: data.rangeDays,
+    products: data.products.map((product) => ({
+      ...normalizeProduct(product),
+      viewCount: product.viewCount,
+      uniqueVisitors: product.uniqueVisitors,
+    })),
+  };
+};
+
+// =================================================
 // POST /api/products
 // =================================================
 
