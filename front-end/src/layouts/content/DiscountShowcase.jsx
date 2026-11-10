@@ -85,17 +85,6 @@ const DiscountShowcase = () => {
     return () => window.clearTimeout(timer);
   }, [activeIndex, products.length, isHovered, isFocused, documentVisible, reducedMotion, scrollProducts]);
 
-  const goToProduct = (index) => {
-    const card = scrollerRef.current?.querySelectorAll("[data-discount-card]")[index];
-    if (!card) return;
-    card.scrollIntoView({
-      behavior: reducedMotion ? "auto" : "smooth",
-      block: "nearest",
-      inline: "start",
-    });
-    setActiveIndex(index);
-  };
-
   return (
     <section
       dir="rtl"
