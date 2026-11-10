@@ -45,17 +45,10 @@ const ProductInfoes = ({ product }) => {
           {product.id}
         </span>
 
-        <span
-          className="
-            min-w-0
-            truncate
-            text-sm
-            font-bold
-            text-white
-            sm:text-base
-          "
-        >
-          {product.price} تومان
+        <span className="flex min-w-0 flex-col items-end gap-1">
+          {product.discountedPrice && <span className="rounded-full bg-red-600 px-2 py-0.5 text-[10px] font-bold text-white">٪{Math.round((1 - product.discountedPrice / product.price) * 100)} تخفیف</span>}
+          {product.discountedPrice && <span className="text-xs text-zinc-500 line-through">{Number(product.price).toLocaleString("fa-IR")} تومان</span>}
+          <span className="truncate text-sm font-bold text-white sm:text-base">{Number(product.discountedPrice ?? product.price ?? 0).toLocaleString("fa-IR")} تومان</span>
         </span>
       </div>
     </div>
