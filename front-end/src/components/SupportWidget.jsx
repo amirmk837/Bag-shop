@@ -29,7 +29,7 @@ const DAYS = [
   ["friday", "جمعه"],
 ];
 
-const getTehranSupportStatus = (hours) => {
+const getTehranSupportStatus = (hours, timestamp) => {
   if (!hours) return null;
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: "Asia/Tehran",
@@ -37,7 +37,7 @@ const getTehranSupportStatus = (hours) => {
     hour: "2-digit",
     minute: "2-digit",
     hourCycle: "h23",
-  }).formatToParts(new Date());
+  }).formatToParts(new Date(timestamp));
   const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
   const dayKey = {
     Saturday: "saturday",
@@ -81,17 +81,18 @@ const SupportWidgetContent = ({ user, authLoading }) => {
   }, []);
 
   const supportStatus = useMemo(
-    () => getTehranSupportStatus(settings.supportHours),
+    () => getTehranSupportStatus(settings.supportHours, clock),
     [settings.supportHours, clock],
   );
 
-  const loadSettings = useCallback(async () => {
-    try {
-      const result = await getSupportSettings();
-      setSettings(result || { supportHours: null, supportResponseText: "" });
-    } catch {
-      // The support entry point remains available if public settings cannot be loaded.
-    }
+  const loadSettings = useCallback(() => {
+    getSupportSettings()
+      .then((result) => {
+        setSettings(result || { supportHours: null, supportResponseText: "" });
+      })
+      .catch(() => {
+        // The support entry point remains available if public settings cannot be loaded.
+      });
   }, []);
 
   const loadTickets = useCallback(async () => {
