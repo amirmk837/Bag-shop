@@ -78,6 +78,7 @@ const AdminProductEdit = () => {
         count: data.count,
         color: data.color,
         price: data.price,
+        discountedPrice: data.discountedPrice,
         description: data.description,
         images: data.images,
       });
@@ -165,6 +166,7 @@ const AdminProductEdit = () => {
           count: product.count ?? "",
           color: product.color || "",
           price: product.price ?? "",
+          discountedPrice: product.discountedPrice ?? "",
           description: product.description || "",
           images: Array.isArray(product.url) ? product.url : [],
         }}
