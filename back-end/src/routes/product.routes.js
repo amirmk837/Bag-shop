@@ -9,6 +9,7 @@ import {
 } from "../controllers/product.controller.js";
 
 import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
+import { popularProductsController } from "../controllers/analytics.controller.js";
 
 const router = express.Router();
 
@@ -18,6 +19,9 @@ const router = express.Router();
 
 // دریافت همه محصولات
 router.get("/", getProductsController);
+
+// Popular products must be registered before the dynamic product-code route.
+router.get("/popular", popularProductsController);
 
 // دریافت یک محصول
 router.get("/:productCode", getProductByCodeController);
