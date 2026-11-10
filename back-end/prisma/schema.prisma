@@ -15,6 +15,7 @@ model Product {
   count       Int      @default(0)
   color       String?
   price       Int
+  discountedPrice Int?
   description String?
   images      String[]
 
