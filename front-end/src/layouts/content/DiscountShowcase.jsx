@@ -60,12 +60,11 @@ const DiscountShowcase = () => {
 
   const scrollProducts = (direction) => {
     const scroller = scrollerRef.current;
-    const firstCard = scroller?.querySelector("[data-discount-card]");
-    if (!scroller || !firstCard) return;
-    const cardWidth = firstCard.getBoundingClientRect().width;
-    const gap = Number.parseFloat(getComputedStyle(scroller).columnGap) || 0;
-    scroller.scrollBy({ left: direction * (cardWidth + gap), behavior: reducedMotion ? "auto" : "smooth" });
-    setActiveIndex((current) => (current + direction + products.length) % products.length);
+    if (!scroller || products.length < 2) return;
+    const nextIndex = (activeIndex + direction + products.length) % products.length;
+    const nextCard = scroller.querySelectorAll("[data-discount-card]")[nextIndex];
+    nextCard?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "nearest", inline: "start" });
+    setActiveIndex(nextIndex);
   };
 
   return (
@@ -131,7 +130,7 @@ const DiscountShowcase = () => {
           </div>
         ) : (
           <div className="relative">
-            <div ref={scrollerRef} dir="rtl" className="discount-carousel-scrollbar flex cursor-grab select-none snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-smooth pb-1 active:cursor-grabbing sm:gap-4" onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} onClickCapture={preventClickAfterDrag}>
+            <div ref={scrollerRef} dir="rtl" className="discount-carousel-scrollbar flex select-none snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-smooth pb-1 motion-reduce:scroll-auto sm:gap-4">
               {products.map((product) => (
                 <div data-discount-card key={product.productCode} className="w-[calc((100%-0.75rem)/2)] shrink-0 snap-start sm:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-3rem)/4)]">
                   <DiscountProductCard product={product} />
