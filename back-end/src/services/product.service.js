@@ -1,4 +1,5 @@
 import prisma from "../config/prisma.js";
+import { Prisma } from "../generated/prisma/client.ts";
 
 const productInclude = {
   category: true,
@@ -77,14 +78,64 @@ const getProducts = async (filters = {}) => {
   const page = filters.page ?? 1;
   const limit = filters.limit ?? 12;
 
-  const [items, total] = await Promise.all([
-    prisma.product.findMany({
+  const totalPromise = prisma.product.count({ where });
+
+  let itemsPromise;
+  if (
+    filters.discountedOnly &&
+    (filters.sortBy === "discountPercent" || filters.sortBy === "discountedPrice")
+  ) {
+    const sqlConditions = [Prisma.sql`p."discountedPrice" IS NOT NULL`];
+
+    if (filters.categorySlug) {
+      sqlConditions.push(Prisma.sql`EXISTS (
+        SELECT 1 FROM "Category" c
+        WHERE c."id" = p."categoryId" AND c."slug" = ${filters.categorySlug}
+      )`);
+    }
+
+    if (filters.search) {
+      const searchTerm = `%${filters.search}%`;
+      sqlConditions.push(Prisma.sql`(
+        p."title" ILIKE ${searchTerm}
+        OR p."productCode" ILIKE ${searchTerm}
+        OR p."brand" ILIKE ${searchTerm}
+      )`);
+    }
+
+    const sortExpression =
+      filters.sortBy === "discountPercent"
+        ? Prisma.sql`(p."price" - p."discountedPrice")::numeric / p."price"`
+        : Prisma.sql`p."discountedPrice"`;
+    const direction =
+      filters.sortOrder === "asc" ? Prisma.raw("ASC") : Prisma.raw("DESC");
+
+    itemsPromise = prisma.$queryRaw(Prisma.sql`
+      SELECT p."id"
+      FROM "Product" p
+      WHERE ${Prisma.join(sqlConditions, " AND ")}
+      ORDER BY ${sortExpression} ${direction}, p."id" ASC
+      LIMIT ${limit}
+      OFFSET ${(page - 1) * limit}
+    `).then(async (rows) => {
+      const ids = rows.map((row) => row.id);
+      if (ids.length === 0) return [];
+      const fetched = await prisma.product.findMany({
+        where: { id: { in: ids } },
+        include: productInclude,
+      });
+      const byId = new Map(fetched.map((product) => [product.id, product]));
+      return ids.map((id) => byId.get(id)).filter(Boolean);
+    });
+  } else {
+    itemsPromise = prisma.product.findMany({
       ...query,
       skip: (page - 1) * limit,
       take: limit,
-    }),
-    prisma.product.count({ where }),
-  ]);
+    });
+  }
+
+  const [items, total] = await Promise.all([itemsPromise, totalPromise]);
 
   return {
     items,
