@@ -16,7 +16,7 @@ export const createPopularProductsQuery = (from, limit = 8) => {
         p.title,
         p.price,
         p."discountedPrice",
-        p.images[1] AS image,
+        p.images AS images,
         COUNT(*)::int AS "viewCount",
         COUNT(DISTINCT e."visitorId")::int AS "uniqueVisitors"
       FROM "SiteVisitEvent" e
