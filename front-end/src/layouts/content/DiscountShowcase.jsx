@@ -139,7 +139,7 @@ const DiscountShowcase = () => {
           </div>
         ) : (
           <div className="relative">
-            <div ref={scrollerRef} dir="rtl" className="flex cursor-grab select-none snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-smooth pb-1 active:cursor-grabbing [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden sm:gap-4" onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} onClickCapture={preventClickAfterDrag}>
+            <div ref={scrollerRef} dir="rtl" className="discount-carousel-scrollbar flex cursor-grab select-none snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-smooth pb-1 active:cursor-grabbing sm:gap-4" onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} onClickCapture={preventClickAfterDrag}>
               {products.map((product) => (
                 <div data-discount-card key={product.productCode} className="w-[calc((100%-0.75rem)/2)] shrink-0 snap-start sm:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-3rem)/4)]">
                   <DiscountProductCard product={product} />
