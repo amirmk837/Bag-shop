@@ -133,8 +133,9 @@ const ProductDetails = ({ product }) => {
       <div className="mt-8 sm:mt-10">
         <span className="text-sm text-zinc-500">قیمت</span>
 
+        {product.discountedPrice && <div className="mt-2 flex flex-wrap items-center gap-3"><span className="rounded-full bg-red-600 px-3 py-1 text-sm font-bold text-white">٪{Math.round((1 - product.discountedPrice / product.price) * 100)} تخفیف</span><span className="text-base text-zinc-500 line-through">{Number(product.price).toLocaleString("fa-IR")} تومان</span></div>}
         <p className="mt-2 break-words text-3xl font-black sm:text-4xl">
-          {Number(product.price || 0).toLocaleString("fa-IR")} تومان
+          {Number(product.discountedPrice ?? product.price ?? 0).toLocaleString("fa-IR")} تومان
         </p>
       </div>
 
