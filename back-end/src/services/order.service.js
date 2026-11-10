@@ -434,8 +434,8 @@ export const createProductShippingTestOrder = async (
               !product ||
               !Number.isSafeInteger(item.quantity) ||
               item.quantity < 1 ||
-              !Number.isSafeInteger(product.price) ||
-              product.price < 1
+              !Number.isSafeInteger(getEffectivePrice(product)) ||
+              getEffectivePrice(product) < 1
             ) {
               throw createOrderError(
                 400,
