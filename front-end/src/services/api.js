@@ -172,6 +172,8 @@ export const getProductsPage = async ({
   categorySlug,
   page = 1,
   limit = 12,
+  discountedOnly = false,
+  search = "",
 } = {}) => {
   const query = new URLSearchParams({
     page: String(page),
@@ -179,6 +181,8 @@ export const getProductsPage = async ({
   });
 
   if (categorySlug) query.set("categorySlug", categorySlug);
+  if (discountedOnly) query.set("discountedOnly", "true");
+  if (search.trim()) query.set("search", search.trim());
 
   const result = await request(`/products?${query.toString()}`);
   const data = getData(result);
