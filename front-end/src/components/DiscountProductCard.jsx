@@ -28,9 +28,9 @@ const DiscountProductCard = ({ product }) => {
           <div className="flex h-full items-center justify-center text-xs text-slate-400">تصویر موجود نیست</div>
         )}
         <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-white/80 to-transparent" />
-        <div className="absolute right-2 top-2 flex min-h-[48px] min-w-[52px] flex-col items-center justify-center gap-0.5 rounded-xl border border-white/70 bg-gradient-to-br from-rose-500 via-red-500 to-orange-500 px-2 py-1.5 text-white shadow-[0_5px_16px_rgba(239,68,68,.35)] sm:right-3 sm:top-3 sm:min-h-[58px] sm:min-w-[64px] sm:rounded-2xl sm:px-3">
-          <span className="text-xl font-black leading-none tracking-tight sm:text-2xl">{discountPercent.toLocaleString("fa-IR")}٪</span>
-          <span className="text-[9px] font-extrabold leading-tight sm:text-[10px]">تخفیف</span>
+        <div className="absolute right-2 top-2 flex min-h-[62px] min-w-[68px] flex-col items-center justify-center gap-1 rounded-2xl border-2 border-white/80 bg-gradient-to-br from-rose-500 via-red-500 to-orange-500 px-3 py-2 text-white shadow-[0_7px_20px_rgba(239,68,68,.42)] sm:right-3 sm:top-3 sm:min-h-[76px] sm:min-w-[82px] sm:rounded-[1.35rem] sm:px-4">
+          <span className="text-2xl font-black leading-none tracking-tight sm:text-3xl">{discountPercent.toLocaleString("fa-IR")}٪</span>
+          <span className="text-[10px] font-extrabold leading-tight sm:text-xs">تخفیف</span>
         </div>
         <span className="absolute bottom-2 left-2 rounded-md bg-emerald-600 px-2 py-1 text-[8px] font-bold text-white shadow sm:bottom-3 sm:left-3 sm:rounded-lg sm:px-2.5 sm:py-1.5 sm:text-[9px]">
           {formatPrice(saving)} تومان کمتر
