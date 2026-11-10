@@ -31,6 +31,7 @@ const AdminProductCreate = () => {
         color: data.color,
         price: data.price,
         description: data.description,
+        specifications: data.specifications,
         images: data.images,
       });
 
