@@ -11,6 +11,8 @@ const AdminDiscounts = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [sortBy, setSortBy] = useState("discountPercent");
+  const [sortOrder, setSortOrder] = useState("desc");
   const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -38,6 +40,8 @@ const AdminDiscounts = () => {
           limit: PAGE_SIZE,
           discountedOnly: true,
           search: debouncedSearch,
+          sortBy,
+          sortOrder,
         });
 
         if (active) {
@@ -56,7 +60,7 @@ const AdminDiscounts = () => {
     return () => {
       active = false;
     };
-  }, [page, debouncedSearch]);
+  }, [page, debouncedSearch, sortBy, sortOrder]);
 
   const handleDisableDiscount = async (product) => {
     const confirmed = window.confirm(
@@ -85,6 +89,8 @@ const AdminDiscounts = () => {
         limit: PAGE_SIZE,
         discountedOnly: true,
         search: debouncedSearch,
+        sortBy,
+        sortOrder,
       });
 
       setProducts(result.products);
@@ -131,6 +137,36 @@ const AdminDiscounts = () => {
         />
       </label>
 
+      <div className="flex flex-col gap-3 rounded-2xl border border-white/[0.08] bg-[#111722] p-4 sm:flex-row sm:items-end sm:justify-between">
+        <label className="block w-full sm:max-w-xs">
+          <span className="mb-2 block text-xs font-semibold text-zinc-400">مرتب‌سازی محصولات تخفیف‌دار</span>
+          <select
+            value={sortBy}
+            onChange={(event) => {
+              setSortBy(event.target.value);
+              setPage(1);
+            }}
+            className="w-full rounded-xl border border-white/10 bg-[#0b1018] px-3 py-3 text-sm text-zinc-100 outline-none focus:border-amber-300/50"
+          >
+            <option value="discountPercent">بیشترین درصد تخفیف</option>
+            <option value="discountedPrice">بیشترین قیمت پس از تخفیف</option>
+          </select>
+        </label>
+        <button
+          type="button"
+          onClick={() => {
+            setSortOrder((current) => current === "desc" ? "asc" : "desc");
+            setPage(1);
+          }}
+          aria-label={sortOrder === "desc" ? "تغییر به ترتیب صعودی" : "تغییر به ترتیب نزولی"}
+          title={sortOrder === "desc" ? "نزولی؛ کلیک برای صعودی" : "صعودی؛ کلیک برای نزولی"}
+          className="inline-flex h-[46px] items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-sm font-bold text-zinc-200 transition hover:border-amber-300/30 hover:text-amber-200"
+        >
+          <span className="text-lg leading-none">{sortOrder === "desc" ? "↓" : "↑"}</span>
+          <span>{sortOrder === "desc" ? "نزولی" : "صعودی"}</span>
+        </button>
+      </div>
+
       {error && (
         <div role="alert" className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
           {error}
@@ -154,7 +190,7 @@ const AdminDiscounts = () => {
                 <tr>
                   <th className="px-4 py-4 font-semibold">محصول</th>
                   <th className="px-4 py-4 font-semibold">قیمت اصلی</th>
-                  <th className="px-4 py-4 font-semibold">قیمت تخفیف</th>
+                  <th className="px-4 py-4 font-semibold">قیمت پس از تخفیف</th>
                   <th className="px-4 py-4 font-semibold">درصد</th>
                   <th className="px-4 py-4 font-semibold">عملیات</th>
                 </tr>
