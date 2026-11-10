@@ -8,6 +8,7 @@ const DiscountShowcase = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const scrollerRef = useRef(null);
+  const dragRef = useRef({ active: false, startX: 0, startScrollLeft: 0, moved: false });
 
   useEffect(() => {
     let active = true;
@@ -30,6 +31,41 @@ const DiscountShowcase = () => {
     loadDiscounts();
     return () => { active = false; };
   }, []);
+
+  const handlePointerDown = (event) => {
+    if (event.pointerType !== "mouse" || event.button !== 0) return;
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    dragRef.current = {
+      active: true,
+      startX: event.clientX,
+      startScrollLeft: scroller.scrollLeft,
+      moved: false,
+    };
+    scroller.setPointerCapture(event.pointerId);
+  };
+
+  const handlePointerMove = (event) => {
+    const drag = dragRef.current;
+    const scroller = scrollerRef.current;
+    if (!drag.active || !scroller) return;
+    const deltaX = event.clientX - drag.startX;
+    if (Math.abs(deltaX) > 5) drag.moved = true;
+    if (drag.moved) {
+      scroller.scrollLeft = drag.startScrollLeft + deltaX;
+    }
+  };
+
+  const handlePointerUp = () => {
+    dragRef.current.active = false;
+  };
+
+  const preventClickAfterDrag = (event) => {
+    if (!dragRef.current.moved) return;
+    event.preventDefault();
+    event.stopPropagation();
+    dragRef.current.moved = false;
+  };
 
   const scrollProducts = (direction) => {
     const scroller = scrollerRef.current;
@@ -104,7 +140,7 @@ const DiscountShowcase = () => {
             <p className="mt-2 text-xs text-zinc-500 sm:text-sm">به‌محض ثبت تخفیف معتبر، محصولات این بخش نمایش داده می‌شوند.</p>
           </div>
         ) : (
-          <div ref={scrollerRef} dir="rtl" className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain pb-3 [scrollbar-color:rgba(249,115,22,.55)_transparent] [scrollbar-width:thin] sm:gap-4">
+          <div ref={scrollerRef} dir="rtl" className="flex cursor-grab select-none snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain scroll-smooth pb-3 active:cursor-grabbing [scrollbar-color:rgba(249,115,22,.55)_transparent] [scrollbar-width:thin] sm:gap-4" onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp} onClickCapture={preventClickAfterDrag}>
             {products.map((product) => (
               <div key={product.productCode} className="w-[calc((100%-0.75rem)/2)] shrink-0 snap-start sm:w-[calc((100%-2rem)/3)] lg:w-[calc((100%-3rem)/4)]">
                 <DiscountProductCard product={product} />
