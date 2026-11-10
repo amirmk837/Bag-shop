@@ -42,9 +42,14 @@ const joinColors = (stocks) => stocks.map((item) => item.color).join("، ");
 // =========================================
 
 const getProducts = async (filters = {}) => {
-  const where = filters.categorySlug
-    ? { category: { slug: filters.categorySlug } }
-    : undefined;
+  const where = {
+    ...(filters.categorySlug ? { category: { slug: filters.categorySlug } } : {}),
+    ...(filters.search ? { OR: [
+      { title: { contains: filters.search, mode: "insensitive" } },
+      { productCode: { contains: filters.search, mode: "insensitive" } },
+      { brand: { contains: filters.search, mode: "insensitive" } },
+    ] } : {}),
+  };
 
   const query = {
     where,
@@ -126,6 +131,7 @@ const createProduct = async (data) => {
       color: hasColors ? joinColors(stocks) : null,
       price: data.price,
       description: data.description,
+      specifications: data.specifications ?? [],
       images: data.images,
 
       colorStocks: hasColors ? { create: stocks } : undefined,
