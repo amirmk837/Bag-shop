@@ -79,6 +79,7 @@ const AdminProductEdit = () => {
         color: data.color,
         price: data.price,
         description: data.description,
+        specifications: data.specifications,
         images: data.images,
       });
 
@@ -166,6 +167,7 @@ const AdminProductEdit = () => {
           color: product.color || "",
           price: product.price ?? "",
           description: product.description || "",
+          specifications: Array.isArray(product.specifications) ? product.specifications : [],
           images: Array.isArray(product.url) ? product.url : [],
         }}
         onSubmit={handleSubmit}
