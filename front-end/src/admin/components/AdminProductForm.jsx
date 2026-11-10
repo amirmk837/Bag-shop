@@ -239,7 +239,7 @@ const AdminProductForm = ({
       return;
     }
 
-    if (!Number.isFinite(price) || price < 0) {
+    if (!Number.isSafeInteger(price) || price < 1) {
       setFormError("قیمت محصول نامعتبر است.");
       return;
     }
