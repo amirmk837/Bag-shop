@@ -25,13 +25,18 @@ const productSchema = z.object({
 
   color: colorSchema,
 
-  price: z.number().int().nonnegative("قیمت نمی‌تواند منفی باشد"),
+  price: z.number().int().positive("قیمت باید بیشتر از صفر باشد"),
+  discountedPrice: z.number().int().positive().nullable().optional(),
 
   description: z.string().nullable().optional(),
 
   images: z.array(z.string()),
 
   colorStocks: z.array(colorStockSchema).max(30).optional(),
+}).superRefine((data, ctx) => {
+  if (data.discountedPrice != null && data.discountedPrice >= data.price) {
+    ctx.addIssue({ code: "custom", path: ["discountedPrice"], message: "قیمت تخفیف‌خورده باید کمتر از قیمت اصلی باشد." });
+  }
 });
 
 const updateProductSchema = productSchema.omit({
