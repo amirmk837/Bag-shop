@@ -180,7 +180,7 @@ const DiscountShowcase = () => {
                 <div
                   ref={scrollerRef}
                   dir="rtl"
-                  className="discount-carousel-scrollbar flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain scroll-smooth pb-1 motion-reduce:scroll-auto sm:gap-3"
+                  className="discount-carousel-scrollbar flex snap-x snap-mandatory gap-2 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth pb-1 motion-reduce:scroll-auto sm:gap-3"
                 >
                   {products.map((product) => (
                     <div
@@ -191,19 +191,6 @@ const DiscountShowcase = () => {
                       <DiscountProductCard product={product} />
                     </div>
                   ))}
-                  {products.length >= 8 && (
-                    <div data-discount-card className="w-[calc((100%-0.5rem)/2)] shrink-0 snap-start sm:w-[calc((100%-2.25rem)/4)]">
-                      <Link
-                        to="/discounts"
-                        className="flex h-full min-h-[270px] flex-col items-center justify-center rounded-2xl border border-white/80 bg-white/90 p-4 text-center text-slate-700 shadow-md transition hover:-translate-y-1 hover:bg-white"
-                      >
-                        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-orange-100 text-3xl font-black text-orange-500">٪</span>
-                        <strong className="mt-4 text-sm font-black">تخفیف‌های بیشتر</strong>
-                        <span className="mt-2 text-xs leading-5 text-slate-500">همه پیشنهادها را ببین</span>
-                        <span className="mt-4 rounded-lg bg-orange-500 px-3 py-2 text-xs font-black text-white">مشاهده همه</span>
-                      </Link>
-                    </div>
-                  )}
                 </div>
 
                 {products.length > 4 && (
@@ -212,26 +199,14 @@ const DiscountShowcase = () => {
                       type="button"
                       onClick={() => scrollProducts(1)}
                       aria-label="محصول بعدی"
-                      className="absolute right-2 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-2xl text-slate-700 shadow-lg transition hover:scale-105 hover:bg-orange-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-10 sm:w-10"
+                      className="absolute right-2 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/55 text-2xl text-white shadow-xl backdrop-blur-sm transition hover:scale-105 hover:bg-black/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:right-3 sm:h-11 sm:w-11"
                     >‹</button>
                     <button
                       type="button"
                       onClick={() => scrollProducts(-1)}
                       aria-label="محصول قبلی"
-                      className="absolute left-2 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-2xl text-slate-700 shadow-lg transition hover:scale-105 hover:bg-orange-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-10 sm:w-10"
+                      className="absolute left-2 top-1/2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/55 text-2xl text-white shadow-xl backdrop-blur-sm transition hover:scale-105 hover:bg-black/75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:left-3 sm:h-11 sm:w-11"
                     >›</button>
-                    <div dir="ltr" className="mt-2 flex justify-center gap-1.5">
-                      {products.map((product, index) => (
-                        <button
-                          key={product.productCode}
-                          type="button"
-                          onClick={() => goToProduct(index)}
-                          aria-label={`رفتن به محصول ${index + 1}`}
-                          aria-current={index === activeIndex ? "true" : undefined}
-                          className={`h-1.5 rounded-full transition-all duration-300 ${index === activeIndex ? "w-5 bg-white" : "w-1.5 bg-white/55 hover:bg-white"}`}
-                        />
-                      ))}
-                    </div>
                   </>
                 )}
               </div>
