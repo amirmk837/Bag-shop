@@ -83,7 +83,7 @@ const AdminProductEdit = () => {
         images: data.images,
       });
 
-      if ((updatedProduct.discountedPrice ?? null) !== data.discountedPrice) {
+      if ((updatedProduct.discountedPrice == null ? null : Number(updatedProduct.discountedPrice)) !== data.discountedPrice) {
         throw new Error("سرور قیمت پس از تخفیف را با مقدار ثبت‌شده برنگرداند؛ ذخیره را بررسی کنید.");
       }
 
