@@ -30,6 +30,14 @@ const ProductDetails = ({ product }) => {
 
   const hasMultipleColors = colors.length > 1;
   const hasColor = colors.length > 0;
+  const originalPrice = Number(product.price);
+  const discountedPrice = Number(product.discountedPrice);
+  const hasValidDiscount =
+    Number.isSafeInteger(originalPrice) &&
+    originalPrice > 0 &&
+    Number.isSafeInteger(discountedPrice) &&
+    discountedPrice > 0 &&
+    discountedPrice < originalPrice;
 
   return (
     <div className="flex flex-col justify-center p-6 sm:p-8 md:p-14">
@@ -50,7 +58,7 @@ const ProductDetails = ({ product }) => {
 
       {/* نام / کد محصول */}
       <h1 className="break-words text-3xl font-bold tracking-tight sm:text-4xl">
-        {product.id}
+        {product.title || product.productCode || product.id}
       </h1>
 
       {/* خط جداکننده */}
@@ -131,11 +139,20 @@ const ProductDetails = ({ product }) => {
 
       {/* قیمت */}
       <div className="mt-8 sm:mt-10">
-        <span className="text-sm text-zinc-500">{product.discountedPrice ? "قیمت پس از تخفیف" : "قیمت"}</span>
+        <span className="text-sm text-zinc-500">{hasValidDiscount ? "قیمت پس از تخفیف" : "قیمت"}</span>
 
-        {product.discountedPrice && <div className="mt-2 flex flex-wrap items-center gap-3"><span className="rounded-full bg-red-600 px-3 py-1 text-sm font-bold text-white">٪{Math.round((1 - product.discountedPrice / product.price) * 100)} تخفیف</span><span className="text-base text-zinc-500 line-through">{Number(product.price).toLocaleString("fa-IR")} تومان</span></div>}
+        {hasValidDiscount && (
+          <div className="mt-2 flex flex-wrap items-center gap-3">
+            <span className="rounded-full bg-red-600 px-3 py-1 text-sm font-bold text-white">
+              ٪{Math.round((1 - discountedPrice / originalPrice) * 100)} تخفیف
+            </span>
+            <span className="text-base text-zinc-500 line-through">
+              {originalPrice.toLocaleString("fa-IR")} تومان
+            </span>
+          </div>
+        )}
         <p className="mt-2 break-words text-3xl font-black sm:text-4xl">
-          {Number(product.discountedPrice ?? product.price ?? 0).toLocaleString("fa-IR")} تومان
+          {(hasValidDiscount ? discountedPrice : originalPrice).toLocaleString("fa-IR")} تومان
         </p>
       </div>
 
