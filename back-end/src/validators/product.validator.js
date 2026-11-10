@@ -14,7 +14,7 @@ const colorStockSchema = z.object({
 });
 
 // سپس اسکیمای محصول از آن استفاده می‌کند
-const productSchema = z.object({
+const productFields = z.object({
   productCode: z.string().min(1, "کد محصول الزامی است"),
 
   title: z.string().min(1, "عنوان محصول الزامی است"),
@@ -33,14 +33,18 @@ const productSchema = z.object({
   images: z.array(z.string()),
 
   colorStocks: z.array(colorStockSchema).max(30).optional(),
-}).superRefine((data, ctx) => {
+});
+
+const validateDiscount = (schema) => schema.superRefine((data, ctx) => {
   if (data.discountedPrice != null && data.discountedPrice >= data.price) {
     ctx.addIssue({ code: "custom", path: ["discountedPrice"], message: "قیمت تخفیف‌خورده باید کمتر از قیمت اصلی باشد." });
   }
 });
 
-const updateProductSchema = productSchema.omit({
+const productSchema = validateDiscount(productFields);
+
+const updateProductSchema = validateDiscount(productFields.omit({
   productCode: true,
-});
+}));
 
 export { productSchema, updateProductSchema, colorStockSchema };
