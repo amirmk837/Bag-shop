@@ -34,8 +34,12 @@ export const recordSiteVisitController = async (req, res) => {
 
 export const popularProductsController = async (req, res) => {
   try {
-    const products = await getMostViewedProducts(req.query.days);
-    return res.json({ items: products, rangeDays: Math.min(Math.max(Number(req.query.days) || 30, 1), 90) });
+    const requestedDays = Number.parseInt(req.query.days, 10);
+    const days = Number.isInteger(requestedDays) && requestedDays >= 1
+      ? Math.min(requestedDays, 90)
+      : 30;
+    const products = await getMostViewedProducts(days);
+    return res.json({ items: products, rangeDays: days });
   } catch (error) {
     console.error("Popular products report failed:", { errorType: error?.name || "Error" });
     return res.status(500).json({ message: "دریافت محصولات پربازدید ناموفق بود." });
