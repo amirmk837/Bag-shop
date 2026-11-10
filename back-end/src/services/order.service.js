@@ -7,6 +7,8 @@ import { reserveStock } from "./stock.service.js";
 
 const MAX_DATABASE_INT = 2147483647;
 
+const getEffectivePrice = (product) => product.discountedPrice ?? product.price;
+
 const createOrderError = (status, message) => {
   const error = new Error(message);
   error.status = status;
@@ -102,6 +104,7 @@ export const createCustomerOrderInTransaction = async (
               productCode: true,
               title: true,
               price: true,
+              discountedPrice: true,
             },
           },
         },
@@ -122,13 +125,14 @@ export const createCustomerOrderInTransaction = async (
       !product ||
       !Number.isSafeInteger(item.quantity) ||
       item.quantity < 1 ||
-      !Number.isSafeInteger(product.price) ||
-      product.price < 1
+      !Number.isSafeInteger(getEffectivePrice(product)) ||
+      getEffectivePrice(product) < 1
     ) {
       throw createOrderError(400, "اطلاعات یکی از اقلام سفارش معتبر نیست.");
     }
 
-    const subtotal = product.price * item.quantity;
+    const unitPrice = getEffectivePrice(product);
+    const subtotal = unitPrice * item.quantity;
     productsTotal += subtotal;
 
     if (!validateAmount(subtotal) || !validateAmount(productsTotal)) {
@@ -140,7 +144,7 @@ export const createCustomerOrderInTransaction = async (
       productCode: product.productCode,
       title: product.title,
       color: item.color || "",
-      unitPrice: product.price,
+      unitPrice,
       quantity: item.quantity,
       subtotal,
     };
@@ -409,6 +413,7 @@ export const createProductShippingTestOrder = async (
                       productCode: true,
                       title: true,
                       price: true,
+                      discountedPrice: true,
                     },
                   },
                 },
@@ -438,7 +443,8 @@ export const createProductShippingTestOrder = async (
               );
             }
 
-            const subtotal = product.price * item.quantity;
+            const unitPrice = getEffectivePrice(product);
+            const subtotal = unitPrice * item.quantity;
             productsTotal += subtotal;
 
             if (!validateAmount(subtotal) || !validateAmount(productsTotal)) {
@@ -450,7 +456,7 @@ export const createProductShippingTestOrder = async (
               productCode: product.productCode,
               title: product.title,
               color: item.color || "",
-              unitPrice: product.price,
+              unitPrice,
               quantity: item.quantity,
               subtotal,
             };
