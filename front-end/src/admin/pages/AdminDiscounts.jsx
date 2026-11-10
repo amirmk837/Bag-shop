@@ -80,21 +80,18 @@ const AdminDiscounts = () => {
         images: product.images || [],
       });
 
-      setProducts((current) =>
-        current.filter((item) => item.productCode !== product.productCode),
-      );
-      setPagination((current) =>
-        current
-          ? {
-              ...current,
-              total: Math.max(0, current.total - 1),
-              totalPages: Math.ceil(Math.max(0, current.total - 1) / PAGE_SIZE),
-            }
-          : current,
-      );
+      const result = await getProductsPage({
+        page,
+        limit: PAGE_SIZE,
+        discountedOnly: true,
+        search: debouncedSearch,
+      });
 
-      if (products.length === 1 && page > 1) {
-        setPage((current) => current - 1);
+      setProducts(result.products);
+      setPagination(result.pagination);
+
+      if (page > result.pagination.totalPages && page > 1) {
+        setPage(Math.max(1, result.pagination.totalPages));
       }
     } catch (updateError) {
       setError(updateError.message || "غیرفعال‌سازی تخفیف انجام نشد");
