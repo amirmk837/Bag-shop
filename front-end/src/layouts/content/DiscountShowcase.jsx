@@ -16,7 +16,7 @@ const DiscountShowcase = () => {
       try {
         const result = await getProductsPage({
           page: 1,
-          limit: 16,
+          limit: 24,
           discountedOnly: true,
           sortBy: "discountPercent",
           sortOrder: "desc",
