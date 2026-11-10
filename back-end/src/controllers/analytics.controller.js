@@ -1,5 +1,13 @@
 import { getAuthUserById, verifyToken } from "../services/auth.service.js";
-import { getAnalyticsReport, getLoggedInUsers, recordSiteVisit } from "../services/analytics.service.js";
+import { getAnalyticsReport, getLoggedInUsers, getPopularProducts, recordSiteVisit } from "../services/analytics.service.js";
+
+export const popularProductsController = async (req, res) => {
+  try { return res.json(await getPopularProducts(req.query.days)); }
+  catch (error) {
+    console.error("Popular products report failed:", { errorType: error?.name || "Error" });
+    return res.status(500).json({ message: "دریافت محصولات محبوب ناموفق بود." });
+  }
+};
 
 export const analyticsReportController = async (req, res) => {
   try { return res.json(await getAnalyticsReport(req.query.days)); }
