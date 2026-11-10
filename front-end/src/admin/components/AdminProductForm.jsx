@@ -10,6 +10,8 @@ const getInitialForm = (initialValues) => ({
   count: initialValues?.count ?? "",
   color: initialValues?.color || "",
   price: initialValues?.price ?? "",
+  discountedPrice: initialValues?.discountedPrice ?? "",
+  discountPercent: initialValues?.discountedPrice && initialValues?.price ? Math.round((1 - initialValues.discountedPrice / initialValues.price) * 100) : "",
   description: initialValues?.description || "",
   images: Array.isArray(initialValues?.images) ? initialValues.images : [],
 });
@@ -126,10 +128,24 @@ const AdminProductForm = ({
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setForm((prev) => {
+      if (name === "price") {
+        const basePrice = Number(value);
+        const discountedPrice = Number(prev.discountedPrice);
+        return { ...prev, price: value, discountPercent: basePrice > 0 && discountedPrice > 0 && discountedPrice < basePrice ? String(Math.round((1 - discountedPrice / basePrice) * 100)) : "" };
+      }
+      if (name === "discountPercent") {
+        const percent = value === "" ? "" : Number(value);
+        const basePrice = Number(prev.price);
+        return { ...prev, discountPercent: value, discountedPrice: percent === "" || !Number.isInteger(percent) || percent < 1 || percent > 99 || basePrice <= 0 ? "" : String(Math.round(basePrice * (100 - percent) / 100)) };
+      }
+      if (name === "discountedPrice") {
+        const discounted = value === "" ? "" : Number(value);
+        const basePrice = Number(prev.price);
+        return { ...prev, discountedPrice: value, discountPercent: discounted === "" || !Number.isInteger(discounted) || basePrice <= 0 || discounted <= 0 || discounted >= basePrice ? "" : String(Math.round((1 - discounted / basePrice) * 100)) };
+      }
+      return { ...prev, [name]: value };
+    });
 
     setFormError("");
   };
@@ -201,6 +217,7 @@ const AdminProductForm = ({
     const categoryId = Number(form.categoryId);
     const count = Number(form.count);
     const price = Number(form.price);
+    const discountedPrice = form.discountedPrice === "" ? null : Number(form.discountedPrice);
 
     if (!productCode) {
       setFormError("کد محصول الزامی است.");
@@ -227,6 +244,11 @@ const AdminProductForm = ({
       return;
     }
 
+    if (discountedPrice !== null && (!Number.isSafeInteger(discountedPrice) || discountedPrice <= 0 || discountedPrice >= price)) {
+      setFormError("قیمت تخفیف‌خورده باید عدد صحیح و کمتر از قیمت اصلی باشد.");
+      return;
+    }
+
     const data = {
       productCode,
       title,
@@ -234,6 +256,7 @@ const AdminProductForm = ({
       count,
       color: form.color.trim() || null,
       price,
+      discountedPrice,
       description: form.description.trim() || null,
       images: form.images.filter(Boolean),
     };
@@ -481,28 +504,19 @@ const AdminProductForm = ({
           </div>
         </div>
 
-        {/* قیمت */}
-
+        {/* قیمت اصلی و تخفیف */}
         <div>
-          <label className="mb-2 block text-sm text-zinc-300">قیمت</label>
-
-          <input
-            name="price"
-            type="number"
-            min="0"
-            value={form.price}
-            onChange={handleChange}
-            required
-            className="
-              w-full rounded-xl
-              border border-zinc-700
-              bg-zinc-950
-              px-4 py-3
-              text-white
-              outline-none
-              focus:border-zinc-400
-            "
-          />
+          <label className="mb-2 block text-sm text-zinc-300">قیمت اصلی (تومان)</label>
+          <input name="price" type="number" min="1" step="1" value={form.price} onChange={handleChange} required className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none focus:border-zinc-400" />
+        </div>
+        <div>
+          <label className="mb-2 block text-sm text-zinc-300">درصد تخفیف</label>
+          <input name="discountPercent" type="number" min="1" max="99" step="1" value={form.discountPercent} onChange={handleChange} placeholder="بدون تخفیف خالی بماند" className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none focus:border-zinc-400" />
+        </div>
+        <div>
+          <label className="mb-2 block text-sm text-zinc-300">قیمت نهایی تخفیف (تومان)</label>
+          <input name="discountedPrice" type="number" min="1" step="1" value={form.discountedPrice} onChange={handleChange} placeholder="یا قیمت نهایی را وارد کنید" className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none focus:border-zinc-400" />
+          <p className="mt-2 text-xs text-zinc-500">با وارد کردن درصد یا قیمت نهایی، مقدار دیگر محاسبه می‌شود. برای حذف تخفیف هر دو فیلد را خالی کنید.</p>
         </div>
 
         {/* توضیحات */}
