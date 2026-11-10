@@ -29,6 +29,11 @@ const productSchema = z.object({
 
   description: z.string().nullable().optional(),
 
+  specifications: z.array(z.object({
+    label: z.string().trim().min(1).max(80),
+    value: z.string().trim().min(1).max(500),
+  })).max(50).optional(),
+
   images: z.array(z.string()),
 
   colorStocks: z.array(colorStockSchema).max(30).optional(),
