@@ -11,11 +11,16 @@ const API_ORIGIN = API_URL.startsWith("http") ? new URL(API_URL).origin : "";
 const GET_CACHE_TTL = 15_000;
 const responseCache = new Map();
 const inFlightGetRequests = new Map();
+let productCacheVersion = 0;
 
 const invalidateReadCache = (path) => {
   if (path.startsWith("/products")) {
+    productCacheVersion += 1;
     for (const key of responseCache.keys()) {
       if (key.startsWith("/products")) responseCache.delete(key);
+    }
+    for (const key of inFlightGetRequests.keys()) {
+      if (key.startsWith("/products")) inFlightGetRequests.delete(key);
     }
   }
 
@@ -87,18 +92,25 @@ const request = async (path, options = {}) => {
 
   if (!cacheable) return execute();
 
+  const requestVersion = path.startsWith("/products") ? productCacheVersion : null;
   const pending = execute();
   inFlightGetRequests.set(path, pending);
 
   try {
     const result = await pending;
-    responseCache.set(path, {
-      value: result,
-      expiresAt: Date.now() + GET_CACHE_TTL,
-    });
+    // A GET started before a product mutation must never repopulate the cache
+    // with stale product/discount data after that mutation completes.
+    if (requestVersion === null || requestVersion === productCacheVersion) {
+      responseCache.set(path, {
+        value: result,
+        expiresAt: Date.now() + GET_CACHE_TTL,
+      });
+    }
     return result;
   } finally {
-    inFlightGetRequests.delete(path);
+    if (inFlightGetRequests.get(path) === pending) {
+      inFlightGetRequests.delete(path);
+    }
   }
 };
 
