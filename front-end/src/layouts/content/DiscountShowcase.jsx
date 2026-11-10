@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { getProductsPage } from "../../services/api";
 import DiscountProductCard from "../../components/DiscountProductCard";
@@ -56,16 +56,16 @@ const DiscountShowcase = () => {
     if (products.length < 2 || isHovered || isFocused || !documentVisible || reducedMotion) return;
     const timer = window.setTimeout(() => scrollProducts(1), 5000);
     return () => window.clearTimeout(timer);
-  }, [activeIndex, products.length, isHovered, isFocused, documentVisible, reducedMotion]);
+  }, [activeIndex, products.length, isHovered, isFocused, documentVisible, reducedMotion, scrollProducts]);
 
-  const scrollProducts = (direction) => {
+  const scrollProducts = useCallback((direction) => {
     const scroller = scrollerRef.current;
     if (!scroller || products.length < 2) return;
     const nextIndex = (activeIndex + direction + products.length) % products.length;
     const nextCard = scroller.querySelectorAll("[data-discount-card]")[nextIndex];
     nextCard?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "nearest", inline: "start" });
     setActiveIndex(nextIndex);
-  };
+  }, [activeIndex, products.length, reducedMotion]);
 
   return (
     <section dir="rtl" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} onFocusCapture={() => setIsFocused(true)} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setIsFocused(false); }} className="relative isolate mx-auto my-14 w-full max-w-7xl overflow-hidden px-3 sm:my-20 sm:px-5">
