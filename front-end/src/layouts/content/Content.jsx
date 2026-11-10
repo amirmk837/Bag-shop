@@ -3,6 +3,7 @@ import Banner from "./Banner";
 import DeferredMount from "../../components/DeferredMount";
 
 const Brands = lazy(() => import("./Brands"));
+const DiscountShowcase = lazy(() => import("./DiscountShowcase"));
 
 const Content = () => {
   return (
@@ -19,6 +20,10 @@ const Content = () => {
       "
     >
       <Banner />
+
+      <Suspense fallback={<div aria-hidden="true" className="min-h-[260px]" />}>
+        <DiscountShowcase />
+      </Suspense>
 
       <DeferredMount rootMargin="500px 0px" minHeight={220}>
         <Suspense fallback={<div aria-hidden="true" className="min-h-[220px]" />}>
