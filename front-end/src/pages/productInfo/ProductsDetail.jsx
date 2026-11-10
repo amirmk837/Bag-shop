@@ -129,6 +129,21 @@ const ProductDetails = ({ product }) => {
         </div>
       </div>
 
+      {/* مشخصات فنی */}
+      {Array.isArray(product.specifications) && product.specifications.length > 0 && (
+        <section className="mt-8 rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4 sm:p-6">
+          <h2 className="mb-4 text-base font-bold text-white">مشخصات محصول</h2>
+          <dl className="divide-y divide-zinc-800">
+            {product.specifications.map((item, index) => (
+              <div key={`${item.label}-${index}`} className="grid grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] gap-4 py-3 first:pt-0 last:pb-0">
+                <dt className="text-sm text-zinc-500">{item.label}</dt>
+                <dd className="break-words text-sm font-medium text-zinc-200">{item.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
+
       {/* قیمت */}
       <div className="mt-8 sm:mt-10">
         <span className="text-sm text-zinc-500">قیمت</span>
