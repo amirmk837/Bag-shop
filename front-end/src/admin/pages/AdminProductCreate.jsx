@@ -23,7 +23,7 @@ const AdminProductCreate = () => {
       setError("");
       setSuccess("");
 
-      await createProduct({
+      const createdProduct = await createProduct({
         productCode: data.productCode,
         title: data.title,
         categoryId: data.categoryId,
@@ -34,6 +34,10 @@ const AdminProductCreate = () => {
         description: data.description,
         images: data.images,
       });
+
+      if ((createdProduct.discountedPrice ?? null) !== data.discountedPrice) {
+        throw new Error("سرور قیمت پس از تخفیف را با مقدار ثبت‌شده برنگرداند؛ ذخیره را بررسی کنید.");
+      }
 
       setSuccess("محصول با موفقیت ایجاد شد.");
 
