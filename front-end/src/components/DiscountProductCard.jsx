@@ -19,37 +19,37 @@ const DiscountProductCard = ({ product }) => {
   return (
     <Link
       to={`/product/${encodeURIComponent(product.productCode)}`}
-      className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-orange-300/20 bg-[#111824] shadow-[0_12px_35px_rgba(0,0,0,.3)] transition duration-300 hover:-translate-y-1.5 hover:border-orange-300/55 hover:shadow-[0_22px_50px_rgba(249,115,22,.16)] sm:rounded-[1.4rem]"
+      className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-white/80 bg-white text-slate-800 shadow-[0_5px_16px_rgba(120,45,20,.16)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(120,45,20,.22)] sm:rounded-2xl"
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-[radial-gradient(ellipse_at_50%_45%,rgba(255,255,255,.09),transparent_65%),linear-gradient(145deg,#202a39,#0b1018)]">
+      <div className="relative aspect-[4/3] overflow-hidden bg-white">
         {image ? (
-          <img src={image} alt={product.title || "محصول تخفیف‌دار"} loading="lazy" className="h-full w-full object-contain p-3 transition duration-500 group-hover:scale-110 sm:p-5" />
+          <img src={image} alt={product.title || "محصول تخفیف‌دار"} loading="lazy" className="h-full w-full object-contain p-3 transition duration-500 group-hover:scale-105 sm:p-4" />
         ) : (
-          <div className="flex h-full items-center justify-center text-xs text-zinc-600">تصویر موجود نیست</div>
+          <div className="flex h-full items-center justify-center text-xs text-slate-400">تصویر موجود نیست</div>
         )}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#111824]/90 to-transparent" />
-        <div className="absolute right-3 top-3 flex min-h-[76px] min-w-[88px] flex-col items-center justify-center gap-1 rounded-2xl border border-white/25 bg-gradient-to-br from-rose-500 via-red-500 to-orange-500 px-4 py-3 text-white shadow-[0_10px_30px_rgba(239,68,68,.5)] ring-1 ring-white/10 sm:min-h-[88px] sm:min-w-[104px] sm:rounded-[1.35rem]">
-          <span className="text-3xl font-black leading-none tracking-tight sm:text-4xl">{discountPercent.toLocaleString("fa-IR")}٪</span>
-          <span className="text-[11px] font-extrabold leading-tight sm:text-xs">تخفیف</span>
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-white/80 to-transparent" />
+        <div className="absolute right-2 top-2 flex min-h-[48px] min-w-[52px] flex-col items-center justify-center gap-0.5 rounded-xl border border-white/70 bg-gradient-to-br from-rose-500 via-red-500 to-orange-500 px-2 py-1.5 text-white shadow-[0_5px_16px_rgba(239,68,68,.35)] sm:right-3 sm:top-3 sm:min-h-[58px] sm:min-w-[64px] sm:rounded-2xl sm:px-3">
+          <span className="text-xl font-black leading-none tracking-tight sm:text-2xl">{discountPercent.toLocaleString("fa-IR")}٪</span>
+          <span className="text-[9px] font-extrabold leading-tight sm:text-[10px]">تخفیف</span>
         </div>
-        <span className="absolute bottom-3 left-3 rounded-lg border border-emerald-300/20 bg-[#071b17]/90 px-2.5 py-1.5 text-[9px] font-bold text-emerald-300 backdrop-blur-sm sm:text-[10px]">
+        <span className="absolute bottom-2 left-2 rounded-md bg-emerald-600 px-2 py-1 text-[8px] font-bold text-white shadow sm:bottom-3 sm:left-3 sm:rounded-lg sm:px-2.5 sm:py-1.5 sm:text-[9px]">
           {formatPrice(saving)} تومان کمتر
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col p-3 sm:p-4">
-        <p className="mb-1 truncate text-[10px] font-bold tracking-wide text-orange-200/80 sm:text-[11px]">{product.brand || "فروشگاه کاظمی"}</p>
-        <h3 className="line-clamp-2 min-h-10 text-xs font-bold leading-5 text-zinc-100 transition group-hover:text-orange-100 sm:text-sm sm:leading-6">{product.title || product.productCode}</h3>
+      <div className="flex flex-1 flex-col p-2.5 sm:p-3">
+        <p className="mb-1 truncate text-[9px] font-bold tracking-wide text-orange-600 sm:text-[10px]">{product.brand || "فروشگاه کاظمی"}</p>
+        <h3 className="line-clamp-2 min-h-10 text-[11px] font-bold leading-5 text-slate-700 transition group-hover:text-orange-700 sm:text-xs sm:leading-5">{product.title || product.productCode}</h3>
 
-        <div className="mt-auto border-t border-white/[0.08] pt-3">
-          <p className="mb-1 text-[10px] text-zinc-500 line-through sm:text-xs">{formatPrice(originalPrice)} تومان</p>
+        <div className="mt-auto border-t border-slate-100 pt-2.5">
+          <p className="mb-1 text-[9px] text-slate-400 line-through sm:text-[10px]">{formatPrice(originalPrice)} تومان</p>
           <div className="flex items-center justify-between gap-1">
-            <span className="text-base font-black tracking-tight text-white sm:text-lg">{formatPrice(finalPrice)}</span>
-            <span className="rounded-lg bg-orange-400/10 px-2 py-1 text-[9px] font-extrabold text-orange-200 sm:text-[10px]">قیمت بعد از تخفیف</span>
+            <span className="text-xs font-black tracking-tight text-slate-800 sm:text-sm">{formatPrice(finalPrice)}</span>
+            <span className="rounded-md bg-orange-50 px-1.5 py-1 text-[8px] font-extrabold text-orange-700 sm:px-2 sm:text-[9px]">قیمت بعد از تخفیف</span>
           </div>
         </div>
       </div>
-      <span aria-hidden="true" className="pointer-events-none absolute inset-x-5 bottom-0 h-0.5 bg-gradient-to-l from-transparent via-orange-300 to-transparent opacity-0 transition group-hover:opacity-100" />
+      <span aria-hidden="true" className="pointer-events-none absolute inset-x-5 bottom-0 h-0.5 bg-gradient-to-l from-transparent via-orange-400 to-transparent opacity-0 transition group-hover:opacity-100" />
     </Link>
   );
 };
