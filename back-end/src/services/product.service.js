@@ -46,7 +46,12 @@ const getProducts = async (filters = {}) => {
   const conditions = [];
 
   if (filters.categorySlug) {
-    conditions.push({ category: { slug: filters.categorySlug } });
+    const selectedCategory = await prisma.category.findUnique({
+      where: { slug: filters.categorySlug },
+      select: { id: true, children: { select: { id: true } } },
+    });
+    const ids = selectedCategory ? [selectedCategory.id, ...selectedCategory.children.map((item) => item.id)] : [-1];
+    conditions.push({ categoryId: { in: ids } });
   }
 
   if (filters.discountedOnly) {
@@ -90,7 +95,9 @@ const getProducts = async (filters = {}) => {
     if (filters.categorySlug) {
       sqlConditions.push(Prisma.sql`EXISTS (
         SELECT 1 FROM "Category" c
-        WHERE c."id" = p."categoryId" AND c."slug" = ${filters.categorySlug}
+        WHERE c."id" = p."categoryId"
+          AND (c."slug" = ${filters.categorySlug}
+            OR c."parentId" = (SELECT parent."id" FROM "Category" parent WHERE parent."slug" = ${filters.categorySlug}))
       )`);
     }
 
@@ -165,15 +172,9 @@ const getProductByCode = async (productCode) => {
 // =========================================
 
 const createProduct = async (data) => {
-  const category = await prisma.category.findUnique({
-    where: {
-      id: Number(data.categoryId),
-    },
-  });
-
-  if (!category) {
-    throw createProductError("CATEGORY_NOT_FOUND", "دسته‌بندی پیدا نشد");
-  }
+  const category = await prisma.category.findUnique({where:{id:Number(data.categoryId)},select:{id:true,name:true,_count:{select:{children:true}}}});
+  if (!category) throw createProductError("CATEGORY_NOT_FOUND","دسته‌بندی پیدا نشد");
+  if (category._count.children>0) throw createProductError("CATEGORY_IS_PARENT","محصول باید به یک زیر‌دسته‌بندی متصل شود.");
 
   const stocks = normalizeColorStocks(data.colorStocks);
   const hasColors = stocks.length > 0;
@@ -209,15 +210,9 @@ const createProduct = async (data) => {
 // =========================================
 
 const updateProduct = async (productCode, data) => {
-  const category = await prisma.category.findUnique({
-    where: {
-      id: data.categoryId,
-    },
-  });
-
-  if (!category) {
-    throw createProductError("CATEGORY_NOT_FOUND", "دسته‌بندی پیدا نشد");
-  }
+  const category = await prisma.category.findUnique({where:{id:data.categoryId},select:{id:true,name:true,_count:{select:{children:true}}}});
+  if (!category) throw createProductError("CATEGORY_NOT_FOUND","دسته‌بندی پیدا نشد");
+  if (category._count.children>0) throw createProductError("CATEGORY_IS_PARENT","محصول باید به یک زیر‌دسته‌بندی متصل شود.");
 
   const { colorStocks, color, count, ...fields } = data;
 

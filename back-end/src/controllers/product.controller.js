@@ -190,11 +190,8 @@ const createProductController = async (req, res) => {
   } catch (error) {
     console.error("Create product error:", error);
 
-    if (error.code === "CATEGORY_NOT_FOUND") {
-      return res.status(400).json({
-        success: false,
-        message: "دسته‌بندی پیدا نشد",
-      });
+    if (error.code === "CATEGORY_NOT_FOUND" || error.code === "CATEGORY_IS_PARENT") {
+      return res.status(400).json({ success: false, message: error.message });
     }
 
     if (error.code === "DUPLICATE_COLOR") {
@@ -245,11 +242,8 @@ const updateProductController = async (req, res) => {
       });
     }
 
-    if (error.code === "CATEGORY_NOT_FOUND") {
-      return res.status(400).json({
-        success: false,
-        message: "دسته‌بندی پیدا نشد",
-      });
+    if (error.code === "CATEGORY_NOT_FOUND" || error.code === "CATEGORY_IS_PARENT") {
+      return res.status(400).json({ success: false, message: error.message });
     }
 
     if (error.code === "DUPLICATE_COLOR") {
