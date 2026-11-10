@@ -72,7 +72,7 @@ const AdminProductEdit = () => {
       setError("");
       setSuccess("");
 
-      await updateProduct(productCode, {
+      const updatedProduct = await updateProduct(productCode, {
         title: data.title,
         categoryId: data.categoryId,
         count: data.count,
@@ -82,6 +82,10 @@ const AdminProductEdit = () => {
         description: data.description,
         images: data.images,
       });
+
+      if ((updatedProduct.discountedPrice ?? null) !== data.discountedPrice) {
+        throw new Error("سرور قیمت پس از تخفیف را با مقدار ثبت‌شده برنگرداند؛ ذخیره را بررسی کنید.");
+      }
 
       setSuccess("محصول با موفقیت ویرایش شد.");
 
