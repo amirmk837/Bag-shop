@@ -146,6 +146,21 @@ export default function AdminAnalytics() {
             ))}
           </Slider>
 
+          <Slider title="محبوب‌ترین محصولات" description="رتبه‌بندی بر اساس تعداد بازدید صفحه جزئیات محصول در بازه انتخابی" empty="در این بازه هنوز بازدیدی از صفحه جزئیات محصولات ثبت نشده است." isEmpty={!report.mostViewedProducts?.length}>
+            {(report.mostViewedProducts || []).map((item, index) => (
+              <SlideCard key={item.productCode}>
+                <div className="flex items-start justify-between gap-2">
+                  <span className="rounded-lg bg-violet-500/10 px-2 py-1 text-xs font-bold text-violet-300">رتبه {number(index + 1)}</span>
+                  <span className="text-xs text-zinc-500" dir="ltr">{item.productCode}</span>
+                </div>
+                <p className="mt-4 line-clamp-2 min-h-10 font-bold text-white">{item.title}</p>
+                <p className="mt-3 text-lg font-black text-violet-300">{number(item.viewCount)} بازدید</p>
+                <p className="mt-1 text-xs text-zinc-500">{number(item.uniqueVisitors)} بازدیدکننده یکتا</p>
+              </SlideCard>
+            ))}
+          </Slider>
+
+
           <Slider title="وضعیت سفارش‌ها" description="توزیع سفارش‌های ثبت‌شده در بازه انتخابی" empty="در این بازه سفارشی ثبت نشده است." isEmpty={!report.orderStatuses?.length}>
             {(report.orderStatuses || []).map((item) => (
               <SlideCard key={item.status} className={STATUS_TONES[item.status] || ""}>
