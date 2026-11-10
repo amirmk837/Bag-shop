@@ -35,7 +35,7 @@ const AdminProductCreate = () => {
         images: data.images,
       });
 
-      if ((createdProduct.discountedPrice ?? null) !== data.discountedPrice) {
+      if ((createdProduct.discountedPrice == null ? null : Number(createdProduct.discountedPrice)) !== data.discountedPrice) {
         throw new Error("سرور قیمت پس از تخفیف را با مقدار ثبت‌شده برنگرداند؛ ذخیره را بررسی کنید.");
       }
 
