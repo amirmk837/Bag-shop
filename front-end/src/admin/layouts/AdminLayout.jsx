@@ -7,6 +7,7 @@ import { getAdminFeedbackSummary } from "../../services/feedbackApi";
 const navItems = [
   { label: "داشبورد", to: "/admin" },
   { label: "محصولات", to: "/admin/products" },
+  { label: "تخفیف‌ها", to: "/admin/discounts" },
   { label: "بنرها", to: "/admin/banners" },
   { label: "سفارش‌ها", to: "/admin/orders" },
   { label: "نظرات و پرسش‌ها", to: "/admin/product-comments", badgeKey: "pendingComments" },
