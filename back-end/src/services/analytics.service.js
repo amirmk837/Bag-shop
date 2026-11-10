@@ -150,6 +150,7 @@ export const getAnalyticsReport = async (requestedDays) => {
     totalCustomers,
     statusGroups,
     bestSellingGroups,
+    mostViewedProducts,
     siteVisits,
   ] = await Promise.all([
     prisma.order.count({ where: periodOrders }),
@@ -182,6 +183,7 @@ export const getAnalyticsReport = async (requestedDays) => {
       orderBy: [{ _sum: { quantity: "desc" } }, { productCode: "asc" }],
       take: 8,
     }),
+    getMostViewedProducts(days),
     getSiteVisitReport(from),
   ]);
 
@@ -208,6 +210,7 @@ export const getAnalyticsReport = async (requestedDays) => {
       status: group.status,
       count: group._count._all,
     })),
+    mostViewedProducts,
     bestSellingProducts: bestSellingGroups.map((group) => ({
       productCode: group.productCode,
       title: group.title,
