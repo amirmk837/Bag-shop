@@ -722,6 +722,12 @@ const AdminOrders = () => {
                     <p className="mt-2 text-sm text-zinc-500">
                       تاریخ ثبت: {formatDate(selectedOrder.createdAt)}
                     </p>
+                    {selectedOrder.archivedAt && (
+                      <p className="mt-2 rounded-lg border border-amber-900/50 bg-amber-950/20 p-3 text-xs leading-6 text-amber-200">
+                        این سفارش در تاریخ {formatDate(selectedOrder.archivedAt)} آرشیو شده است.
+                        {selectedOrder.archiveReason ? ` علت: ${selectedOrder.archiveReason}` : ""}
+                      </p>
+                    )}
                   </div>
                   <button
                     type="button"
@@ -764,9 +770,9 @@ const AdminOrders = () => {
                           setStatusSuccess("");
                         }}
                         disabled={
+                          Boolean(selectedOrder.archivedAt) ||
                           updatingStatus ||
-                          !(ALLOWED_NEXT_STATUSES[selectedOrder.status] || [])
-                            .length
+                          !(ALLOWED_NEXT_STATUSES[selectedOrder.status] || []).length
                         }
                         className="min-w-0 flex-1 rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-white outline-none focus:border-zinc-400 disabled:opacity-60"
                       >
@@ -786,10 +792,10 @@ const AdminOrders = () => {
                         type="button"
                         onClick={handleStatusUpdate}
                         disabled={
+                          Boolean(selectedOrder.archivedAt) ||
                           updatingStatus ||
                           statusDraft === selectedOrder.status ||
-                          !(ALLOWED_NEXT_STATUSES[selectedOrder.status] || [])
-                            .length
+                          !(ALLOWED_NEXT_STATUSES[selectedOrder.status] || []).length
                         }
                         className="rounded-xl bg-white px-5 py-3 font-bold text-zinc-900 transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-40"
                       >
@@ -876,7 +882,7 @@ const AdminOrders = () => {
                     />
                   </div>
 
-                  {selectedOrder.status === "PROCESSING" ? (
+                  {selectedOrder.status === "PROCESSING" && !selectedOrder.archivedAt ? (
                     <>
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div>

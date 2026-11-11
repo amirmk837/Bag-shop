@@ -2,7 +2,7 @@ name: Project checks
 
 on:
   push:
-    branches: [main]
+    branches: [main, feature/store-redesign]
   pull_request:
     branches: [main]
 
