@@ -45,7 +45,7 @@ const ProductDetails = ({ product }) => {
   return (
     <div
       className="
-        relative flex min-w-0 flex-col justify-center
+        theme-content-panel relative flex min-w-0 flex-col justify-center
         overflow-hidden
         bg-gradient-to-br from-[#14243b] via-[#101c31] to-[#0c1526]
         p-5 text-right
