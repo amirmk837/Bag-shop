@@ -19,6 +19,24 @@ const initial = {
   isPublished: false,
 };
 
+const editableFields = [
+  "eyebrow", "title", "intro", "storyTitle", "story",
+  "mission", "vision", "values", "contactText", "isPublished",
+];
+
+function toEditableAboutPage(data = {}) {
+  const editable = Object.fromEntries(
+    editableFields.map((field) => [field, data[field] ?? initial[field]])
+  );
+
+  return {
+    ...editable,
+    values: Array.isArray(data.values)
+      ? data.values.map(({ title, description }) => ({ title, description }))
+      : initial.values,
+  };
+}
+
 const inputClass = "w-full min-w-0 rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/10";
 const labelClass = "block space-y-2 text-sm text-zinc-300";
 
@@ -38,7 +56,7 @@ export default function AdminAboutPage() {
     setLoading(true); setError("");
     try {
       const data = await getAdminAboutPage();
-      if (!signal?.aborted) setForm({ ...initial, ...data, values: Array.isArray(data.values) ? data.values : initial.values });
+      if (!signal?.aborted) setForm(toEditableAboutPage(data));
     } catch (err) { if (!signal?.aborted) setError(err.message); }
     finally { if (!signal?.aborted) setLoading(false); }
   };
@@ -65,8 +83,8 @@ export default function AdminAboutPage() {
     if (saving) return;
     setSaving(true); setError(""); setMessage("");
     try {
-      const saved = await saveAboutPage(form);
-      setForm({ ...initial, ...saved });
+      const saved = await saveAboutPage(toEditableAboutPage(form));
+      setForm(toEditableAboutPage(saved));
       setMessage("محتوای صفحه درباره ما با موفقیت ذخیره شد.");
     } catch (err) { setError(err.message); }
     finally { setSaving(false); }
