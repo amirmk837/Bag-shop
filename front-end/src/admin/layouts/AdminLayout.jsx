@@ -73,7 +73,7 @@ const AdminLayout = ({ children }) => {
 
   return (
     <div
-      className="min-h-screen overflow-x-clip bg-[#0d1119] text-white"
+      className="admin-layout-shell min-h-screen overflow-x-clip bg-[#0d1119] text-white"
       dir="rtl"
     >
       <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-[#111722]/95 shadow-lg shadow-black/10 backdrop-blur">
