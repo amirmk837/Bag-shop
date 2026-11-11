@@ -13,7 +13,7 @@ const ImageThumbnails = ({
   return (
     <div
       className={`
-        absolute left-1/2 ${position} z-30
+        theme-dark-overlay absolute left-1/2 ${position} z-30
         flex max-w-[calc(100%-16px)]
         -translate-x-1/2
         items-center justify-center gap-1
