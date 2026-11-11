@@ -11,6 +11,8 @@ const DEFAULTS = {
   headerText: "",
   footerAbout: "",
   footerCaption: "© فروشگاه کاظمی — تمامی حقوق محفوظ است.",
+  showPopularShowcase: true,
+  showDiscountShowcase: true,
 };
 
 export const getSiteSettings = async () =>
