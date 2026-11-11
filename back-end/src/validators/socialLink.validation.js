@@ -52,7 +52,7 @@ export const normalizeActive = (value) => {
 
 export const normalizeSocialPlatform = (value) => {
   if (typeof value !== "string") throw createError(400, "شناسه پلتفرم نامعتبر است.");
-  const platform = value.trim().toUpperCase().replace(/[\\s-]+/g, "_");
+  const platform = value.trim().toUpperCase().replace(/[\s-]+/g, "_");
   if (!/^[A-Z][A-Z0-9_]{1,39}$/.test(platform)) {
     throw createError(400, "شناسه پلتفرم باید ۲ تا ۴۰ کاراکتر انگلیسی، عدد یا زیرخط باشد.");
   }
@@ -62,7 +62,7 @@ export const normalizeSocialPlatform = (value) => {
 export const normalizeSocialLabel = (value) => {
   if (typeof value !== "string") throw createError(400, "نام پلتفرم الزامی است.");
   const label = value.trim();
-  if (!label || label.length > 60 || /[<>\\u0000-\\u001F]/.test(label)) {
+  if (!label || label.length > 60 || /[<>\u0000-\u001F]/.test(label)) {
     throw createError(400, "نام پلتفرم باید بین ۱ تا ۶۰ کاراکتر متن ساده باشد.");
   }
   return label;
