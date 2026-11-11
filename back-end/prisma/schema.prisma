@@ -77,6 +77,11 @@ model User {
   permissions UserPermission[]
   auditLogs   AdminAuditLog[]
 
+  archivedOrders Order[] @relation("OrderArchivedBy")
+  returnedOrderItems OrderItem[] @relation("OrderItemInventoryReturnedBy")
+  createdInventoryReturnIssues InventoryReturnIssue[] @relation("InventoryIssueCreatedBy")
+  resolvedInventoryReturnIssues InventoryReturnIssue[] @relation("InventoryIssueResolvedBy")
+
   isActive  Boolean   @default(true)
   deletedAt DateTime?
 
@@ -163,6 +168,18 @@ enum OrderStatus {
   CANCELLED
 }
 
+enum InventoryReturnStatus {
+  NOT_RETURNED
+  RETURNED
+  NEEDS_REVIEW
+}
+
+enum InventoryReturnIssueStatus {
+  OPEN
+  RESOLVED
+  DISMISSED
+}
+
 model Order {
   id Int @id @default(autoincrement())
 
@@ -185,12 +202,19 @@ model Order {
 
   items OrderItem[]
   payments Payment[]
+  inventoryReturnIssues InventoryReturnIssue[]
+
+  archivedAt DateTime?
+  archivedById Int?
+  archiveReason String?
+  archivedBy User? @relation("OrderArchivedBy", fields: [archivedById], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@index([status, createdAt])
+  @@index([archivedAt, createdAt])
   shippingCost   Int      @default(0)
   shippingMethod String?
   trackingCode   String?
@@ -216,10 +240,45 @@ model OrderItem {
   quantity    Int
   subtotal    Int
 
+  inventoryReturnStatus InventoryReturnStatus @default(NOT_RETURNED)
+  inventoryReturnedAt DateTime?
+  inventoryReturnedById Int?
+  inventoryReturnReceived Boolean @default(false)
+  inventoryReturnSaleable Boolean @default(false)
+  inventoryReturnedBy User? @relation("OrderItemInventoryReturnedBy", fields: [inventoryReturnedById], references: [id], onDelete: SetNull)
+  inventoryReturnIssues InventoryReturnIssue[]
+
   createdAt DateTime @default(now())
 
   @@index([orderId])
   @@index([productId])
+}
+
+model InventoryReturnIssue {
+  id Int @id @default(autoincrement())
+  orderId Int
+  orderItemId Int?
+  productCode String
+  title String
+  color String @default("")
+  quantity Int
+  reason String
+  status InventoryReturnIssueStatus @default(OPEN)
+  resolutionNote String?
+  resolvedAt DateTime?
+  createdById Int?
+  resolvedById Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderItem OrderItem? @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
+  createdBy User? @relation("InventoryIssueCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  resolvedBy User? @relation("InventoryIssueResolvedBy", fields: [resolvedById], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([orderId])
+  @@index([orderItemId])
 }
 
 model Banner {
@@ -311,6 +370,11 @@ model ShippingMethod {
 }
 
 enum AdminAuditAction {
+  ORDER_ARCHIVED
+  ORDER_RESTORED
+  ORDER_INVENTORY_RETURNED
+  ORDER_INVENTORY_RETURN_ISSUE_CREATED
+  ORDER_INVENTORY_RETURN_ISSUE_RESOLVED
   PAYMENT_RECONCILIATION
   PAYMENT_EXPIRED_UNSENT
   ORDER_STATUS_CHANGED
@@ -359,11 +423,11 @@ model SiteVisitEvent {
   visitorId       String
   userId          Int?
   user            User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  path            String
-  referrerHost    String?
-  deviceType      String
-  operatingSystem String
-  browser         String
+  path            String   @db.VarChar(180)
+  referrerHost    String?  @db.VarChar(255)
+  deviceType      String   @db.VarChar(24)
+  operatingSystem String   @db.VarChar(40)
+  browser         String   @db.VarChar(40)
   createdAt       DateTime @default(now())
 
   @@index([createdAt])
