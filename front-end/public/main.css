@@ -319,6 +319,11 @@ html {
   color: inherit !important;
 }
 
+:root[data-theme="light"] .app-shell button[class~="bg-zinc-800"],
+:root[data-theme="light"] .app-shell button[class~="bg-zinc-700"] {
+  color: var(--app-text) !important;
+}
+
 :root[data-theme="light"] .app-shell [class~="bg-cyan-500/10"],
 :root[data-theme="light"] .app-shell [class~="bg-cyan-950/20"],
 :root[data-theme="light"] .app-shell [class~="bg-cyan-950/30"],
