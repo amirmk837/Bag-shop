@@ -150,7 +150,7 @@ const AdminLayout = ({ children }) => {
         </aside>
 
         <main className="min-w-0 w-full flex-1 p-3 sm:p-4 lg:p-5">
-          <div className="mx-auto w-full max-w-[1600px] min-w-0">
+          <div className="admin-content-surface mx-auto w-full max-w-[1600px] min-w-0">
             {children}
           </div>
         </main>
