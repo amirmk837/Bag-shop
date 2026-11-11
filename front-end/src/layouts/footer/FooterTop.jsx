@@ -7,8 +7,6 @@ const API_BASE_URL = (
   import.meta.env.VITE_API_URL || "http://localhost:5000/api"
 ).replace(/\/$/, "");
 
-const PLATFORM_ORDER = ["INSTAGRAM", "TELEGRAM", "WHATSAPP", "BALE", "RUBIKA"];
-
 const SOCIAL_META = {
   INSTAGRAM: { label: "اینستاگرام", Icon: FaInstagram, color: "bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400" },
   TELEGRAM: { label: "تلگرام", Icon: FaTelegramPlane, color: "bg-sky-500" },
@@ -56,8 +54,8 @@ const FooterTop = () => {
 
         setSocialLinks(
           links
-            .filter((item) => SOCIAL_META[item.platform] && typeof item.url === "string" && item.url.trim() !== "")
-            .sort((a, b) => PLATFORM_ORDER.indexOf(a.platform) - PLATFORM_ORDER.indexOf(b.platform)),
+            .filter((item) => SOCIAL_META[item.platform] && item.isActive !== false && typeof item.url === "string" && item.url.trim() !== "")
+            .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)),
         );
       } catch (error) {
         if (error.name !== "AbortError") console.error("Social links:", error);
@@ -113,11 +111,11 @@ const FooterTop = () => {
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={meta.label}
-              title={meta.label}
+              aria-label={item.channelName?.trim() || meta.label}
+              title={item.channelName?.trim() || meta.label}
               className="rounded-xl transition duration-300 hover:-translate-y-1 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
             >
-              <SocialIcon platform={item.platform} />
+              <span className="flex flex-col items-center gap-1"><SocialIcon platform={item.platform} /><span className="max-w-24 truncate text-[11px] text-zinc-400">{item.channelName?.trim() || meta.label}</span></span>
             </a>
           );
         })}
