@@ -21,7 +21,7 @@ const Content = () => {
               KAZEMI STORE
             </div>
             <h1 className="text-2xl font-black leading-[1.5] tracking-tight text-white sm:text-3xl lg:text-4xl">
-              انتخابی مطمئن برای <span className="bg-gradient-to-l from-cyan-200 via-sky-300 to-violet-300 bg-clip-text text-transparent">سبک زندگی شما</span>
+              انتخابی مطمئن برای <span className="theme-brand-gradient bg-gradient-to-l from-cyan-200 via-sky-300 to-violet-300 bg-clip-text text-transparent">سبک زندگی شما</span>
             </h1>
             <p className="mt-2 max-w-xl text-xs leading-7 text-zinc-400 sm:text-sm">
               مجموعه‌ای از کیف، کوله‌پشتی و لوازم کاربردی؛ محصولات را ببینید و انتخابتان را پیدا کنید.
