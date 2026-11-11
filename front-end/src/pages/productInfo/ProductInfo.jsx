@@ -117,7 +117,7 @@ const ProductInfoes = () => {
             {/* گالری تصاویر */}
             <div
               className="
-                relative flex min-h-[380px] flex-col
+                theme-media-surface relative flex min-h-[380px] flex-col
                 items-center justify-center overflow-hidden
                 bg-gradient-to-br from-zinc-900 via-zinc-800 to-black
                 p-5 sm:min-h-[500px] sm:p-8
