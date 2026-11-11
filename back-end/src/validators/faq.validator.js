@@ -13,7 +13,7 @@ const optionalLink = z.string().trim().max(2048, "لینک بیش از حد طو
     if (value === null) return true;
     if (/^[\u0000-\u0020\\\\]/.test(value)) return false;
     if (value.startsWith("/")) return !value.startsWith("//") && !/[\\\\]/.test(value);
-    if (/^[a-z][a-z\\d+.-]*:/i.test(value) && !/^https?:\\/\\//i.test(value)) return false;
+    if (/^[a-z][a-z\d+.-]*:/i.test(value) && !/^https?:\\/\\//i.test(value)) return false;
     try {
       const url = new URL(/^https?:\\/\\//i.test(value) ? value : `https://${value}`);
       return ["http:", "https:"].includes(url.protocol) && Boolean(url.hostname) && !url.username && !url.password;
