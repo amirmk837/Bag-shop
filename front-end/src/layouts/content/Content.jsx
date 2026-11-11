@@ -2,12 +2,14 @@ import { lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import Banner from "./Banner";
 import DeferredMount from "../../components/DeferredMount";
+import { useSiteSettings } from "../../context/useSiteSettings";
 
 const Brands = lazy(() => import("./Brands"));
 const DiscountShowcase = lazy(() => import("./DiscountShowcase"));
 const PopularShowcase = lazy(() => import("./PopularShowcase"));
 
 const Content = () => {
+  const { siteSettings } = useSiteSettings();
   return (
     <main dir="rtl" className="relative isolate min-h-screen w-full overflow-hidden bg-[#080c13] pb-12 pt-5 text-white sm:pt-8">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
@@ -58,12 +60,16 @@ const Content = () => {
           ))}
         </div>
 
-        <Suspense fallback={<div aria-hidden="true" className="min-h-[260px]" />}>
-          <PopularShowcase />
-        </Suspense>
-        <Suspense fallback={<div aria-hidden="true" className="min-h-[260px]" />}>
-          <DiscountShowcase />
-        </Suspense>
+        {siteSettings?.showPopularShowcase !== false && (
+          <Suspense fallback={<div aria-hidden="true" className="min-h-[260px]" />}>
+            <PopularShowcase />
+          </Suspense>
+        )}
+        {siteSettings?.showDiscountShowcase !== false && (
+          <Suspense fallback={<div aria-hidden="true" className="min-h-[260px]" />}>
+            <DiscountShowcase />
+          </Suspense>
+        )}
 
         <DeferredMount rootMargin="500px 0px" minHeight={300}>
           <Suspense fallback={<div aria-hidden="true" className="min-h-[260px]" />}>
