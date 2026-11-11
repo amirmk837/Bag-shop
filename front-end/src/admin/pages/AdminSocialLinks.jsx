@@ -96,7 +96,7 @@ const AdminSocialLinks = () => {
       setAdding(true);
       setError("");
       setSuccess("");
-      const platform = newPlatform.platform.trim().toUpperCase().replace(/[\\s-]+/g, "_");
+      const platform = newPlatform.platform.trim().toUpperCase().replace(/[\s-]+/g, "_");
       const response = await fetch(`${API_BASE_URL}/social-links/admin`, {
         method: "POST",
         credentials: "include",
