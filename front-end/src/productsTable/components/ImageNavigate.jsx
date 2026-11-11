@@ -60,7 +60,7 @@ const ImageNavigation = ({ onPrev, onNext, position = "card" }) => {
         type="button"
         onClick={(event) => stopCardNavigation(event, onPrev)}
         aria-label="عکس قبلی"
-        className={`${buttonClass} right-2 ${
+        className={`theme-dark-overlay ${buttonClass} right-2 ${
           isModal ? "sm:right-5 md:right-6" : "sm:right-3"
         }`}
       >
@@ -71,7 +71,7 @@ const ImageNavigation = ({ onPrev, onNext, position = "card" }) => {
         type="button"
         onClick={(event) => stopCardNavigation(event, onNext)}
         aria-label="عکس بعدی"
-        className={`${buttonClass} left-2 ${
+        className={`theme-dark-overlay ${buttonClass} left-2 ${
           isModal ? "sm:left-5 md:left-6" : "sm:left-3"
         }`}
       >
