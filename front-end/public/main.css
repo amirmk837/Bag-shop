@@ -203,67 +203,67 @@ html {
 
 /* Text hierarchy. Interactive contrast labels and intentionally dark media
    overlays are excluded so white-on-color and white-on-image remain intact. */
-:root[data-theme="light"] .app-shell [class~="text-white"]:not(button):not(button *):not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-zinc-50"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-zinc-100"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-zinc-200"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-slate-100"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-slate-200"]:not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-white"]:not(button):not(button *):not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-zinc-50"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-zinc-100"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-zinc-200"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-slate-100"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-slate-200"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-text) !important;
 }
 
-:root[data-theme="light"] .app-shell [class~="text-zinc-300"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-slate-300"]:not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-zinc-300"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-slate-300"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: #3d4a5e !important;
 }
 
-:root[data-theme="light"] .app-shell [class~="text-zinc-400"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-slate-400"]:not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-zinc-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-slate-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-text-secondary) !important;
 }
 
-:root[data-theme="light"] .app-shell [class~="text-zinc-500"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-zinc-600"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-slate-500"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-slate-600"]:not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-zinc-500"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-zinc-600"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-slate-500"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-slate-600"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-text-tertiary) !important;
 }
 
 /* Brand accents become deep enough for readable text on pale surfaces. */
-:root[data-theme="light"] .app-shell [class~="text-cyan-100"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-cyan-200"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-cyan-300"]:not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-cyan-100"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-cyan-200"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-cyan-300"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-accent) !important;
 }
 
-:root[data-theme="light"] .app-shell [class~="text-violet-100"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-violet-200"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-violet-300"]:not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-violet-100"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-violet-200"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-violet-300"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-violet) !important;
 }
 
-:root[data-theme="light"] .app-shell [class~="text-amber-100"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-amber-200"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-amber-300"]:not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-amber-100"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-amber-200"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-amber-300"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-warning) !important;
 }
 
-:root[data-theme="light"] .app-shell [class~="text-emerald-200"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-emerald-300"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-green-300"]:not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-emerald-200"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-emerald-300"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-green-300"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-success) !important;
 }
 
-:root[data-theme="light"] .app-shell [class~="text-red-200"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-red-300"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-red-400"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-rose-200"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-rose-300"]:not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-red-200"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-red-300"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-red-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-rose-200"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-rose-300"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-danger) !important;
 }
 
-:root[data-theme="light"] .app-shell [class~="text-blue-300"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-sky-300"]:not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-blue-300"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-sky-300"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-info) !important;
 }
 
@@ -311,7 +311,8 @@ html {
 :root[data-theme="light"] .app-shell [class~="bg-cyan-500/10"],
 :root[data-theme="light"] .app-shell [class~="bg-cyan-950/20"],
 :root[data-theme="light"] .app-shell [class~="bg-cyan-950/30"],
-:root[data-theme="light"] .app-shell [class~="bg-cyan-950/40"] {
+:root[data-theme="light"] .app-shell [class~="bg-cyan-950/40"],
+:root[data-theme="light"] .app-shell [class~="bg-cyan-950/60"] {
   background-color: var(--app-accent-soft) !important;
 }
 
@@ -437,7 +438,9 @@ html {
 :root[data-theme="light"] .app-shell [class~="bg-zinc-900/50"],
 :root[data-theme="light"] .app-shell [class~="bg-zinc-900/60"],
 :root[data-theme="light"] .app-shell [class~="bg-zinc-800/40"],
-:root[data-theme="light"] .app-shell [class~="bg-zinc-800/60"] {
+:root[data-theme="light"] .app-shell [class~="bg-zinc-800/60"],
+:root[data-theme="light"] .app-shell [class~="bg-zinc-900/70"],
+:root[data-theme="light"] .app-shell [class~="bg-black/20"] {
   background-color: var(--app-surface-muted) !important;
 }
 :root[data-theme="light"] .app-shell [class~="bg-cyan-400/10"],
@@ -448,23 +451,25 @@ html {
 }
 
 /* Stronger semantic text tones used in compact status and payment labels. */
-:root[data-theme="light"] .app-shell [class~="text-amber-400"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-amber-500"]:not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-amber-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-amber-500"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-rose-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-cyan-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-warning) !important;
 }
-:root[data-theme="light"] .app-shell [class~="text-emerald-400"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-green-400"]:not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-emerald-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-green-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-success) !important;
 }
-:root[data-theme="light"] .app-shell [class~="text-blue-400"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-indigo-300"]:not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-sky-400"]:not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-blue-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-indigo-300"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-sky-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-info) !important;
 }
-:root[data-theme="light"] .app-shell [class~="text-violet-400"]:not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-violet-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-violet) !important;
 }
-:root[data-theme="light"] .app-shell [class~="text-cyan-50"]:not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-cyan-50"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-accent) !important;
 }
 
