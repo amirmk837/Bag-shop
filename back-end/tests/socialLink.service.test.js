@@ -6,6 +6,8 @@ import {
   normalizeChannelName,
   normalizeSortOrder,
   normalizeActive,
+  normalizeSocialPlatform,
+  normalizeSocialLabel,
 } from "../src/validators/socialLink.validation.js";
 
 test("accepts HTTPS social URLs and normalizes bare hostnames", () => {
@@ -38,4 +40,17 @@ test("validates display order and enabled state", () => {
   assert.equal(normalizeActive(false), false);
   assert.equal(normalizeActive(true), true);
   assert.throws(() => normalizeActive("false"), { status: 400 });
+});
+
+test("accepts custom platform keys and normalizes separators", () => {
+  assert.equal(normalizeSocialPlatform(" custom-chat "), "CUSTOM_CHAT");
+  assert.equal(normalizeSocialPlatform("eita"), "EITA");
+  assert.throws(() => normalizeSocialPlatform("x"), { status: 400 });
+  assert.throws(() => normalizeSocialPlatform("custom<script>"), { status: 400 });
+});
+
+test("validates custom platform display labels", () => {
+  assert.equal(normalizeSocialLabel(" ایتا "), "ایتا");
+  assert.throws(() => normalizeSocialLabel(""), { status: 400 });
+  assert.throws(() => normalizeSocialLabel("<b>chat</b>"), { status: 400 });
 });
