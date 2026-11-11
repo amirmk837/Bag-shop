@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getSiteSettings, saveSiteSettings } from "../../services/siteSettingsApi";
 import { useSiteSettings } from "../../context/useSiteSettings";
 
-const initial = { storeName: "فروشگاه کاظمی", phone: "", headerText: "", footerAbout: "", footerCaption: "", logoUrl: "", footerLogoUrl: "", logoFile: null, footerLogoFile: null };
+const initial = { storeName: "فروشگاه کاظمی", phone: "", headerText: "", footerAbout: "", footerCaption: "", showPopularShowcase: true, showDiscountShowcase: true, logoUrl: "", footerLogoUrl: "", logoFile: null, footerLogoFile: null };
 
 function TextField({ label, name, value, onChange, multiline = false, maxLength = 180 }) {
   const common = "w-full rounded-xl border border-zinc-700 bg-zinc-950 px-3 py-3 text-white outline-none focus:border-cyan-500";
@@ -68,6 +68,7 @@ export default function AdminSiteSettings() {
         <TextField label="شماره تماس فروشگاه" name="phone" value={form.phone} onChange={change} maxLength={30} />
       </div>
       <TextField label="متن کوتاه کنار لوگو در سربرگ" name="headerText" value={form.headerText} onChange={change} maxLength={180} />
+      <fieldset className="grid gap-3 rounded-xl border border-zinc-800 bg-zinc-950 p-4 sm:grid-cols-2"><legend className="px-2 text-sm font-semibold text-zinc-200">نمایش بخش‌های صفحه اصلی</legend><label className="flex items-center gap-3 text-sm text-zinc-300"><input type="checkbox" checked={form.showPopularShowcase !== false} onChange={(event) => setForm((old) => ({ ...old, showPopularShowcase: event.target.checked }))} className="h-4 w-4 accent-cyan-500" />نمایش بهترین محصولات</label><label className="flex items-center gap-3 text-sm text-zinc-300"><input type="checkbox" checked={form.showDiscountShowcase !== false} onChange={(event) => setForm((old) => ({ ...old, showDiscountShowcase: event.target.checked }))} className="h-4 w-4 accent-cyan-500" />نمایش محصولات تخفیف‌دار</label></fieldset>
       <div className="grid gap-4 lg:grid-cols-2">{imageField("لوگوی اصلی سربرگ", "logoFile", "logoUrl")}{imageField("لوگوی فوتر", "footerLogoFile", "footerLogoUrl")}</div>
       <TextField label="متن معرفی کنار لوگو در فوتر" name="footerAbout" value={form.footerAbout} onChange={change} multiline maxLength={1000} />
       <TextField label="متن انتهایی فوتر" name="footerCaption" value={form.footerCaption} onChange={change} maxLength={180} />
