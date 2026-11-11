@@ -405,6 +405,76 @@ html {
   border-color: var(--app-accent-border) !important;
 }
 
+/* Additional status tones used by account, checkout, orders and support views. */
+:root[data-theme="light"] .app-shell [class~="bg-amber-950"],
+:root[data-theme="light"] .app-shell [class~="bg-amber-950/50"],
+:root[data-theme="light"] .app-shell [class~="bg-amber-950/60"] {
+  background-color: var(--app-warning-soft) !important;
+}
+:root[data-theme="light"] .app-shell [class~="bg-blue-950"],
+:root[data-theme="light"] .app-shell [class~="bg-blue-800"],
+:root[data-theme="light"] .app-shell [class~="bg-indigo-950"],
+:root[data-theme="light"] .app-shell [class~="bg-sky-950"] {
+  background-color: var(--app-info-soft) !important;
+}
+:root[data-theme="light"] .app-shell [class~="bg-emerald-950"],
+:root[data-theme="light"] .app-shell [class~="bg-green-950"],
+:root[data-theme="light"] .app-shell [class~="bg-emerald-950/50"] {
+  background-color: var(--app-success-soft) !important;
+}
+:root[data-theme="light"] .app-shell [class~="bg-red-950"],
+:root[data-theme="light"] .app-shell [class~="bg-red-950/50"],
+:root[data-theme="light"] .app-shell [class~="bg-rose-950"] {
+  background-color: var(--app-danger-soft) !important;
+}
+:root[data-theme="light"] .app-shell [class~="bg-violet-950"],
+:root[data-theme="light"] .app-shell [class~="bg-indigo-950/40"] {
+  background-color: var(--app-violet-soft) !important;
+}
+:root[data-theme="light"] .app-shell [class~="bg-zinc-950/40"],
+:root[data-theme="light"] .app-shell [class~="bg-zinc-950/50"],
+:root[data-theme="light"] .app-shell [class~="bg-zinc-950/70"],
+:root[data-theme="light"] .app-shell [class~="bg-zinc-900/50"],
+:root[data-theme="light"] .app-shell [class~="bg-zinc-900/60"],
+:root[data-theme="light"] .app-shell [class~="bg-zinc-800/40"],
+:root[data-theme="light"] .app-shell [class~="bg-zinc-800/60"] {
+  background-color: var(--app-surface-muted) !important;
+}
+:root[data-theme="light"] .app-shell [class~="bg-cyan-400/10"],
+:root[data-theme="light"] .app-shell [class~="bg-cyan-400/15"],
+:root[data-theme="light"] .app-shell [class~="bg-cyan-500/[0.07]"],
+:root[data-theme="light"] .app-shell [class~="bg-cyan-500/[0.08]"] {
+  background-color: var(--app-accent-soft) !important;
+}
+
+/* Stronger semantic text tones used in compact status and payment labels. */
+:root[data-theme="light"] .app-shell [class~="text-amber-400"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-amber-500"]:not(.theme-dark-overlay *) {
+  color: var(--app-warning) !important;
+}
+:root[data-theme="light"] .app-shell [class~="text-emerald-400"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-green-400"]:not(.theme-dark-overlay *) {
+  color: var(--app-success) !important;
+}
+:root[data-theme="light"] .app-shell [class~="text-blue-400"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-indigo-300"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-sky-400"]:not(.theme-dark-overlay *) {
+  color: var(--app-info) !important;
+}
+:root[data-theme="light"] .app-shell [class~="text-violet-400"]:not(.theme-dark-overlay *) {
+  color: var(--app-violet) !important;
+}
+:root[data-theme="light"] .app-shell [class~="text-cyan-50"]:not(.theme-dark-overlay *) {
+  color: var(--app-accent) !important;
+}
+
+/* Product and category hover states stay subtle rather than glowing. */
+:root[data-theme="light"] .theme-product-card:hover,
+:root[data-theme="light"] .theme-category-card:hover {
+  border-color: var(--app-accent-border) !important;
+  box-shadow: 0 16px 34px rgb(23 107 112 / 10%) !important;
+}
+
 /* Reduced-motion preference is respected in both appearances. */
 @media (prefers-reduced-motion: reduce) {
   *,
