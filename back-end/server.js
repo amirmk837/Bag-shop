@@ -25,6 +25,7 @@ import { securityHeaders } from "./src/middlewares/securityHeaders.middleware.js
 import { requireHttpsInProduction } from "./src/middlewares/https.middleware.js";
 import footerTrustBadgeRoutes from "./src/routes/footerTrustBadge.routes.js";
 import aboutRoutes from "./src/routes/about.routes.js";
+import faqRoutes from "./src/routes/faq.routes.js";
 
 const app = express();
 const PORT = config.PORT;
@@ -79,6 +80,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/social-links", socialLinkRoutes);
 app.use("/api/site-settings", siteSettingsRoutes);
 app.use("/api/about", aboutRoutes);
+app.use("/api/faq", faqRoutes);
 app.use("/api/analytics", siteAnalyticsRoutes);
 app.use("/api/admin/analytics", adminAnalyticsRoutes);
 app.use("/api/admin/users", adminUserRoutes);
