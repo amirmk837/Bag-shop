@@ -7,15 +7,20 @@ const plainText = (max, label, min = 1) =>
     .refine((value) => !/[<>]/.test(value), `${label} باید متن ساده باشد.`)
     .refine((value) => !/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/.test(value), `${label} شامل نویسه نامعتبر است.`);
 
+const hasHttpProtocol = (value) => {
+  const normalized = value.toLowerCase();
+  return normalized.startsWith("http://") || normalized.startsWith("https://");
+};
+
 const optionalLink = z.string().trim().max(2048, "لینک بیش از حد طولانی است.")
   .transform((value) => value || null)
   .refine((value) => {
     if (value === null) return true;
     if (/^[\u0000-\u0020\\\\]/.test(value)) return false;
     if (value.startsWith("/")) return !value.startsWith("//") && !/[\\\\]/.test(value);
-    if (/^[a-z][a-z\d+.-]*:/i.test(value) && !/^https?:\\/\\//i.test(value)) return false;
+    if (/^[a-z][a-z\d+.-]*:/i.test(value) && !hasHttpProtocol(value)) return false;
     try {
-      const url = new URL(/^https?:\\/\\//i.test(value) ? value : `https://${value}`);
+      const url = new URL(hasHttpProtocol(value) ? value : `https://${value}`);
       return ["http:", "https:"].includes(url.protocol) && Boolean(url.hostname) && !url.username && !url.password;
     } catch {
       return false;
@@ -23,7 +28,7 @@ const optionalLink = z.string().trim().max(2048, "لینک بیش از حد طو
   }, "لینک باید یک آدرس داخلی یا URL معتبر HTTP/HTTPS باشد.")
   .transform((value) => {
     if (value === null || value.startsWith("/")) return value;
-    return new URL(/^https?:\\/\\//i.test(value) ? value : `https://${value}`).toString();
+    return new URL(hasHttpProtocol(value) ? value : `https://${value}`).toString();
   });
 
 export const faqItemSchema = z.object({
