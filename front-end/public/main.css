@@ -707,21 +707,50 @@ html {
 }
 
 /* Status pills and alerts use consistent semantic fills. */
-:root[data-theme="light"] .admin-theme-scope [class*="bg-emerald-"],
-:root[data-theme="light"] .admin-theme-scope [class*="bg-green-"] {
+:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-950/30"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-950/40"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-500/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-green-950"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-green-950/40"] {
   background-color: var(--app-success-soft) !important;
 }
-:root[data-theme="light"] .admin-theme-scope [class*="bg-amber-"] {
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-950/20"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-950/30"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-950/40"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-500/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-400/10"] {
   background-color: var(--app-warning-soft) !important;
 }
-:root[data-theme="light"] .admin-theme-scope [class*="bg-red-"],
-:root[data-theme="light"] .admin-theme-scope [class*="bg-rose-"] {
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/20"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/30"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/40"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-500/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-500/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-500/15"] {
   background-color: var(--app-danger-soft) !important;
 }
-:root[data-theme="light"] .admin-theme-scope [class*="bg-blue-"],
-:root[data-theme="light"] .admin-theme-scope [class*="bg-sky-"],
-:root[data-theme="light"] .admin-theme-scope [class*="bg-violet-"] {
+:root[data-theme="light"] .admin-theme-scope [class~="bg-blue-500/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-sky-500/10"] {
   background-color: var(--app-info-soft) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="bg-violet-500/10"] {
+  background-color: var(--app-violet-soft) !important;
+}
+
+/* Solid semantic buttons keep white labels on a deep, accessible fill. */
+:root[data-theme="light"] .admin-theme-scope button[class~="bg-red-500"],
+:root[data-theme="light"] .admin-theme-scope button[class~="bg-red-600"],
+:root[data-theme="light"] .admin-theme-scope button[class~="bg-red-900"] {
+  background-color: var(--app-danger) !important;
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .admin-theme-scope button[class~="bg-blue-800"] {
+  background-color: var(--app-info) !important;
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .admin-theme-scope button[class~="bg-amber-800"] {
+  background-color: var(--app-warning) !important;
+  color: #ffffff !important;
 }
 
 /* Discount prices are presented as one calm price block, never a cyan-violet gradient. */
