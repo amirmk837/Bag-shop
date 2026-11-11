@@ -60,7 +60,7 @@ const ProductCard = ({ product, priority = false }) => {
           md:h-[240px] lg:h-[260px]
         "
       >
-        <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-[#060d19]/40 via-transparent to-white/[0.02]" />
+        <div className="theme-media-overlay pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-[#060d19]/40 via-transparent to-white/[0.02]" />
 
         {images.length > 0 ? (
           <>
@@ -136,7 +136,7 @@ const ProductCard = ({ product, priority = false }) => {
 
       <div
         className="
-        pointer-events-none absolute inset-x-8 bottom-0 h-px
+        theme-product-accent-line pointer-events-none absolute inset-x-8 bottom-0 h-px
         bg-gradient-to-r from-transparent via-cyan-500/35 to-transparent
         opacity-0 transition-opacity duration-500
         group-hover:opacity-100
