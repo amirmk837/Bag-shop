@@ -36,7 +36,7 @@ export const getAdminSocialLinksController = async (_req, res) => {
 
 export const saveSocialLinkController = async (req, res) => {
   try {
-    const data = await saveSocialLink(req.params.platform, req.body?.url);
+    const data = await saveSocialLink(req.params.platform, req.body);
 
     return res.status(200).json({
       message: "تنظیمات شبکه اجتماعی ذخیره شد.",
