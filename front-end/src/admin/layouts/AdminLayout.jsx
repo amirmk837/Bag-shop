@@ -73,10 +73,10 @@ const AdminLayout = ({ children }) => {
 
   return (
     <div
-      className="admin-layout-shell min-h-screen overflow-x-clip bg-[#0d1119] text-white"
+      className="admin-theme-scope admin-layout-shell min-h-screen overflow-x-clip bg-[#0d1119] text-white"
       dir="rtl"
     >
-      <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-[#111722]/95 shadow-lg shadow-black/10 backdrop-blur">
+      <header className="admin-header-shell sticky top-0 z-40 border-b border-white/[0.07] bg-[#111722]/95 shadow-lg shadow-black/10 backdrop-blur">
         <div className="flex min-h-14 flex-wrap items-center justify-between gap-3 px-3 py-2 sm:px-5 lg:px-6">
           <div className="flex min-w-0 items-center gap-2">
             <img
@@ -126,7 +126,7 @@ const AdminLayout = ({ children }) => {
       </header>
 
       <div className="flex min-h-[calc(100vh-57px)]">
-        <aside className="hidden w-56 shrink-0 border-l border-white/[0.06] bg-[#111722] p-3 lg:sticky lg:top-[57px] lg:block lg:h-[calc(100vh-57px)] lg:w-60">
+        <aside className="admin-sidebar-shell hidden w-56 shrink-0 border-l border-white/[0.06] bg-[#111722] p-3 lg:sticky lg:top-[57px] lg:block lg:h-[calc(100vh-57px)] lg:w-60">
           <nav aria-label="منوی پنل مدیریت" className="space-y-1">
             {navItems.map((item) => (
               <NavLink
