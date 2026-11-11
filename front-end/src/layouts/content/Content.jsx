@@ -11,12 +11,7 @@ const PopularShowcase = lazy(() => import("./PopularShowcase"));
 const Content = () => {
   const { siteSettings } = useSiteSettings();
   return (
-    <main dir="rtl" className="relative isolate min-h-screen w-full overflow-hidden bg-[#080c13] pb-12 pt-5 text-white sm:pt-8">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -right-48 top-20 h-[28rem] w-[28rem] rounded-full bg-cyan-500/[0.07] blur-[130px]" />
-        <div className="absolute -left-48 top-[38rem] h-[32rem] w-[32rem] rounded-full bg-violet-500/[0.07] blur-[140px]" />
-        <div className="absolute inset-0 opacity-[0.035] [background-image:linear-gradient(rgba(255,255,255,.22)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.22)_1px,transparent_1px)] [background-size:54px_54px]" />
-      </div>
+    <main dir="rtl" className="relative w-full overflow-hidden bg-transparent pb-12 pt-5 text-white sm:pt-8">
 
       <div className="mx-auto w-full max-w-[1440px]">
         <section className="mx-auto mb-6 flex max-w-7xl flex-col gap-5 px-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:px-6 lg:px-8">
