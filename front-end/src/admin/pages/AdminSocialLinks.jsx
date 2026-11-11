@@ -7,7 +7,6 @@ import {
   FiRefreshCw,
   FiPlus,
   FiTrash2,
-  FiX,
 } from "react-icons/fi";
 
 const API_BASE_URL = (
