@@ -13,6 +13,8 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import CustomerOnlyRoute from "./routes/CustomerOnlyRoute";
 
 const Content = lazy(() => import("./layouts/content/Content"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const AdminAboutPage = lazy(() => import("./admin/pages/AdminAboutPage"));
 const ProductInfo = lazy(() => import("./pages/productInfo/ProductInfo"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 const AdminLayout = lazy(() => import("./admin/layouts/AdminLayout"));
@@ -65,6 +67,10 @@ const routes = [
   {
     path: "/category/:slug",
     element: <CategoryProducts />,
+  },
+  {
+    path: "/about",
+    element: <AboutPage />,
   },
   {
     path: "/discounts",
@@ -321,6 +327,16 @@ const routes = [
     ),
   },
 
+  {
+    path: "/admin/about",
+    element: (
+      <ProtectedRoute>
+        <AdminLayout>
+          <AdminAboutPage />
+        </AdminLayout>
+      </ProtectedRoute>
+    ),
+  },
   {
     path: "/admin/site-settings",
     element: (

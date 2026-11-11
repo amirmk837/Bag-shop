@@ -553,3 +553,19 @@ model FooterTrustBadge {
 
   @@index([isActive, sortOrder, id])
 }
+
+
+model AboutPage {
+  id          Int      @id @default(1)
+  eyebrow     String   @default("آشنایی با ما") @db.VarChar(80)
+  title       String   @default("درباره فروشگاه کاظمی") @db.VarChar(160)
+  intro       String   @default("") @db.VarChar(600)
+  storyTitle  String   @default("داستان ما") @db.VarChar(120)
+  story       String   @default("") @db.Text
+  mission     String   @default("") @db.Text
+  vision      String   @default("") @db.Text
+  values      Json?
+  contactText String   @default("") @db.VarChar(600)
+  isPublished Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
+}

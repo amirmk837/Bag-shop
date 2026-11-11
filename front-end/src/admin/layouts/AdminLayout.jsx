@@ -25,6 +25,7 @@ const navItems = [
   { label: "کاربران", to: "/admin/users" },
   { label: "بازدیدکنندگان و آمار", to: "/admin/analytics" },
   { label: "تنظیمات ظاهری سایت", to: "/admin/site-settings" },
+  { label: "صفحه درباره ما", to: "/admin/about" },
   { label: "شبکه‌های اجتماعی", to: "/admin/social-links" },
   { label: "تنظیمات پرداخت", to: "/admin/payment-settings" },
   { label: "تنظیمات ارسال", to: "/admin/shipping-methods" },
