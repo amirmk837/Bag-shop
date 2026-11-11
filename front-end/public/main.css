@@ -467,9 +467,11 @@ html {
 }
 
 /* Remaining solid semantic surfaces found in shipping and account controls. */
-:root[data-theme="light"] .app-shell [class~="bg-cyan-950"],
-:root[data-theme="light"] .app-shell [class~="bg-amber-800"] {
+:root[data-theme="light"] .app-shell [class~="bg-cyan-950"] {
   background-color: var(--app-accent-soft) !important;
+}
+:root[data-theme="light"] .app-shell [class~="bg-amber-800"] {
+  background-color: var(--app-warning-soft) !important;
 }
 :root[data-theme="light"] .app-shell [class~="bg-red-900"],
 :root[data-theme="light"] .app-shell [class~="bg-red-950/90"],
