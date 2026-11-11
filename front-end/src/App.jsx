@@ -398,11 +398,11 @@ const App = () => {
   return (
     <div
       dir="rtl"
-      className="relative isolate flex min-h-screen flex-col overflow-hidden bg-[#080c13] text-white"
+      className="app-shell relative isolate flex min-h-screen flex-col overflow-hidden bg-[#080c13] text-white"
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+        className="app-background-glow pointer-events-none absolute inset-0 -z-10 overflow-hidden"
       >
         <div className="absolute -right-48 top-20 h-[28rem] w-[28rem] rounded-full bg-cyan-500/[0.07] blur-[130px]" />
         <div className="absolute -left-48 top-[38rem] h-[32rem] w-[32rem] rounded-full bg-violet-500/[0.07] blur-[140px]" />
