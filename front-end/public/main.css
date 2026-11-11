@@ -809,11 +809,11 @@ html {
   border-color: #c9dfdc !important;
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 75%) !important;
 }
-:root[data-theme="light"] .discount-final-label {
+:root[data-theme="light"] .app-shell .discount-price-panel .discount-final-label {
   color: #426b69 !important;
 }
-:root[data-theme="light"] .discount-final-value,
-:root[data-theme="light"] .discount-final-unit {
+:root[data-theme="light"] .app-shell .discount-price-panel .discount-final-value,
+:root[data-theme="light"] .app-shell .discount-price-panel .discount-final-unit {
   color: #155e63 !important;
 }
 
