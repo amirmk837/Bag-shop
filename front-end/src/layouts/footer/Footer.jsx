@@ -1,5 +1,4 @@
 import FooterTop from "./FooterTop";
-import { Link } from "react-router-dom";
 import FooterAbout from "./FooterAbout";
 import { useSiteSettings } from "../../context/useSiteSettings";
 import FooterTrustBadges from "./FooterTrustBadges";
