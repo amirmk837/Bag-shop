@@ -80,7 +80,7 @@ const ProductComments = ({ productCode }) => {
   return (
     <section
       className="
-        relative mt-6 overflow-hidden rounded-[26px]
+        theme-content-panel relative mt-6 overflow-hidden rounded-[26px]
         border border-cyan-900/40
         bg-gradient-to-br from-[#14243b] via-[#0c182c] to-[#101426]
         p-4 text-white
