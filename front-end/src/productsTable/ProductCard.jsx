@@ -40,22 +40,19 @@ const ProductCard = ({ product, priority = false }) => {
       className="
         theme-product-card group relative isolate w-full min-w-0 overflow-hidden
         rounded-[24px] border border-cyan-950/50
-        bg-gradient-to-br from-[#0e1a2f] via-[#0a1426] to-[#0e1121]
-        p-1.5 text-center shadow-[0_12px_35px_rgba(0,0,0,0.25)]
+        bg-[#111a26]
+        p-1.5 text-center shadow-[0_8px_24px_rgba(0,0,0,0.18)]
         transition-all duration-500 ease-out
         hover:-translate-y-1.5 hover:border-cyan-500/35
         hover:shadow-[0_18px_45px_rgba(6,182,212,0.10)]
         sm:rounded-[28px] sm:p-2
       "
     >
-      <div className="pointer-events-none absolute -right-16 -top-16 -z-10 h-40 w-40 rounded-full bg-cyan-600/10 blur-3xl transition-opacity duration-500 group-hover:opacity-100" />
-      <div className="pointer-events-none absolute -bottom-20 -left-16 -z-10 h-40 w-40 rounded-full bg-violet-600/10 blur-3xl transition-opacity duration-500 group-hover:opacity-100" />
-
       <div
         className="
           theme-media-surface relative h-[180px] w-full overflow-hidden rounded-[19px]
-          border border-white/[0.04]
-          bg-gradient-to-br from-[#14253d] via-[#0e192c] to-[#080d19]
+          border border-white/[0.07]
+          bg-[#152131]
           sm:h-[210px] sm:rounded-[22px]
           md:h-[240px] lg:h-[260px]
         "
