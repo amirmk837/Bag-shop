@@ -742,6 +742,7 @@ html {
 :root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/40"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/50"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/60"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/90"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-red-500/10"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-red-400/[0.07]"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-rose-500/10"],
@@ -760,7 +761,8 @@ html {
   background-color: var(--app-info-soft) !important;
 }
 :root[data-theme="light"] .admin-theme-scope [class~="bg-violet-950/40"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-violet-500/10"] {
+:root[data-theme="light"] .admin-theme-scope [class~="bg-violet-500/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-violet-400/10"] {
   background-color: var(--app-violet-soft) !important;
 }
 
