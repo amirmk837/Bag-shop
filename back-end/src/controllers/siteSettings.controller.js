@@ -24,6 +24,12 @@ export const updateSiteSettingsController = async (req, res) => {
       headerText: cleanText(req.body.headerText, 180) ?? current.headerText,
       footerAbout: cleanText(req.body.footerAbout, 1000) ?? current.footerAbout,
       footerCaption: cleanText(req.body.footerCaption, 180) ?? current.footerCaption,
+      showPopularShowcase: req.body.showPopularShowcase === undefined
+        ? current.showPopularShowcase !== false
+        : req.body.showPopularShowcase === "true" || req.body.showPopularShowcase === true,
+      showDiscountShowcase: req.body.showDiscountShowcase === undefined
+        ? current.showDiscountShowcase !== false
+        : req.body.showDiscountShowcase === "true" || req.body.showDiscountShowcase === true,
     };
     const logo = req.files?.logo?.[0];
     const footerLogo = req.files?.footerLogo?.[0];
