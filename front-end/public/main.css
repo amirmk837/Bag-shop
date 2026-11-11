@@ -258,7 +258,8 @@ html {
 :root[data-theme="light"] .app-shell [class~="text-red-300"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
 :root[data-theme="light"] .app-shell [class~="text-red-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
 :root[data-theme="light"] .app-shell [class~="text-rose-200"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-rose-300"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-rose-300"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-rose-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-danger) !important;
 }
 
@@ -452,8 +453,7 @@ html {
 
 /* Stronger semantic text tones used in compact status and payment labels. */
 :root[data-theme="light"] .app-shell [class~="text-amber-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-amber-500"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-rose-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-amber-500"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-warning) !important;
 }
 :root[data-theme="light"] .app-shell [class~="text-cyan-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
