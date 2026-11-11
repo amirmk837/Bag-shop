@@ -236,7 +236,7 @@ const DiscountShowcase = () => {
       dir="rtl"
       className="mx-auto my-10 w-full max-w-[1600px] px-3 sm:my-14 sm:px-5"
     >
-      <div className="relative overflow-hidden rounded-[1.5rem] border border-cyan-800/60 bg-gradient-to-br from-[#0c202b] via-[#081a24] to-[#101b2b] p-3 shadow-[0_18px_55px_rgba(0,0,0,.38),inset_0_1px_0_rgba(255,255,255,.05)] sm:rounded-[1.8rem] sm:p-5 lg:p-6">
+      <div className="theme-feature-panel relative overflow-hidden rounded-[1.5rem] border border-cyan-800/60 bg-gradient-to-br from-[#0c202b] via-[#081a24] to-[#101b2b] p-3 shadow-[0_18px_55px_rgba(0,0,0,.38),inset_0_1px_0_rgba(255,255,255,.05)] sm:rounded-[1.8rem] sm:p-5 lg:p-6">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_12%_20%,rgba(34,211,238,.22)_0,transparent_25%),repeating-radial-gradient(circle_at_100%_0%,transparent_0_18px,rgba(103,232,249,.07)_19px_25px,transparent_26px_42px)]"
