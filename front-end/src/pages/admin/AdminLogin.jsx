@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useAuth } from "../../context/useAuth";
 import PasswordField from "../../components/forms/PasswordField";
+import ThemeToggle from "../../components/ThemeToggle";
 
 // VALIDATION
 // =========================================
@@ -33,6 +34,9 @@ const AdminLogin = () => {
       dir="rtl"
       className="flex min-h-screen items-center justify-center bg-zinc-950 px-4"
     >
+      <div className="absolute left-4 top-4">
+        <ThemeToggle />
+      </div>
       <Formik
         initialValues={{
           identifier: "",
