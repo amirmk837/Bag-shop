@@ -60,7 +60,7 @@ const Brands = () => {
 
         <div
           className="
-            flex w-fit items-center gap-3 rounded-2xl
+            theme-feature-chip flex w-fit items-center gap-3 rounded-2xl
             border border-white/[0.09]
             bg-gradient-to-l from-white/[0.065] to-white/[0.025]
             px-4 py-3 shadow-lg backdrop-blur-xl
