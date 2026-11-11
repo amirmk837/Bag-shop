@@ -4,6 +4,7 @@ import { useAuth } from "../../context/useAuth";
 import { useCart } from "../../context/useCart";
 import { useSiteSettings } from "../../context/useSiteSettings";
 import HamburgerMenu from "./HamburgerMenu";
+import ThemeToggle from "../../components/ThemeToggle";
 
 const TopBar = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const TopBar = () => {
       >
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <HamburgerMenu />
+          <ThemeToggle />
 
           {!loading && (
             <Link
