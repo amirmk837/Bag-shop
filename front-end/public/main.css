@@ -311,6 +311,14 @@ html {
   background-color: #287f83 !important;
 }
 
+/* Primary teal buttons use white foreground after the light-theme remap. */
+:root[data-theme="light"] .app-shell button[class*="bg-cyan-"] {
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .app-shell button[class*="bg-cyan-"] * {
+  color: inherit !important;
+}
+
 :root[data-theme="light"] .app-shell [class~="bg-cyan-500/10"],
 :root[data-theme="light"] .app-shell [class~="bg-cyan-950/20"],
 :root[data-theme="light"] .app-shell [class~="bg-cyan-950/30"],
