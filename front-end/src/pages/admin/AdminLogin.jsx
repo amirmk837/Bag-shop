@@ -32,7 +32,7 @@ const AdminLogin = () => {
   return (
     <div
       dir="rtl"
-      className="flex min-h-screen items-center justify-center bg-zinc-950 px-4"
+      className="admin-theme-scope admin-login-shell flex min-h-screen items-center justify-center bg-zinc-950 px-4"
     >
       <div className="absolute left-4 top-4">
         <ThemeToggle />
