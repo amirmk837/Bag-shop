@@ -412,6 +412,8 @@ model SiteSettings {
   headerText          String?
   footerAbout         String?
   footerCaption       String?
+  showPopularShowcase Boolean  @default(true)
+  showDiscountShowcase Boolean @default(true)
   supportHours        Json?
   supportResponseText String?  @db.VarChar(240)
   updatedAt           DateTime @updatedAt
