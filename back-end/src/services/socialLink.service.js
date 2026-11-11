@@ -34,7 +34,7 @@ export const normalizeSocialUrl = (value) => {
   }
 };
 
-const normalizeChannelName = (value) => {
+export const normalizeChannelName = (value) => {
   if (value === undefined || value === null) return null;
   if (typeof value !== "string") throw createError(400, "نام کانال باید متن باشد.");
   const name = value.trim();
@@ -44,7 +44,7 @@ const normalizeChannelName = (value) => {
   return name || null;
 };
 
-const normalizeSortOrder = (value) => {
+export const normalizeSortOrder = (value) => {
   const order = Number(value ?? 0);
   if (!Number.isInteger(order) || order < 0 || order > 10000) {
     throw createError(400, "ترتیب نمایش باید عدد صحیح بین صفر تا ۱۰۰۰۰ باشد.");
@@ -52,7 +52,7 @@ const normalizeSortOrder = (value) => {
   return order;
 };
 
-const normalizeActive = (value) => {
+export const normalizeActive = (value) => {
   if (value === undefined) return true;
   if (typeof value !== "boolean") throw createError(400, "وضعیت نمایش نامعتبر است.");
   return value;
