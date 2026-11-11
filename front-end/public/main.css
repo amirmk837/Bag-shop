@@ -466,6 +466,17 @@ html {
   background-color: var(--app-accent-soft) !important;
 }
 
+/* Remaining solid semantic surfaces found in shipping and account controls. */
+:root[data-theme="light"] .app-shell [class~="bg-cyan-950"],
+:root[data-theme="light"] .app-shell [class~="bg-amber-800"] {
+  background-color: var(--app-accent-soft) !important;
+}
+:root[data-theme="light"] .app-shell [class~="bg-red-900"],
+:root[data-theme="light"] .app-shell [class~="bg-red-950/90"],
+:root[data-theme="light"] .app-shell [class~="bg-rose-950/40"] {
+  background-color: var(--app-danger-soft) !important;
+}
+
 /* Stronger semantic text tones used in compact status and payment labels. */
 :root[data-theme="light"] .app-shell [class~="text-amber-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
 :root[data-theme="light"] .app-shell [class~="text-amber-500"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
