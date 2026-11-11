@@ -14,6 +14,8 @@ import CustomerOnlyRoute from "./routes/CustomerOnlyRoute";
 
 const Content = lazy(() => import("./layouts/content/Content"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
+const FaqPage = lazy(() => import("./pages/FaqPage"));
+const AdminFaqPage = lazy(() => import("./admin/pages/AdminFaqPage"));
 const AdminAboutPage = lazy(() => import("./admin/pages/AdminAboutPage"));
 const ProductInfo = lazy(() => import("./pages/productInfo/ProductInfo"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
@@ -71,6 +73,10 @@ const routes = [
   {
     path: "/about",
     element: <AboutPage />,
+  },
+  {
+    path: "/faq",
+    element: <FaqPage />,
   },
   {
     path: "/discounts",
@@ -327,6 +333,16 @@ const routes = [
     ),
   },
 
+  {
+    path: "/admin/faq",
+    element: (
+      <ProtectedRoute>
+        <AdminLayout>
+          <AdminFaqPage />
+        </AdminLayout>
+      </ProtectedRoute>
+    ),
+  },
   {
     path: "/admin/about",
     element: (
