@@ -38,6 +38,7 @@ const Checkout = lazy(() => import("./pages/Checkout"));
 const Account = lazy(() => import("./pages/account/Account"));
 const AdminBanners = lazy(() => import("./admin/pages/AdminBanners"));
 const AdminSocialLinks = lazy(() => import("./admin/pages/AdminSocialLinks"));
+const AdminFooterTrustBadges = lazy(() => import("./admin/pages/AdminFooterTrustBadges"));
 const AdminSiteSettings = lazy(() => import("./admin/pages/AdminSiteSettings"));
 const AdminPaymentSettings = lazy(
   () => import("./admin/pages/AdminPaymentSettings"),
@@ -282,6 +283,17 @@ const routes = [
       <ProtectedRoute>
         <AdminLayout>
           <AdminBanners />
+        </AdminLayout>
+      </ProtectedRoute>
+    ),
+  },
+
+  {
+    path: "/admin/footer-trust-badges",
+    element: (
+      <ProtectedRoute>
+        <AdminLayout>
+          <AdminFooterTrustBadges />
         </AdminLayout>
       </ProtectedRoute>
     ),
