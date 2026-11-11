@@ -7,6 +7,7 @@ const CloseImage = ({ onClick }) => {
       type="button"
       aria-label="بستن تصویر"
       className="
+        theme-dark-overlay
         absolute
         right-3
         top-3
