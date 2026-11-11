@@ -58,7 +58,7 @@ const ProductImage = ({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      className="
+      className="theme-product-image
         relative z-0
         h-full w-full cursor-pointer
         select-none object-contain
