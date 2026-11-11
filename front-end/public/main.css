@@ -753,6 +753,87 @@ html {
   color: #ffffff !important;
 }
 
+/* Additional states present in the full admin route inventory. */
+:root[data-theme="light"] .admin-theme-scope.admin-login-shell {
+  background: radial-gradient(ellipse at 50% 0%, #e5edf2 0%, transparent 48%), var(--app-canvas) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="bg-white/5"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-white/[0.025]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-white/[0.05]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-800/30"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-800/50"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-800/60"] {
+  background-color: #edf1f6 !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-950/10"] {
+  background-color: #edf5f4 !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-400/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-500/10"] {
+  background-color: var(--app-success-soft) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-300/[0.07]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-300/[0.08]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-300/[0.12]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-400/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-400/15"] {
+  background-color: var(--app-warning-soft) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-400/[0.07]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/60"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-400/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-400/[0.07]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-400/[0.14]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-500/20"] {
+  background-color: var(--app-danger-soft) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="bg-blue-950/40"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-sky-950/40"] {
+  background-color: var(--app-info-soft) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="bg-violet-950/40"] {
+  background-color: var(--app-violet-soft) !important;
+}
+
+/* Semantic outlines make alert and status boundaries legible on pale cards. */
+:root[data-theme="light"] .admin-theme-scope [class*="border-red-"],
+:root[data-theme="light"] .admin-theme-scope [class*="border-rose-"] {
+  border-color: #e7c5c8 !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class*="border-amber-"] {
+  border-color: #e8d6b6 !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class*="border-emerald-"] {
+  border-color: #c8dfd1 !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class*="border-cyan-"] {
+  border-color: #bfdad8 !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class*="border-blue-"],
+:root[data-theme="light"] .admin-theme-scope [class*="border-sky-"] {
+  border-color: #cbd9e9 !important;
+}
+
+/* Icons and inline action content inherit the accessible primary foreground. */
+:root[data-theme="light"] .admin-theme-scope button[class*="bg-cyan-"] * {
+  color: inherit !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="text-cyan-50"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-cyan-300/70"] {
+  color: var(--app-accent) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="text-slate-950"] {
+  color: var(--app-text) !important;
+}
+:root[data-theme="light"] .admin-theme-scope .admin-primary-action {
+  background: var(--app-accent) !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 16px rgb(23 107 112 / 15%) !important;
+}
+:root[data-theme="light"] .admin-theme-scope .admin-primary-action:hover {
+  background: var(--app-accent-hover) !important;
+}
+
 /* Discount prices are presented as one calm price block, never a cyan-violet gradient. */
 :root[data-theme="light"] .discount-price-panel {
   background: #eaf3f2 !important;
