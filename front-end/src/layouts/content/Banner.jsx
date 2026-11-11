@@ -225,7 +225,7 @@ const Banner = () => {
         {/* Outer decorative frame */}
         <div
           className="
-            relative rounded-[1.8rem] p-[1px]
+            theme-banner-frame relative rounded-[1.8rem] p-[1px]
             bg-gradient-to-br from-cyan-300/30
             via-white/[0.07] to-violet-400/25
             shadow-[0_25px_90px_rgba(0,0,0,.38)]
