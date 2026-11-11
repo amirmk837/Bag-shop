@@ -453,9 +453,11 @@ html {
 /* Stronger semantic text tones used in compact status and payment labels. */
 :root[data-theme="light"] .app-shell [class~="text-amber-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
 :root[data-theme="light"] .app-shell [class~="text-amber-500"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-rose-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
-:root[data-theme="light"] .app-shell [class~="text-cyan-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
+:root[data-theme="light"] .app-shell [class~="text-rose-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   color: var(--app-warning) !important;
+}
+:root[data-theme="light"] .app-shell [class~="text-cyan-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
+  color: var(--app-accent) !important;
 }
 :root[data-theme="light"] .app-shell [class~="text-emerald-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *),
 :root[data-theme="light"] .app-shell [class~="text-green-400"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) {
