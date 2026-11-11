@@ -828,3 +828,176 @@ html {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* =========================================
+   LIGHT MODE REFINEMENT — QUIET, TONAL SURFACES
+   Applied only to light appearance. Dark mode is unchanged.
+========================================= */
+:root[data-theme="light"] {
+  --app-canvas: #f2f4f5;
+  --app-surface: #f8f9fa;
+  --app-surface-raised: #ffffff;
+  --app-surface-muted: #eceff1;
+  --app-surface-strong: #e3e7e9;
+  --app-border: #d8dee2;
+  --app-border-strong: #c5cdd2;
+  --app-text: #252e35;
+  --app-text-secondary: #56616a;
+  --app-text-tertiary: #68747c;
+  --app-accent: #45676a;
+  --app-accent-hover: #38585b;
+  --app-accent-soft: #e8eeee;
+  --app-accent-border: #cbd8d8;
+  --app-violet: #665e70;
+  --app-violet-soft: #eeedf0;
+  --app-success: #35664e;
+  --app-success-soft: #eaf1ec;
+  --app-warning: #80633b;
+  --app-warning-soft: #f3efe7;
+  --app-danger: #96535a;
+  --app-danger-soft: #f4ebec;
+  --app-info: #4d6680;
+  --app-info-soft: #ebeff3;
+}
+
+/* Quiet down ambient lighting and decorative blur layers. */
+:root[data-theme="light"] .app-shell .app-background-glow {
+  display: none !important;
+}
+:root[data-theme="light"] .app-shell [class*="blur-"].pointer-events-none {
+  opacity: 0 !important;
+}
+
+/* Prefer solid, calm surfaces over stacked gradients and luminous shadows. */
+:root[data-theme="light"] .site-header-shell {
+  background: #f8f9fa !important;
+  box-shadow: 0 2px 12px rgb(35 45 54 / 5%) !important;
+}
+:root[data-theme="light"] .site-footer-shell {
+  background: #e9edef !important;
+  box-shadow: none !important;
+}
+:root[data-theme="light"] .theme-product-card,
+:root[data-theme="light"] .theme-category-card,
+:root[data-theme="light"] .theme-content-panel,
+:root[data-theme="light"] .theme-feature-panel {
+  background: #ffffff !important;
+  border-color: #d9dfe3 !important;
+  box-shadow: 0 2px 12px rgb(35 45 54 / 5%) !important;
+}
+:root[data-theme="light"] .theme-product-card:hover,
+:root[data-theme="light"] .theme-category-card:hover {
+  border-color: #c3d0d1 !important;
+  box-shadow: 0 5px 16px rgb(35 45 54 / 7%) !important;
+}
+:root[data-theme="light"] .theme-media-surface {
+  background: #edf0f2 !important;
+  border-color: #e0e4e7 !important;
+}
+:root[data-theme="light"] .theme-feature-chip {
+  background: #f8f9fa !important;
+  border-color: #dce1e4 !important;
+  box-shadow: 0 2px 8px rgb(35 45 54 / 4%) !important;
+}
+:root[data-theme="light"] .theme-banner-frame {
+  background: #e9edef !important;
+  box-shadow: 0 4px 16px rgb(35 45 54 / 6%) !important;
+}
+:root[data-theme="light"] .theme-brand-gradient {
+  background-image: none !important;
+  color: var(--app-accent) !important;
+  -webkit-text-fill-color: var(--app-accent) !important;
+}
+:root[data-theme="light"] .admin-theme-scope.admin-login-shell {
+  background: var(--app-canvas) !important;
+}
+:root[data-theme="light"] .admin-theme-scope .admin-content-surface {
+  background: #f8f9fa !important;
+  box-shadow: 0 3px 14px rgb(35 45 54 / 5%) !important;
+}
+:root[data-theme="light"] .admin-theme-scope .admin-primary-action {
+  box-shadow: 0 2px 8px rgb(35 45 54 / 10%) !important;
+}
+
+/* Category thumbnails: neutral image stage, natural artwork, no neon framing. */
+:root[data-theme="light"] .category-card-shell {
+  background: #fafbfc !important;
+  border-color: #dce1e4 !important;
+  box-shadow: 0 2px 10px rgb(35 45 54 / 5%) !important;
+}
+:root[data-theme="light"] .category-card-shell:hover {
+  border-color: #c7d2d4 !important;
+  box-shadow: 0 5px 15px rgb(35 45 54 / 7%) !important;
+}
+:root[data-theme="light"] .category-card-glow,
+:root[data-theme="light"] .category-section-glow {
+  display: none !important;
+}
+:root[data-theme="light"] .category-thumbnail-surface {
+  background: #edf0f2 !important;
+  border-color: #e0e4e7 !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 70%) !important;
+}
+:root[data-theme="light"] .category-thumbnail-wash {
+  display: none !important;
+}
+:root[data-theme="light"] .category-thumbnail-ring {
+  border-color: #dce2e5 !important;
+}
+:root[data-theme="light"] .category-thumbnail-image {
+  filter: none !important;
+  -webkit-filter: none !important;
+  transform: none !important;
+}
+:root[data-theme="light"] .category-card-shell:hover .category-thumbnail-image {
+  transform: scale(1.025) !important;
+}
+:root[data-theme="light"] .category-thumbnail-index {
+  color: #7b858c !important;
+}
+:root[data-theme="light"] .category-card-title {
+  color: #29343b !important;
+}
+:root[data-theme="light"] .category-card-description,
+:root[data-theme="light"] .category-card-children > div > span {
+  color: #737e85 !important;
+}
+:root[data-theme="light"] .category-card-arrow {
+  background: #f1f3f4 !important;
+  border-color: #dce1e4 !important;
+  color: #5e6a71 !important;
+}
+:root[data-theme="light"] .category-card-arrow:hover,
+:root[data-theme="light"] .category-card-shell:hover .category-card-arrow {
+  background: #e7eded !important;
+  border-color: #cbd7d8 !important;
+  color: var(--app-accent) !important;
+}
+:root[data-theme="light"] .category-card-children {
+  border-color: #e1e5e8 !important;
+}
+:root[data-theme="light"] .category-card-child {
+  background: #f0f2f3 !important;
+  border-color: #dfe4e7 !important;
+  color: #5d6870 !important;
+}
+:root[data-theme="light"] .category-card-child:hover {
+  background: #e7eded !important;
+  border-color: #cbd7d8 !important;
+  color: var(--app-accent) !important;
+}
+
+/* The discounted amount remains prominent without a colored panel. */
+:root[data-theme="light"] .discount-price-panel {
+  background: #eff2f3 !important;
+  border-color: #d8e0e1 !important;
+  box-shadow: none !important;
+}
+:root[data-theme="light"] .app-shell .discount-price-panel .discount-final-label {
+  color: #66747a !important;
+}
+:root[data-theme="light"] .app-shell .discount-price-panel .discount-final-value,
+:root[data-theme="light"] .app-shell .discount-price-panel .discount-final-unit {
+  color: #365c60 !important;
+}
