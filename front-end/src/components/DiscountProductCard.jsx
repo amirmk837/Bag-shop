@@ -22,10 +22,10 @@ const DiscountProductCard = ({ product }) => {
   return (
     <Link
       to={`/product/${encodeURIComponent(product.productCode)}`}
-      className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-[1.5rem] border border-slate-700/70 bg-[#0b1425] text-white shadow-[0_12px_35px_rgba(0,0,0,.32)] transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/60 hover:shadow-[0_18px_38px_rgba(0,0,0,.42),0_0_20px_rgba(34,211,238,.08)]"
+      className="theme-product-card group relative flex h-full min-w-0 flex-col overflow-hidden rounded-[1.5rem] border border-slate-700/70 bg-[#0b1425] text-white shadow-[0_12px_35px_rgba(0,0,0,.32)] transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/60 hover:shadow-[0_18px_38px_rgba(0,0,0,.42),0_0_20px_rgba(34,211,238,.08)]"
     >
       {/* Product image */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-[radial-gradient(ellipse_at_50%_45%,rgba(34,211,238,.13),transparent_60%),linear-gradient(145deg,#18263c,#101a2d_65%,#0b1425)]">
+      <div className="theme-media-surface relative aspect-[4/3] overflow-hidden bg-[radial-gradient(ellipse_at_50%_45%,rgba(34,211,238,.13),transparent_60%),linear-gradient(145deg,#18263c,#101a2d_65%,#0b1425)]">
         {image ? (
           <img
             src={image}
@@ -46,7 +46,7 @@ const DiscountProductCard = ({ product }) => {
         />
 
         {/* Discount badge */}
-        <div className="absolute left-3 top-3 z-10 flex items-center gap-1.5 rounded-xl border border-rose-300/20 bg-gradient-to-br from-rose-500 to-red-700 px-3 py-2 text-white shadow-[0_7px_20px_rgba(225,29,72,.28)]">
+        <div className="theme-dark-overlay absolute left-3 top-3 z-10 flex items-center gap-1.5 rounded-xl border border-rose-300/20 bg-gradient-to-br from-rose-500 to-red-700 px-3 py-2 text-white shadow-[0_7px_20px_rgba(225,29,72,.28)]">
           <span className="text-xl font-black leading-none sm:text-2xl">
             {discountPercent.toLocaleString("fa-IR")}٪
           </span>
@@ -54,7 +54,7 @@ const DiscountProductCard = ({ product }) => {
         </div>
 
         {/* Brand */}
-        <div className="absolute bottom-3 right-3 z-10 max-w-[75%] truncate rounded-full border border-white/10 bg-slate-950/65 px-3 py-1.5 text-[10px] font-bold text-cyan-200 shadow-lg backdrop-blur-md sm:text-xs">
+        <div className="theme-dark-overlay absolute bottom-3 right-3 z-10 max-w-[75%] truncate rounded-full border border-white/10 bg-slate-950/65 px-3 py-1.5 text-[10px] font-bold text-cyan-200 shadow-lg backdrop-blur-md sm:text-xs">
           {product.brand || "فروشگاه کاظمی"}
         </div>
       </div>
