@@ -38,7 +38,7 @@ const ProductCard = ({ product, priority = false }) => {
     <article
       dir="rtl"
       className="
-        group relative isolate w-full min-w-0 overflow-hidden
+        theme-product-card group relative isolate w-full min-w-0 overflow-hidden
         rounded-[24px] border border-cyan-950/50
         bg-gradient-to-br from-[#0e1a2f] via-[#0a1426] to-[#0e1121]
         p-1.5 text-center shadow-[0_12px_35px_rgba(0,0,0,0.25)]
@@ -53,7 +53,7 @@ const ProductCard = ({ product, priority = false }) => {
 
       <div
         className="
-          relative h-[180px] w-full overflow-hidden rounded-[19px]
+          theme-media-surface relative h-[180px] w-full overflow-hidden rounded-[19px]
           border border-white/[0.04]
           bg-gradient-to-br from-[#14253d] via-[#0e192c] to-[#080d19]
           sm:h-[210px] sm:rounded-[22px]
@@ -89,7 +89,7 @@ const ProductCard = ({ product, priority = false }) => {
                 <div
                   className="
                   pointer-events-none absolute right-2 top-2 z-20
-                  rounded-full border border-white/[0.08]
+                  theme-dark-overlay rounded-full border border-white/[0.08]
                   bg-[#060d19]/80 px-2.5 py-1
                   text-[10px] font-semibold text-cyan-200
                   shadow-lg backdrop-blur-md sm:right-3 sm:top-3
