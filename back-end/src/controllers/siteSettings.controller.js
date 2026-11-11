@@ -1,6 +1,7 @@
 import { unlink } from "node:fs/promises";
 import path from "node:path";
 import { getSiteSettings, updateSiteSettings } from "../services/siteSettings.service.js";
+import { footerCaptionSchema } from "../validators/footerCaption.validator.js";
 
 const cleanText = (value, max) =>
   typeof value === "string" ? value.trim().slice(0, max) : undefined;
@@ -17,13 +18,24 @@ export const getSiteSettingsController = async (_req, res) => {
 export const updateSiteSettingsController = async (req, res) => {
   const files = Object.values(req.files || {}).flat();
   try {
+    const captionValidation = footerCaptionSchema.safeParse({
+      footerCaption: req.body.footerCaption,
+    });
+
+    if (!captionValidation.success) {
+      await Promise.all(files.map((file) => unlink(file.path).catch(() => {})));
+      return res.status(400).json({
+        message: captionValidation.error.issues[0]?.message || "متن کپی‌رایت نامعتبر است.",
+      });
+    }
+
     const current = await getSiteSettings();
     const data = {
       storeName: cleanText(req.body.storeName, 80) || current.storeName,
       phone: cleanText(req.body.phone, 30) ?? current.phone,
       headerText: cleanText(req.body.headerText, 180) ?? current.headerText,
       footerAbout: cleanText(req.body.footerAbout, 1000) ?? current.footerAbout,
-      footerCaption: cleanText(req.body.footerCaption, 180) ?? current.footerCaption,
+      footerCaption: captionValidation.data.footerCaption ?? current.footerCaption,
       showPopularShowcase: req.body.showPopularShowcase === undefined
         ? current.showPopularShowcase !== false
         : req.body.showPopularShowcase === "true" || req.body.showPopularShowcase === true,
