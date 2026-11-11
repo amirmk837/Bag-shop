@@ -25,6 +25,7 @@ model Product {
   colorStocks ProductColorStock[]
   cartItems   CartItem[]
   orderItems  OrderItem[]
+  productComments ProductComment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -84,6 +85,10 @@ model User {
   updatedAt DateTime @updatedAt
 
   siteVisitEvents SiteVisitEvent[]
+  productComments ProductComment[]
+  repliedProductComments ProductComment[] @relation("ProductCommentReplier")
+  supportTickets SupportTicket[]
+  supportMessages SupportMessage[] @relation("SupportMessageAuthor")
 }
 
 model UserAddress {
@@ -331,15 +336,17 @@ model AdminAuditLog {
 
 
 model SiteSettings {
-  id             Int      @id @default(1)
-  storeName      String   @default("فروشگاه کاظمی")
-  logoUrl        String?
-  footerLogoUrl  String?
-  phone          String?
-  headerText     String?
-  footerAbout    String?
-  footerCaption  String?
-  updatedAt      DateTime @updatedAt
+  id                  Int      @id @default(1)
+  storeName           String   @default("فروشگاه کاظمی")
+  logoUrl             String?
+  footerLogoUrl       String?
+  phone               String?
+  headerText          String?
+  footerAbout         String?
+  footerCaption       String?
+  supportHours        Json?
+  supportResponseText String?  @db.VarChar(240)
+  updatedAt           DateTime @updatedAt
 }
 
 
@@ -360,4 +367,97 @@ model SiteVisitEvent {
   @@index([userId, createdAt])
   @@index([path, createdAt])
   @@index([referrerHost, createdAt])
+}
+
+
+enum ProductCommentType {
+  COMMENT
+  QUESTION
+}
+
+enum ProductCommentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum SupportTopic {
+  ORDER
+  PAYMENT
+  PRODUCT
+  SHIPPING
+  ACCOUNT
+  OTHER
+}
+
+enum SupportTicketStatus {
+  NEW
+  IN_PROGRESS
+  ANSWERED
+  CLOSED
+}
+
+enum SupportSenderRole {
+  USER
+  ADMIN
+}
+
+model ProductComment {
+  id          Int                 @id @default(autoincrement())
+  productId   Int
+  userId      Int
+  type        ProductCommentType  @default(COMMENT)
+  content     String
+  status      ProductCommentStatus @default(PENDING)
+  adminReply  String?
+  repliedAt   DateTime?
+  repliedById Int?
+
+  product  Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  repliedBy User?  @relation("ProductCommentReplier", fields: [repliedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId, status, createdAt])
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+}
+
+model SupportTicket {
+  id              Int                 @id @default(autoincrement())
+  userId          Int
+  topic           SupportTopic
+  status          SupportTicketStatus @default(NEW)
+  customerName    String
+  customerPhone   String?
+  customerAddress String?
+  lastMessageAt   DateTime            @default(now())
+
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages SupportMessage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, lastMessageAt])
+  @@index([status, lastMessageAt])
+  @@index([status, createdAt])
+}
+
+model SupportMessage {
+  id         Int               @id @default(autoincrement())
+  ticketId   Int
+  senderId   Int?
+  senderRole SupportSenderRole
+  content    String
+
+  ticket SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  sender User?         @relation("SupportMessageAuthor", fields: [senderId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([ticketId, createdAt])
+  @@index([senderId, createdAt])
 }

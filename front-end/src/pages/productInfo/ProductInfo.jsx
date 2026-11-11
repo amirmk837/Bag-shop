@@ -5,6 +5,7 @@ import ProductImage from "../../productsTable/components/ProductImage";
 import ProductDetails from "./ProductsDetail";
 import { getProductByCode } from "../../services/api";
 import BackPage from "../../components/BackPage";
+import ProductComments from "../../components/ProductComments";
 
 const ProductInfoes = () => {
   const { id } = useParams();
@@ -155,6 +156,7 @@ const ProductInfoes = () => {
             <ProductDetails product={product} />
           </div>
         </div>
+        <ProductComments key={product.productCode ?? product.id} productCode={product.productCode ?? product.id} />
       </div>
     </div>
   );

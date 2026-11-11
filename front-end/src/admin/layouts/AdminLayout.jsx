@@ -1,12 +1,16 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { FiExternalLink } from "react-icons/fi";
 import BackPage from "../../components/BackPage";
+import { useEffect, useState } from "react";
+import { getAdminFeedbackSummary } from "../../services/feedbackApi";
 
 const navItems = [
   { label: "داشبورد", to: "/admin" },
   { label: "محصولات", to: "/admin/products" },
   { label: "بنرها", to: "/admin/banners" },
   { label: "سفارش‌ها", to: "/admin/orders" },
+  { label: "نظرات و پرسش‌ها", to: "/admin/product-comments", badgeKey: "pendingComments" },
+  { label: "پشتیبانی مشتریان", to: "/admin/support", badgeKey: "unansweredTickets" },
   { label: "دسته‌بندی‌ها", to: "/admin/categories" },
   { label: "کاربران", to: "/admin/users" },
   { label: "بازدیدکنندگان و آمار", to: "/admin/analytics" },
@@ -27,6 +31,27 @@ const linkClass = ({ isActive }) =>
 const AdminLayout = ({ children }) => {
   const location = useLocation();
   const isDashboard = location.pathname === "/admin";
+  const [summary, setSummary] = useState({});
+
+  useEffect(() => {
+    let active = true;
+    const loadSummary = async () => {
+      try {
+        const result = await getAdminFeedbackSummary();
+        if (active) setSummary(result || {});
+      } catch {
+        if (active) setSummary({});
+      }
+    };
+    loadSummary();
+    const timer = window.setInterval(loadSummary, 30000);
+    return () => { active = false; window.clearInterval(timer); };
+  }, []);
+
+  const renderBadge = (item) => {
+    const count = Number(summary[item.badgeKey] || 0);
+    return item.badgeKey && count > 0 ? <span className="mr-auto rounded-full bg-rose-500/15 px-2 py-0.5 text-[10px] font-bold tabular-nums text-rose-300">{count > 99 ? "۹۹+" : count.toLocaleString("fa-IR")}</span> : null;
+  };
 
   return (
     <div className="min-h-screen overflow-x-clip bg-[#0d1119] text-white" dir="rtl">
@@ -56,7 +81,8 @@ const AdminLayout = ({ children }) => {
         >
           {navItems.map((item) => (
             <NavLink key={item.to} to={item.to} end={item.to === "/admin"} className={linkClass}>
-              {item.label}
+              <span>{item.label}</span>
+              {renderBadge(item)}
             </NavLink>
           ))}
         </nav>
@@ -79,7 +105,8 @@ const AdminLayout = ({ children }) => {
                   ].join(" ")
                 }
               >
-                {item.label}
+                <span>{item.label}</span>
+                {renderBadge(item)}
               </NavLink>
             ))}
           </nav>
