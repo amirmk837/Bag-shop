@@ -83,17 +83,17 @@ const DiscountProductCard = ({ product }) => {
             </span>
           </div>
 
-          <div className="rounded-xl border border-cyan-500/20 bg-gradient-to-l from-cyan-950/70 via-slate-900/80 to-violet-950/30 p-2.5 sm:p-3">
-            <span className="mb-1 block text-[10px] font-bold text-cyan-300 sm:text-xs">
+          <div className="discount-price-panel rounded-xl border border-cyan-500/20 bg-[#0e1b29] p-2.5 sm:p-3">
+            <span className="discount-final-label mb-1 block text-[10px] font-bold text-cyan-300 sm:text-xs">
               قیمت نهایی
             </span>
 
             <div className="flex flex-wrap items-baseline gap-x-1.5">
-              <span className="text-xl font-black leading-tight tracking-tight text-white sm:text-2xl">
+              <span className="discount-final-value text-xl font-black leading-tight tracking-tight text-white sm:text-2xl">
                 {formatPrice(finalPrice)}
               </span>
 
-              <span className="text-[10px] font-bold text-cyan-200 sm:text-xs">
+              <span className="discount-final-unit text-[10px] font-bold text-cyan-200 sm:text-xs">
                 تومان
               </span>
             </div>
