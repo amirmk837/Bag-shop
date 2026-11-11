@@ -202,3 +202,172 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* =========================================
+   LIGHT THEME — COMPONENT COVERAGE PATCH
+   Warm layered palette; dark theme is untouched.
+========================================= */
+:root[data-theme="light"] {
+  --light-canvas: #f2eee5;
+  --light-surface: #fffaf0;
+  --light-surface-raised: #f8f1e5;
+  --light-surface-muted: #eee6d8;
+  --light-border: #d9cebd;
+  --light-text: #202b3b;
+  --light-text-muted: #526174;
+  --light-accent: #087f86;
+}
+
+/* Replace dark hard-coded surfaces used by storefront and admin screens. */
+:root[data-theme="light"] [class*="bg-[#080c13]"],
+:root[data-theme="light"] [class*="bg-[#0d1119]"],
+:root[data-theme="light"] [class*="bg-[#0b111c]"] {
+  background-color: var(--light-canvas) !important;
+}
+:root[data-theme="light"] [class*="bg-[#111722]"],
+:root[data-theme="light"] [class*="bg-[#151923]"],
+:root[data-theme="light"] [class*="bg-[#151d2a]"],
+:root[data-theme="light"] [class*="bg-[#111824]"],
+:root[data-theme="light"] [class*="bg-zinc-900"] {
+  background-color: var(--light-surface) !important;
+}
+:root[data-theme="light"] [class*="bg-[#10151f]"],
+:root[data-theme="light"] [class*="bg-[#101722]"],
+:root[data-theme="light"] [class*="bg-[#090e16]"],
+:root[data-theme="light"] [class*="bg-zinc-950"] {
+  background-color: var(--light-surface-raised) !important;
+}
+:root[data-theme="light"] [class*="bg-zinc-800"] {
+  background-color: var(--light-surface-muted) !important;
+}
+:root[data-theme="light"] [class*="bg-black/"] {
+  background-color: rgb(231 222 207 / 82%) !important;
+}
+
+/* Warm product gallery and product detail panel. */
+:root[data-theme="light"] [class*="from-zinc-900"][class*="via-zinc-800"] {
+  background-image: linear-gradient(135deg, #eee6d8, #e2d8c8 55%, #f7f0e5) !important;
+}
+:root[data-theme="light"] [class*="to-black"] {
+  --tw-gradient-to: #f7f0e5 var(--tw-gradient-to-position) !important;
+}
+
+/* Make all common neutral text levels readable, including smaller labels. */
+:root[data-theme="light"] [class~="text-white"],
+:root[data-theme="light"] [class*="text-zinc-50"],
+:root[data-theme="light"] [class*="text-zinc-100"],
+:root[data-theme="light"] [class*="text-zinc-200"] {
+  color: var(--light-text) !important;
+}
+:root[data-theme="light"] [class*="text-zinc-300"] {
+  color: #354357 !important;
+}
+:root[data-theme="light"] [class*="text-zinc-400"] {
+  color: var(--light-text-muted) !important;
+}
+:root[data-theme="light"] [class*="text-zinc-500"],
+:root[data-theme="light"] [class*="text-zinc-600"] {
+  color: #657286 !important;
+}
+:root[data-theme="light"] [class*="text-cyan-100"],
+:root[data-theme="light"] [class*="text-cyan-200"],
+:root[data-theme="light"] [class*="text-cyan-300"] {
+  color: #087780 !important;
+}
+:root[data-theme="light"] [class*="text-amber-100"],
+:root[data-theme="light"] [class*="text-amber-200"],
+:root[data-theme="light"] [class*="text-amber-300"] {
+  color: #87530b !important;
+}
+:root[data-theme="light"] [class*="text-rose-200"],
+:root[data-theme="light"] [class*="text-rose-300"],
+:root[data-theme="light"] [class*="text-red-200"],
+:root[data-theme="light"] [class*="text-red-300"],
+:root[data-theme="light"] [class*="text-red-400"] {
+  color: #a52d36 !important;
+}
+:root[data-theme="light"] [class*="text-emerald-200"],
+:root[data-theme="light"] [class*="text-emerald-300"] {
+  color: #16734b !important;
+}
+:root[data-theme="light"] [class*="text-blue-300"],
+:root[data-theme="light"] [class*="text-sky-300"],
+:root[data-theme="light"] [class*="text-violet-300"] {
+  color: #365e9a !important;
+}
+
+/* Borders: visible separation without harsh black outlines. */
+:root[data-theme="light"] [class*="border-white/"],
+:root[data-theme="light"] [class*="border-zinc-800"],
+:root[data-theme="light"] [class*="border-zinc-700"],
+:root[data-theme="light"] [class*="border-zinc-600"] {
+  border-color: var(--light-border) !important;
+}
+
+/* Pastel semantic status chips retain meaning with readable contrast. */
+:root[data-theme="light"] [class*="bg-amber-950/"],
+:root[data-theme="light"] [class*="bg-amber-500/"] {
+  background-color: #f8e8c6 !important;
+}
+:root[data-theme="light"] [class*="bg-blue-950/"],
+:root[data-theme="light"] [class*="bg-blue-500/"],
+:root[data-theme="light"] [class*="bg-sky-950/"],
+:root[data-theme="light"] [class*="bg-sky-500/"] {
+  background-color: #e2ebf8 !important;
+}
+:root[data-theme="light"] [class*="bg-violet-950/"],
+:root[data-theme="light"] [class*="bg-violet-500/"] {
+  background-color: #eee7fa !important;
+}
+:root[data-theme="light"] [class*="bg-cyan-950/"],
+:root[data-theme="light"] [class*="bg-cyan-500/"] {
+  background-color: #dff1ef !important;
+}
+:root[data-theme="light"] [class*="bg-emerald-950/"],
+:root[data-theme="light"] [class*="bg-emerald-500/"] {
+  background-color: #e1f1e7 !important;
+}
+:root[data-theme="light"] [class*="bg-red-950/"],
+:root[data-theme="light"] [class*="bg-red-500/"],
+:root[data-theme="light"] [class*="bg-rose-950/"],
+:root[data-theme="light"] [class*="bg-rose-500/"] {
+  background-color: #f8e4e3 !important;
+}
+
+/* Admin workspace gets a distinct contained surface in light mode. */
+:root[data-theme="light"] .admin-content-surface {
+  min-height: calc(100vh - 100px);
+  padding: clamp(0.75rem, 1.5vw, 1.5rem);
+  border: 1px solid #ded4c5;
+  border-radius: 1.25rem;
+  background: linear-gradient(145deg, #fffaf1 0%, #f8f1e5 100%);
+  box-shadow: 0 14px 34px rgb(67 52 31 / 7%);
+}
+
+/* Discount-management hero and analytics cards receive warm raised layers. */
+:root[data-theme="light"] [class*="bg-[#0b111c]"] {
+  background-image: linear-gradient(135deg, #fffaf0, #eee5d6 100%) !important;
+  border-color: #d9cdbb !important;
+}
+:root[data-theme="light"] [class*="bg-[#151d2a]"],
+:root[data-theme="light"] [class*="bg-[#101722]"] {
+  border-color: #d9cebd !important;
+}
+:root[data-theme="light"] [class*="bg-white/"] {
+  --tw-bg-opacity: 1;
+}
+:root[data-theme="light"] input::placeholder,
+:root[data-theme="light"] textarea::placeholder {
+  color: #788497 !important;
+}
+
+/* Category badges and product surfaces stay distinct from the page canvas. */
+:root[data-theme="light"] [class*="border-cyan-300/"],
+:root[data-theme="light"] [class*="border-cyan-400/"] {
+  border-color: #9ac8c5 !important;
+}
+:root[data-theme="light"] [class*="bg-cyan-300/"],
+:root[data-theme="light"] [class*="bg-cyan-400/"] {
+  background-color: #e1f1ef !important;
+}
