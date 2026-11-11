@@ -1001,3 +1001,38 @@ html {
 :root[data-theme="light"] .app-shell .discount-price-panel .discount-final-unit {
   color: #365c60 !important;
 }
+
+
+/* Fine tuning for storefront media and primary accents in light mode. */
+:root[data-theme="light"] .theme-media-overlay {
+  background: none !important;
+}
+:root[data-theme="light"] .theme-product-image {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+:root[data-theme="light"] .theme-product-card:hover .theme-product-image {
+  transform: scale(1.015) !important;
+  filter: none !important;
+}
+:root[data-theme="light"] .theme-product-accent-line {
+  display: none !important;
+}
+:root[data-theme="light"] .store-eyebrow {
+  background: #e9eeee !important;
+  border-color: #d5dfdf !important;
+  color: #4b6669 !important;
+}
+:root[data-theme="light"] .store-eyebrow > span:first-child {
+  background: #6b898b !important;
+  box-shadow: none !important;
+}
+:root[data-theme="light"] .store-primary-cta {
+  background: #45676a !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+:root[data-theme="light"] .store-primary-cta:hover {
+  background: #38585b !important;
+  box-shadow: 0 3px 10px rgb(35 45 54 / 9%) !important;
+}
