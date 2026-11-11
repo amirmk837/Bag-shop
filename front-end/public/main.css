@@ -824,6 +824,61 @@ html {
   border-color: #cbd9e9 !important;
 }
 
+/* Small status fills and borders used by tables, badges and inline feedback. */
+:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-950/30"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-950/40"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-950/50"] {
+  background-color: var(--app-success-soft) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-950/20"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-950/40"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-500/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-400/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-400/15"] {
+  background-color: var(--app-warning-soft) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/20"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/30"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/40"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/50"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/60"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-500/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-500/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-500/20"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-950/40"] {
+  background-color: var(--app-danger-soft) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="bg-blue-950/40"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-sky-950/40"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-blue-500/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-sky-500/10"] {
+  background-color: var(--app-info-soft) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="bg-violet-950/40"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-violet-500/10"] {
+  background-color: var(--app-violet-soft) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="border-red-900/50"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-red-900/60"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-red-800/70"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-red-500/30"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-rose-500/30"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-rose-400/15"] {
+  border-color: #e5c4c8 !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="border-amber-500/20"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-amber-500/30"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-amber-800/70"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-amber-900/50"] {
+  border-color: #e6d4b5 !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="border-emerald-500/20"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-emerald-500/30"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-emerald-800/70"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-emerald-900/50"] {
+  border-color: #c7dfd0 !important;
+}
+
 /* Icons and inline action content inherit the accessible primary foreground. */
 :root[data-theme="light"] .admin-theme-scope button[class*="bg-cyan-"] * {
   color: inherit !important;
