@@ -18,7 +18,7 @@ export const applyTheme = (theme) => {
   document.documentElement.dataset.theme = nextTheme;
   document.documentElement.style.colorScheme = nextTheme;
   const themeColor = document.querySelector('meta[name="theme-color"]');
-  if (themeColor) themeColor.setAttribute("content", nextTheme === "dark" ? "#080c13" : "#f4f7fb");
+  if (themeColor) themeColor.setAttribute("content", nextTheme === "dark" ? "#080c13" : "#f1f3f7");
   return nextTheme;
 };
 
