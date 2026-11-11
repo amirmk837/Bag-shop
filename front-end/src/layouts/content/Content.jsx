@@ -16,7 +16,7 @@ const Content = () => {
       <div className="mx-auto w-full max-w-[1440px]">
         <section className="mx-auto mb-6 flex max-w-7xl flex-col gap-5 px-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:px-6 lg:px-8">
           <div className="max-w-2xl">
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-3 py-1.5 text-[10px] font-extrabold tracking-[.16em] text-cyan-200 sm:text-[11px]">
+            <div className="store-eyebrow mb-3 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-3 py-1.5 text-[10px] font-extrabold tracking-[.16em] text-cyan-200 sm:text-[11px]">
               <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(103,232,249,.8)]" />
               KAZEMI STORE
             </div>
@@ -29,12 +29,12 @@ const Content = () => {
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <a href="#store-categories" className="inline-flex h-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.045] px-4 text-xs font-bold text-zinc-200 transition hover:border-cyan-300/30 hover:bg-cyan-300/[0.07] hover:text-cyan-100 sm:text-sm">دسته‌بندی محصولات</a>
-            <Link to="/discounts" className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-l from-cyan-300 to-sky-500 px-4 text-xs font-black text-[#061018] shadow-[0_10px_28px_rgba(6,182,212,.18)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(6,182,212,.25)] sm:text-sm">پیشنهادهای ویژه <span aria-hidden="true">←</span></Link>
+            <Link to="/discounts" className="store-primary-cta inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-l from-cyan-300 to-sky-500 px-4 text-xs font-black text-[#061018] shadow-[0_10px_28px_rgba(6,182,212,.18)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(6,182,212,.25)] sm:text-sm">پیشنهادهای ویژه <span aria-hidden="true">←</span></Link>
           </div>
         </section>
 
         <div className="px-3 sm:px-5 md:px-6">
-          <div className="mx-auto max-w-7xl overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#101722] p-1.5 shadow-[0_24px_80px_rgba(0,0,0,.35)] sm:rounded-[2rem] sm:p-2">
+          <div className="theme-banner-frame mx-auto max-w-7xl overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#101722] p-1.5 shadow-[0_24px_80px_rgba(0,0,0,.35)] sm:rounded-[2rem] sm:p-2">
             <Banner />
           </div>
         </div>
