@@ -315,11 +315,16 @@ enum SocialPlatform {
 }
 
 model SocialLink {
-  id        Int            @id @default(autoincrement())
-  platform  SocialPlatform @unique
-  url       String?
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  id          Int            @id @default(autoincrement())
+  platform    SocialPlatform @unique
+  url         String?
+  channelName String?
+  isActive    Boolean        @default(true)
+  sortOrder   Int            @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([isActive, sortOrder])
 }
 
 model PaymentSettings {
