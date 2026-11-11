@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
+  FiHelpCircle,
+  FiInfo,
   FiLogIn,
   FiLogOut,
   FiMenu,
@@ -201,6 +203,25 @@ const HamburgerMenu = () => {
             />
           </>
         )}
+
+        <div className="mt-2 border-t border-white/10 pt-2">
+          <MenuLink
+            to="/about"
+            icon={<FiInfo />}
+            label="درباره ما"
+            onClick={closeMenu}
+            open={open}
+            delay={150}
+          />
+          <MenuLink
+            to="/faq"
+            icon={<FiHelpCircle />}
+            label="پرسش‌های متداول"
+            onClick={closeMenu}
+            open={open}
+            delay={200}
+          />
+        </div>
       </div>
     </div>
   );
