@@ -531,6 +531,213 @@ html {
   box-shadow: 0 16px 34px rgb(23 107 112 / 10%) !important;
 }
 
+/* =========================================
+   ADMIN LIGHT THEME
+   Scoped to the admin shell so storefront and dark mode stay isolated.
+========================================= */
+:root[data-theme="light"] .admin-theme-scope {
+  background: var(--app-canvas) !important;
+  color: var(--app-text) !important;
+}
+
+:root[data-theme="light"] .admin-theme-scope .admin-header-shell {
+  background: rgb(250 251 253 / 94%) !important;
+  border-color: var(--app-border) !important;
+  box-shadow: 0 8px 26px rgb(32 43 58 / 6%) !important;
+  color: var(--app-text) !important;
+}
+
+:root[data-theme="light"] .admin-theme-scope .admin-sidebar-shell {
+  background: #f7f9fc !important;
+  border-color: var(--app-border) !important;
+}
+
+:root[data-theme="light"] .admin-theme-scope .admin-content-surface {
+  background: linear-gradient(160deg, #ffffff 0%, #f8fafd 72%, #f1f4f8 100%) !important;
+  border-color: var(--app-border) !important;
+  box-shadow: 0 14px 36px rgb(32 43 58 / 6%) !important;
+}
+
+/* Admin cards and nested panels: one clear elevation step per layer. */
+:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-900"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-[#151d2a]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-[#151923]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-[#111824]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-[#111722]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-[#101722]"] {
+  background-color: #ffffff !important;
+}
+
+:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-950"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-[#090e16]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-[#10151f]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-black/20"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-950/40"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-950/50"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-950/70"] {
+  background-color: #f0f3f7 !important;
+}
+
+:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-800"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-700"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-800/40"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-800/60"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-white/[0.035]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-white/[0.05]"] {
+  background-color: #e9eef4 !important;
+}
+
+/* Text hierarchy applies to static labels, tables, forms and dynamic content. */
+:root[data-theme="light"] .admin-theme-scope [class~="text-white"]:not(button):not(button *),
+:root[data-theme="light"] .admin-theme-scope [class~="text-zinc-100"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-zinc-200"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-slate-100"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-slate-200"] {
+  color: var(--app-text) !important;
+}
+
+:root[data-theme="light"] .admin-theme-scope [class~="text-zinc-300"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-slate-300"] {
+  color: #3d4a5e !important;
+}
+
+:root[data-theme="light"] .admin-theme-scope [class~="text-zinc-400"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-slate-400"] {
+  color: var(--app-text-secondary) !important;
+}
+
+:root[data-theme="light"] .admin-theme-scope [class~="text-zinc-500"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-zinc-600"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-slate-500"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-slate-600"] {
+  color: var(--app-text-tertiary) !important;
+}
+
+/* Semantic accents are muted enough for light surfaces but remain distinct. */
+:root[data-theme="light"] .admin-theme-scope [class~="text-cyan-100"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-cyan-200"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-cyan-300"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-cyan-400"] {
+  color: var(--app-accent) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="text-emerald-200"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-emerald-300"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-emerald-400"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-green-300"] {
+  color: var(--app-success) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="text-amber-100"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-amber-200"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-amber-300"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-amber-400"] {
+  color: var(--app-warning) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="text-red-200"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-red-300"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-red-400"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-rose-200"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-rose-300"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-rose-400"] {
+  color: var(--app-danger) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="text-blue-300"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-sky-300"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-violet-300"] {
+  color: var(--app-info) !important;
+}
+
+/* Borders, dividers and table structure become visible without heavy outlines. */
+:root[data-theme="light"] .admin-theme-scope [class~="border-zinc-800"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-zinc-700"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-zinc-600"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-white/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-white/[0.08]"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-white/[0.07]"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-white/[0.06]"] {
+  border-color: var(--app-border) !important;
+}
+
+:root[data-theme="light"] .admin-theme-scope table thead {
+  background: #edf1f6 !important;
+  color: var(--app-text-secondary) !important;
+}
+:root[data-theme="light"] .admin-theme-scope table tbody tr {
+  border-color: #e3e8ef !important;
+}
+:root[data-theme="light"] .admin-theme-scope table tbody tr:hover {
+  background-color: #f4f7fa !important;
+}
+
+/* Inputs have a raised surface, clear focus ring and readable placeholders. */
+:root[data-theme="light"] .admin-theme-scope input:not([type="checkbox"]):not([type="radio"]),
+:root[data-theme="light"] .admin-theme-scope textarea,
+:root[data-theme="light"] .admin-theme-scope select {
+  background: #ffffff !important;
+  color: var(--app-text) !important;
+  border-color: #c8d2df !important;
+}
+:root[data-theme="light"] .admin-theme-scope input::placeholder,
+:root[data-theme="light"] .admin-theme-scope textarea::placeholder {
+  color: #69778a !important;
+  opacity: 1;
+}
+:root[data-theme="light"] .admin-theme-scope input:focus,
+:root[data-theme="light"] .admin-theme-scope textarea:focus,
+:root[data-theme="light"] .admin-theme-scope select:focus {
+  border-color: var(--app-accent) !important;
+  box-shadow: 0 0 0 3px rgb(23 107 112 / 12%) !important;
+}
+
+/* Primary actions and selected navigation share the mineral-teal accent. */
+:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-500"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-600"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-700"] {
+  background-color: var(--app-accent) !important;
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-400/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-500/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-950/20"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-950/60"] {
+  background-color: var(--app-accent-soft) !important;
+}
+:root[data-theme="light"] .admin-theme-scope button[class~="bg-zinc-800"],
+:root[data-theme="light"] .admin-theme-scope button[class~="bg-zinc-700"] {
+  color: var(--app-text) !important;
+}
+
+/* Status pills and alerts use consistent semantic fills. */
+:root[data-theme="light"] .admin-theme-scope [class*="bg-emerald-"],
+:root[data-theme="light"] .admin-theme-scope [class*="bg-green-"] {
+  background-color: var(--app-success-soft) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class*="bg-amber-"] {
+  background-color: var(--app-warning-soft) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class*="bg-red-"],
+:root[data-theme="light"] .admin-theme-scope [class*="bg-rose-"] {
+  background-color: var(--app-danger-soft) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class*="bg-blue-"],
+:root[data-theme="light"] .admin-theme-scope [class*="bg-sky-"],
+:root[data-theme="light"] .admin-theme-scope [class*="bg-violet-"] {
+  background-color: var(--app-info-soft) !important;
+}
+
+/* Discount prices are presented as one calm price block, never a cyan-violet gradient. */
+:root[data-theme="light"] .discount-price-panel {
+  background: #eaf3f2 !important;
+  border-color: #c9dfdc !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 75%) !important;
+}
+:root[data-theme="light"] .discount-final-label {
+  color: #426b69 !important;
+}
+:root[data-theme="light"] .discount-final-value,
+:root[data-theme="light"] .discount-final-unit {
+  color: #155e63 !important;
+}
+
 /* Reduced-motion preference is respected in both appearances. */
 @media (prefers-reduced-motion: reduce) {
   :root[data-theme="light"] *,
