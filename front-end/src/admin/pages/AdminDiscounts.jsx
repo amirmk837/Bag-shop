@@ -83,7 +83,7 @@ const AdminDiscounts = () => {
 
   return (
     <section dir="rtl" className="space-y-6 text-zinc-100">
-      <header className="relative isolate overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0b111c] p-5 shadow-[0_20px_60px_rgba(0,0,0,.24)] sm:p-7">
+      <header className="theme-admin-hero relative isolate overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0b111c] p-5 shadow-[0_20px_60px_rgba(0,0,0,.24)] sm:p-7">
         <div aria-hidden="true" className="pointer-events-none absolute -left-12 -top-24 -z-10 h-64 w-64 rounded-full bg-fuchsia-500/15 blur-[90px]" />
         <div aria-hidden="true" className="pointer-events-none absolute -right-12 -bottom-28 -z-10 h-64 w-64 rounded-full bg-amber-400/15 blur-[90px]" />
         <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
