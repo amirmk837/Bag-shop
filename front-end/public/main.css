@@ -11,6 +11,8 @@
 
 :root {
   color-scheme: dark;
+  scrollbar-color: #3f3f46 #18181b;
+  scrollbar-width: thin;
   --app-canvas: #080c13;
   --app-surface: #111722;
   --app-surface-raised: #151d2a;
@@ -484,9 +486,9 @@ html {
 
 /* Reduced-motion preference is respected in both appearances. */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  :root[data-theme="light"] *,
+  :root[data-theme="light"] *::before,
+  :root[data-theme="light"] *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
