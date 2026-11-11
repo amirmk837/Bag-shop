@@ -235,11 +235,10 @@ const Banner = () => {
           <div
             dir="ltr"
             role="region"
-            className="theme-dark-overlay"
             aria-roledescription="carousel"
             aria-label="بنرهای فروشگاه کاظمی"
             className="
-              group relative aspect-[16/10] w-full
+              theme-dark-overlay group relative aspect-[16/10] w-full
               overflow-hidden rounded-[1.75rem]
               bg-[#0b1422]
               sm:aspect-[16/7] sm:rounded-[2.2rem]
