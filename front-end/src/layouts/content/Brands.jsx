@@ -89,7 +89,7 @@ const Brands = () => {
           <article
             key={category.id}
             className="
-              group relative isolate min-w-0
+              theme-category-card group relative isolate min-w-0
               overflow-hidden rounded-[1.35rem]
               border border-white/[0.09]
               bg-gradient-to-br from-[#172536] via-[#101b29] to-[#0b121d]
