@@ -1,11 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {
+
+process.env.NODE_ENV = "test";
+process.env.JWT_SECRET ||= "test-secret-that-is-at-least-32-characters";
+process.env.DATABASE_URL ||= "postgresql://test:test@localhost:5432/test";
+process.env.FRONTEND_ORIGINS ||= "http://localhost:5173";
+
+const {
   normalizeSocialUrl,
   normalizeChannelName,
   normalizeSortOrder,
   normalizeActive,
-} from "../src/services/socialLink.service.js";
+} = await import("../src/services/socialLink.service.js");
 
 test("accepts HTTPS social URLs and normalizes bare hostnames", () => {
   assert.equal(normalizeSocialUrl("instagram.com/store"), "https://instagram.com/store");
