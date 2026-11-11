@@ -97,7 +97,7 @@ const AdminDiscounts = () => {
               <p className="text-[10px] font-semibold text-zinc-500">تعداد تخفیف فعال</p>
               <p className="mt-1 text-xl font-black tabular-nums text-amber-200">{pagination ? formatPrice(pagination.total) : "—"}</p>
             </div>
-            <Link to="/admin/products" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-gradient-to-l from-amber-300 to-orange-400 px-4 text-xs font-black text-[#17120a] transition hover:-translate-y-0.5">افزودن / ویرایش محصول</Link>
+            <Link to="/admin/products" className="admin-primary-action inline-flex min-h-11 items-center justify-center rounded-xl bg-cyan-600 px-4 text-xs font-black text-white transition hover:-translate-y-0.5">افزودن / ویرایش محصول</Link>
           </div>
         </div>
       </header>
