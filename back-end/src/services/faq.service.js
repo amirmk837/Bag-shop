@@ -14,7 +14,7 @@ const parseId = (value) => {
   return id;
 };
 
-export const getPublicFaqItems = () => prisma.fAQItem.findMany({
+export const getPublicFaqItems = () => prisma.faqItem.findMany({
   where: { isActive: true },
   select: {
     id: true,
@@ -26,23 +26,23 @@ export const getPublicFaqItems = () => prisma.fAQItem.findMany({
   orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
 });
 
-export const getAdminFaqItems = () => prisma.fAQItem.findMany({
+export const getAdminFaqItems = () => prisma.faqItem.findMany({
   orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
 });
 
-export const createFaqItem = (data) => prisma.fAQItem.create({ data });
+export const createFaqItem = (data) => prisma.faqItem.create({ data });
 
 export const updateFaqItem = async (value, data) => {
   const id = parseId(value);
-  const existing = await prisma.fAQItem.findUnique({ where: { id }, select: { id: true } });
+  const existing = await prisma.faqItem.findUnique({ where: { id }, select: { id: true } });
   if (!existing) throw createError(404, "پرسش متداول پیدا نشد.");
-  return prisma.fAQItem.update({ where: { id }, data });
+  return prisma.faqItem.update({ where: { id }, data });
 };
 
 export const deleteFaqItem = async (value) => {
   const id = parseId(value);
-  const existing = await prisma.fAQItem.findUnique({ where: { id }, select: { id: true } });
+  const existing = await prisma.faqItem.findUnique({ where: { id }, select: { id: true } });
   if (!existing) throw createError(404, "پرسش متداول پیدا نشد.");
-  await prisma.fAQItem.delete({ where: { id } });
+  await prisma.faqItem.delete({ where: { id } });
   return { id };
 };
