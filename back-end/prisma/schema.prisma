@@ -8,23 +8,23 @@ datasource db {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  productCode String   @unique
-  title       String
-  brand       String
-  count       Int      @default(0)
-  color       String?
-  price       Int
+  id              Int      @id @default(autoincrement())
+  productCode     String   @unique
+  title           String
+  brand           String
+  count           Int      @default(0)
+  color           String?
+  price           Int
   discountedPrice Int?
-  description String?
-  images      String[]
+  description     String?
+  images          String[]
 
   categoryId Int?
   category   Category? @relation(fields: [categoryId], references: [id])
 
-  colorStocks ProductColorStock[]
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
+  colorStocks     ProductColorStock[]
+  cartItems       CartItem[]
+  orderItems      OrderItem[]
   productComments ProductComment[]
 
   createdAt DateTime @default(now())
@@ -47,23 +47,32 @@ model ProductColorStock {
 }
 
 model Category {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  slug      String   @unique
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  slug      String     @unique
   image     String?
   parentId  Int?
-  sortOrder Int      @default(0)
+  sortOrder Int        @default(0)
   parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Restrict)
   children  Category[] @relation("CategoryTree")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  products Product[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  products  Product[]
+
   @@index([parentId, sortOrder])
 }
 
 enum UserRole {
   USER
   ADMIN
+}
+
+enum UserPermission {
+  MANAGE_PRODUCTS
+  MANAGE_CATEGORIES
+  VIEW_ORDERS
+  MANAGE_ORDERS
+  MANAGE_USERS
 }
 
 model User {
@@ -77,11 +86,6 @@ model User {
   permissions UserPermission[]
   auditLogs   AdminAuditLog[]
 
-  archivedOrders Order[] @relation("OrderArchivedBy")
-  returnedOrderItems OrderItem[] @relation("OrderItemInventoryReturnedBy")
-  createdInventoryReturnIssues InventoryReturnIssue[] @relation("InventoryIssueCreatedBy")
-  resolvedInventoryReturnIssues InventoryReturnIssue[] @relation("InventoryIssueResolvedBy")
-
   isActive  Boolean   @default(true)
   deletedAt DateTime?
 
@@ -89,15 +93,20 @@ model User {
   orders  Order[]
   address UserAddress?
 
-  createdAt DateTime @default(now())
-  lastLoginAt DateTime?
-  updatedAt DateTime @updatedAt
+  archivedOrders                Order[]                @relation("OrderArchivedBy")
+  returnedOrderItems            OrderItem[]            @relation("OrderItemInventoryReturnedBy")
+  createdInventoryReturnIssues  InventoryReturnIssue[] @relation("InventoryIssueCreatedBy")
+  resolvedInventoryReturnIssues InventoryReturnIssue[] @relation("InventoryIssueResolvedBy")
 
-  siteVisitEvents SiteVisitEvent[]
-  productComments ProductComment[]
+  siteVisitEvents        SiteVisitEvent[]
+  productComments        ProductComment[]
   repliedProductComments ProductComment[] @relation("ProductCommentReplier")
-  supportTickets SupportTicket[]
-  supportMessages SupportMessage[] @relation("SupportMessageAuthor")
+  supportTickets         SupportTicket[]
+  supportMessages        SupportMessage[] @relation("SupportMessageAuthor")
+
+  createdAt   DateTime  @default(now())
+  lastLoginAt DateTime?
+  updatedAt   DateTime  @updatedAt
 }
 
 model UserAddress {
@@ -150,14 +159,6 @@ model CartItem {
   @@index([productId])
 }
 
-enum UserPermission {
-  MANAGE_PRODUCTS
-  MANAGE_CATEGORIES
-  VIEW_ORDERS
-  MANAGE_ORDERS
-  MANAGE_USERS
-}
-
 enum OrderStatus {
   PENDING
   PAID
@@ -189,7 +190,7 @@ model Order {
   status          OrderStatus @default(PENDING)
   totalAmount     Int
   stockReleasedAt DateTime?
-  confirmedAt DateTime?
+  confirmedAt     DateTime?
 
   shippingRecipientName  String?
   shippingRecipientPhone String?
@@ -200,14 +201,22 @@ model Order {
   shippingPlateNumber    String?
   shippingUnitNumber     String?
 
-  items OrderItem[]
-  payments Payment[]
+  shippingCost     Int             @default(0)
+  shippingMethod   String?
+  trackingCode     String?
+  shippedAt        DateTime?
+  deliveredAt      DateTime?
+  shippingMethodId Int?
+  shippingOption   ShippingMethod? @relation(fields: [shippingMethodId], references: [id], onDelete: SetNull)
+
+  items                 OrderItem[]
+  payments              Payment[]
   inventoryReturnIssues InventoryReturnIssue[]
 
-  archivedAt DateTime?
-  archivedById Int?
+  archivedAt    DateTime?
+  archivedById  Int?
   archiveReason String?
-  archivedBy User? @relation("OrderArchivedBy", fields: [archivedById], references: [id], onDelete: SetNull)
+  archivedBy    User?     @relation("OrderArchivedBy", fields: [archivedById], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -215,13 +224,6 @@ model Order {
   @@index([userId])
   @@index([status, createdAt])
   @@index([archivedAt, createdAt])
-  shippingCost   Int      @default(0)
-  shippingMethod String?
-  trackingCode   String?
-  shippedAt      DateTime?
-  deliveredAt    DateTime?
-  shippingMethodId Int?
-  shippingOption   ShippingMethod? @relation(fields: [shippingMethodId], references: [id], onDelete: SetNull)
 }
 
 model OrderItem {
@@ -240,12 +242,13 @@ model OrderItem {
   quantity    Int
   subtotal    Int
 
-  inventoryReturnStatus InventoryReturnStatus @default(NOT_RETURNED)
-  inventoryReturnedAt DateTime?
-  inventoryReturnedById Int?
-  inventoryReturnReceived Boolean @default(false)
-  inventoryReturnSaleable Boolean @default(false)
-  inventoryReturnedBy User? @relation("OrderItemInventoryReturnedBy", fields: [inventoryReturnedById], references: [id], onDelete: SetNull)
+  inventoryReturnStatus   InventoryReturnStatus @default(NOT_RETURNED)
+  inventoryReturnedAt     DateTime?
+  inventoryReturnedById   Int?
+  inventoryReturnReceived Boolean               @default(false)
+  inventoryReturnSaleable Boolean               @default(false)
+
+  inventoryReturnedBy   User?                  @relation("OrderItemInventoryReturnedBy", fields: [inventoryReturnedById], references: [id], onDelete: SetNull)
   inventoryReturnIssues InventoryReturnIssue[]
 
   createdAt DateTime @default(now())
@@ -256,25 +259,32 @@ model OrderItem {
 
 model InventoryReturnIssue {
   id Int @id @default(autoincrement())
-  orderId Int
+
+  orderId     Int
   orderItemId Int?
+
   productCode String
-  title String
-  color String @default("")
-  quantity Int
+  title       String
+  color       String @default("")
+  quantity    Int
+
   reason String
   status InventoryReturnIssueStatus @default(OPEN)
+
   resolutionNote String?
-  resolvedAt DateTime?
-  createdById Int?
+  resolvedAt     DateTime?
+
+  createdById  Int?
   resolvedById Int?
+
+  order     Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderItem OrderItem? @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
+
+  createdBy  User? @relation("InventoryIssueCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  resolvedBy User? @relation("InventoryIssueResolvedBy", fields: [resolvedById], references: [id], onDelete: SetNull)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderItem OrderItem? @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
-  createdBy User? @relation("InventoryIssueCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
-  resolvedBy User? @relation("InventoryIssueResolvedBy", fields: [resolvedById], references: [id], onDelete: SetNull)
 
   @@index([status, createdAt])
   @@index([orderId])
@@ -347,19 +357,20 @@ model Payment {
   refId     String? @unique
 
   verifiedAt DateTime?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  merchantIdSnapshot String?
 
   @@index([orderId, status])
-  merchantIdSnapshot String?
 }
 
 model ShippingMethod {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  price       Int      @default(0)
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  price       Int     @default(0)
   description String?
-  isActive    Boolean  @default(true)
+  isActive    Boolean @default(true)
 
   orders Order[]
 
@@ -387,38 +398,37 @@ enum AdminAuditAction {
 }
 
 model AdminAuditLog {
-  id          Int              @id @default(autoincrement())
-  adminId     Int?
-  admin       User?            @relation(fields: [adminId], references: [id], onDelete: SetNull)
-  action      AdminAuditAction
-  targetType  String
-  targetId    Int
-  orderId     Int?
-  details     Json?
-  createdAt   DateTime         @default(now())
+  id         Int              @id @default(autoincrement())
+  adminId    Int?
+  admin      User?            @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  action     AdminAuditAction
+  targetType String
+  targetId   Int
+  orderId    Int?
+  details    Json?
+  createdAt  DateTime         @default(now())
 
   @@index([adminId, createdAt])
   @@index([targetType, targetId, createdAt])
   @@index([orderId, createdAt])
 }
 
-
 model SiteSettings {
-  id                  Int      @id @default(1)
-  storeName           String   @default("فروشگاه کاظمی")
-  logoUrl             String?
-  footerLogoUrl       String?
-  phone               String?
-  headerText          String?
-  footerAbout         String?
-  footerCaption       String?
-  showPopularShowcase Boolean  @default(true)
+  id                   Int     @id @default(1)
+  storeName            String  @default("فروشگاه کاظمی")
+  logoUrl              String?
+  footerLogoUrl        String?
+  phone                String?
+  headerText           String?
+  footerAbout          String?
+  footerCaption        String?
+  showPopularShowcase  Boolean @default(true)
   showDiscountShowcase Boolean @default(true)
-  supportHours        Json?
-  supportResponseText String?  @db.VarChar(240)
-  updatedAt           DateTime @updatedAt
-}
+  supportHours         Json?
+  supportResponseText  String? @db.VarChar(240)
 
+  updatedAt DateTime @updatedAt
+}
 
 model SiteVisitEvent {
   id              BigInt   @id @default(autoincrement())
@@ -439,7 +449,6 @@ model SiteVisitEvent {
   @@index([referrerHost, createdAt])
 }
 
-
 enum ProductCommentType {
   COMMENT
   QUESTION
@@ -449,6 +458,29 @@ enum ProductCommentStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+model ProductComment {
+  id          Int                  @id @default(autoincrement())
+  productId   Int
+  userId      Int
+  type        ProductCommentType   @default(COMMENT)
+  content     String
+  status      ProductCommentStatus @default(PENDING)
+  adminReply  String?
+  repliedAt   DateTime?
+  repliedById Int?
+
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  repliedBy User?   @relation("ProductCommentReplier", fields: [repliedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId, status, createdAt])
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
 }
 
 enum SupportTopic {
@@ -470,29 +502,6 @@ enum SupportTicketStatus {
 enum SupportSenderRole {
   USER
   ADMIN
-}
-
-model ProductComment {
-  id          Int                 @id @default(autoincrement())
-  productId   Int
-  userId      Int
-  type        ProductCommentType  @default(COMMENT)
-  content     String
-  status      ProductCommentStatus @default(PENDING)
-  adminReply  String?
-  repliedAt   DateTime?
-  repliedById Int?
-
-  product  Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  repliedBy User?  @relation("ProductCommentReplier", fields: [repliedById], references: [id], onDelete: SetNull)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([productId, status, createdAt])
-  @@index([userId, createdAt])
-  @@index([status, createdAt])
 }
 
 model SupportTicket {

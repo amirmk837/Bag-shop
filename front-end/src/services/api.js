@@ -81,7 +81,8 @@ const request = async (path, options = {}) => {
         const messages = error.details
           .map((issue) => issue?.message)
           .filter(Boolean);
-        if (messages.length) error.message = `${error.message}: ${messages.join("، ")}`;
+        if (messages.length)
+          error.message = `${error.message}: ${messages.join("، ")}`;
       }
       throw error;
     }
@@ -92,7 +93,9 @@ const request = async (path, options = {}) => {
 
   if (!cacheable) return execute();
 
-  const requestVersion = path.startsWith("/products") ? productCacheVersion : null;
+  const requestVersion = path.startsWith("/products")
+    ? productCacheVersion
+    : null;
   const pending = execute();
   inFlightGetRequests.set(path, pending);
 
@@ -352,14 +355,28 @@ export const uploadProductImage = async (file) => {
 // =================================================
 
 export const getCategories = async () => {
-  const result = await request("/categories");
+  const result = await request("/categories", {
+    method: "GET",
+    credentials: "include",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+
   const data = getData(result);
 
   if (!Array.isArray(data)) {
-    throw new Error("ساختار دسته‌بندی‌ها معتبر نیست.");
+    console.error("Invalid categories response:", result);
+    throw new Error("ساختار دسته‌بندی‌های دریافتی از سرور معتبر نیست.");
   }
 
-  return data;
+  return data.filter(
+    (category) =>
+      category &&
+      typeof category === "object" &&
+      category.id != null &&
+      typeof category.name === "string",
+  );
 };
 
 // =================================================

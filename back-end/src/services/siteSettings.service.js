@@ -16,7 +16,9 @@ const DEFAULTS = {
 };
 
 export const getSiteSettings = async () =>
-  (await prisma.siteSettings.findUnique({ where: { id: SETTINGS_ID } })) || DEFAULTS;
+  (await prisma.siteSettings.findUnique({
+    where: { id: SETTINGS_ID },
+  })) || DEFAULTS;
 
 export const updateSiteSettings = async (data) =>
   prisma.siteSettings.upsert({
