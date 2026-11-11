@@ -82,6 +82,7 @@ const FaqPage = () => {
                       {item.linkUrl && item.linkText && (
                         <a
                           href={item.linkUrl}
+                          tabIndex={isOpen ? 0 : -1}
                           target={/^https?:\/\//i.test(item.linkUrl) ? "_blank" : undefined}
                           rel={/^https?:\/\//i.test(item.linkUrl) ? "noopener noreferrer" : undefined}
                           className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-cyan-400 transition-colors hover:text-cyan-300 focus-visible:outline-none focus-visible:underline"
