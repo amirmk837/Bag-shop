@@ -795,6 +795,16 @@ html {
   background-color: var(--app-violet-soft) !important;
 }
 
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/50"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/60"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-950/40"] {
+  background-color: var(--app-danger-soft) !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-950/50"] {
+  background-color: var(--app-success-soft) !important;
+}
+
 /* Semantic outlines make alert and status boundaries legible on pale cards. */
 :root[data-theme="light"] .admin-theme-scope [class*="border-red-"],
 :root[data-theme="light"] .admin-theme-scope [class*="border-rose-"] {
