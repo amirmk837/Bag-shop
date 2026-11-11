@@ -269,7 +269,7 @@ export const getCustomerOrders = async (userId) => {
   }
 
   return prisma.order.findMany({
-    where: { userId: numericUserId },
+    where: { userId: numericUserId, archivedAt: null },
     select: {
       ...orderSelect,
       payments: {

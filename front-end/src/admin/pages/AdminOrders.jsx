@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { FiRefreshCw, FiSearch, FiTrash2 } from "react-icons/fi";
-
-import FeedbackDialog from "../components/ui/FeedbackDialog";
+import { FiRefreshCw, FiSearch, FiArchive, FiRotateCcw } from "react-icons/fi";
 
 import {
-  deleteAdminOrder,
+  archiveAdminOrder,
+  restoreAdminOrder,
+  updateAdminOrderItemInventoryReturn,
+  resolveInventoryReturnIssue,
   getAdminOrders,
   getAdminOrderDetail,
   updateAdminOrderStatus,
@@ -41,8 +42,6 @@ const ALLOWED_NEXT_STATUSES = {
   DELIVERED: [],
   CANCELLED: ["PENDING"],
 };
-
-const DELETABLE_STATUSES = ["PENDING", "CONFIRMED", "PROCESSING", "CANCELLED"];
 
 const formatPrice = (value) => Number(value || 0).toLocaleString("fa-IR");
 
@@ -116,9 +115,11 @@ const AdminOrders = () => {
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [statusSuccess, setStatusSuccess] = useState("");
 
-  const [deletingOrderId, setDeletingOrderId] = useState(null);
-  const [orderToDelete, setOrderToDelete] = useState(null);
-  const [deleteDialogMessage, setDeleteDialogMessage] = useState("");
+  const [archiveMode, setArchiveMode] = useState("active");
+  const [archivingOrderId, setArchivingOrderId] = useState(null);
+  const [restoringOrderId, setRestoringOrderId] = useState(null);
+  const [inventoryUpdatingId, setInventoryUpdatingId] = useState(null);
+  const [resolvingIssueId, setResolvingIssueId] = useState(null);
 
   const [shippingMethod, setShippingMethod] = useState("");
   const [trackingCode, setTrackingCode] = useState("");
@@ -154,6 +155,7 @@ const AdminOrders = () => {
           period,
           sortBy,
           sortOrder: "desc",
+          archiveMode,
         });
 
         if (ignore) return;
@@ -177,7 +179,7 @@ const AdminOrders = () => {
     return () => {
       ignore = true;
     };
-  }, [pagination.page, pagination.pageSize, search, status, from, to, period, sortBy, refreshKey]);
+  }, [pagination.page, pagination.pageSize, search, status, from, to, period, sortBy, archiveMode, refreshKey]);
 
   const openOrder = useCallback(async (orderId) => {
     setModalOpen(true);
@@ -208,7 +210,7 @@ const AdminOrders = () => {
   }, [searchParams, openOrder]);
 
   const closeModal = () => {
-    if (updatingStatus || updatingShipping || deletingOrderId !== null) {
+    if (updatingStatus || updatingShipping || archivingOrderId !== null || restoringOrderId !== null || inventoryUpdatingId !== null || resolvingIssueId !== null) {
       return;
     }
 
@@ -313,70 +315,107 @@ const AdminOrders = () => {
     }
   };
 
-  const handleDeleteOrder = (order) => {
-    if (!order || deletingOrderId !== null) return;
-
-    if (!DELETABLE_STATUSES.includes(order.status)) {
-      setError("حذف این سفارش با وضعیت فعلی مجاز نیست.");
+  const handleArchiveOrder = async (order) => {
+    if (!order || archivingOrderId !== null) return;
+    if (!window.confirm("آیا از انتقال سفارش شماره " + order.id + " به آرشیو مطمئن هستید؟ سوابق مالی و سفارش حفظ می‌شوند.")) return;
+    const reason = window.prompt("علت آرشیو سفارش را وارد کنید (حداقل ۵ نویسه):", "");
+    if (!reason || reason.trim().length < 5) {
+      setError("برای آرشیو سفارش، علت معتبر الزامی است.");
       return;
     }
-
-    const stockMessage =
-      order.status === "CANCELLED"
-        ? "سفارش قبلاً لغو شده است؛ وضعیت موجودی باید در بک‌اند کنترل شود."
-        : "بک‌اند باید قبل از حذف، وضعیت موجودی را به‌درستی مدیریت کند.";
-
-    setError("");
-    setDeleteDialogMessage(
-      `آیا از حذف دائمی سفارش شماره ${order.id} مطمئن هستید؟\n\n${stockMessage}\n\nاین عملیات قابل بازگشت نیست.`,
-    );
-    setOrderToDelete(order);
-  };
-
-  const confirmDeleteOrder = async () => {
-    const order = orderToDelete;
-
-    if (!order || deletingOrderId !== null) return false;
-
+    let returnStock = false;
+    if (!["SHIPPED", "DELIVERED"].includes(order.status)) {
+      returnStock = window.confirm("آیا موجودی رزروشده این سفارش نیز به انبار برگردد؟ اگر «خیر» را بزنید، رزرو موجودی حفظ می‌شود.");
+    }
     try {
-      setDeletingOrderId(order.id);
+      setArchivingOrderId(order.id);
       setError("");
       setDetailError("");
-      setNotice("");
-
-      const result = await deleteAdminOrder(order.id);
-
-      if (selectedOrder?.id === order.id) {
-        setModalOpen(false);
-        setSelectedOrder(null);
-      }
-
-      setNotice(result?.message || `سفارش شماره ${order.id} حذف شد.`);
-      setOrderToDelete(null);
-      setDeleteDialogMessage("");
+      const result = await archiveAdminOrder(order.id, { reason: reason.trim(), returnStock });
+      if (selectedOrder?.id === order.id) setSelectedOrder(result.order);
+      setNotice(result.message || "سفارش به آرشیو منتقل شد.");
       setRefreshKey((current) => current + 1);
-
-      return true;
     } catch (err) {
-      const message = err.message || "حذف سفارش ناموفق بود.";
-
+      const message = err.message || "آرشیو سفارش ناموفق بود.";
       setError(message);
       setDetailError(message);
-      setDeleteDialogMessage(
-        `${message}\n\nبرای تلاش مجدد، دکمه تأیید را بزنید.`,
-      );
-
-      return false;
     } finally {
-      setDeletingOrderId(null);
+      setArchivingOrderId(null);
     }
   };
 
-  const closeDeleteDialog = () => {
-    if (deletingOrderId !== null) return;
+  const handleRestoreOrder = async (order) => {
+    if (!order || restoringOrderId !== null) return;
+    if (!window.confirm("سفارش شماره " + order.id + " از آرشیو خارج شود؟ اگر موجودی قبلاً آزاد شده باشد، سرور ابتدا رزرو مجدد را کنترل می‌کند.")) return;
+    try {
+      setRestoringOrderId(order.id);
+      setError("");
+      setDetailError("");
+      const result = await restoreAdminOrder(order.id);
+      if (selectedOrder?.id === order.id) setSelectedOrder(result.order);
+      setNotice(result.message || "سفارش بازیابی شد.");
+      setRefreshKey((current) => current + 1);
+    } catch (err) {
+      const message = err.message || "بازیابی سفارش ناموفق بود.";
+      setError(message);
+      setDetailError(message);
+    } finally {
+      setRestoringOrderId(null);
+    }
+  };
 
-    setOrderToDelete(null);
-    setDeleteDialogMessage("");
+  const handleInventoryReturn = async (item) => {
+    if (!selectedOrder || inventoryUpdatingId !== null) return;
+    const received = window.confirm("آیا این کالا به‌صورت فیزیکی به فروشگاه برگشته است؟");
+    const saleable = received && window.confirm("آیا کالا سالم و قابل فروش مجدد است؟");
+    let reason = "";
+    if (!received || !saleable) {
+      reason = window.prompt("علت دریافت‌نشدن یا غیرقابل‌فروش بودن کالا را وارد کنید:", "") || "";
+      if (reason.trim().length < 5) {
+        setDetailError("برای ثبت کالای نیازمند بررسی، علت حداقل ۵ نویسه‌ای الزامی است.");
+        return;
+      }
+    }
+    try {
+      setInventoryUpdatingId(item.id);
+      setDetailError("");
+      const result = await updateAdminOrderItemInventoryReturn(selectedOrder.id, item.id, {
+        received, saleable, reason: reason.trim(),
+      });
+      setSelectedOrder(result.order);
+      setStatusSuccess(result.message || "وضعیت بازگشت کالا ثبت شد.");
+      setRefreshKey((current) => current + 1);
+    } catch (err) {
+      setDetailError(err.message || "ثبت بازگشت موجودی ناموفق بود.");
+    } finally {
+      setInventoryUpdatingId(null);
+    }
+  };
+
+  const handleResolveInventoryIssue = async (issue) => {
+    if (!issue || resolvingIssueId !== null) return;
+    const returnStock = window.confirm("آیا مشکل برطرف شده و کالا اکنون سالم، قابل فروش و آماده بازگشت به موجودی است؟ با انتخاب «خیر»، مشکل بدون تغییر موجودی بسته می‌شود.");
+    const resolutionNote = window.prompt("توضیح تصمیم مدیر (حداقل ۳ نویسه):", "") || "";
+    if (resolutionNote.trim().length < 3) {
+      setDetailError("توضیح تعیین‌تکلیف باید حداقل ۳ نویسه باشد.");
+      return;
+    }
+    try {
+      setResolvingIssueId(issue.id);
+      setDetailError("");
+      const result = await resolveInventoryReturnIssue(issue.id, {
+        action: returnStock ? "RETURN_STOCK" : "DISMISS",
+        resolutionNote: resolutionNote.trim(),
+      });
+      const refreshed = await getAdminOrderDetail(selectedOrder.id);
+      setSelectedOrder(refreshed);
+      setStatusSuccess(result.message || "مشکل بازگشت موجودی تعیین‌تکلیف شد.");
+      setRefreshKey((current) => current + 1);
+    } catch (err) {
+      setDetailError(err.message || "تعیین‌تکلیف مشکل ناموفق بود.");
+    } finally {
+      setResolvingIssueId(null);
+    }
   };
 
   return (
@@ -419,7 +458,7 @@ const AdminOrders = () => {
         </div>
       )}
 
-      <div className="mb-6 grid gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 md:grid-cols-[minmax(0,1fr)_180px_180px_200px]">
+      <div className="mb-6 grid gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 md:grid-cols-[minmax(0,1fr)_180px_180px_180px_200px]">
         <div className="relative">
           <FiSearch className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500" />
           <input
@@ -449,6 +488,20 @@ const AdminOrders = () => {
           <option value="all">تمام سفارش‌ها</option>
           {period === "custom" && <option value="custom">ماه انتخاب‌شده در نمودار</option>}
         </select>
+        <select
+          value={archiveMode}
+          onChange={(event) => {
+            setArchiveMode(event.target.value);
+            setPagination((current) => ({ ...current, page: 1 }));
+          }}
+          aria-label="فیلتر آرشیو سفارش‌ها"
+          className="rounded-xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-white outline-none"
+        >
+          <option value="active">سفارش‌های فعال</option>
+          <option value="archived">سفارش‌های آرشیوشده</option>
+          <option value="all">همه سفارش‌ها</option>
+        </select>
+
         <select
           value={status}
           onChange={(event) => {
@@ -526,7 +579,7 @@ const AdminOrders = () => {
                     (total, item) => total + Number(item.quantity || 0),
                     0,
                   );
-                  const canDelete = DELETABLE_STATUSES.includes(order.status);
+                  const isArchived = Boolean(order.archivedAt);
 
                   return (
                     <tr
@@ -565,19 +618,21 @@ const AdminOrders = () => {
                           >
                             جزئیات
                           </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteOrder(order)}
-                            disabled={
-                              deletingOrderId === order.id || !canDelete
-                            }
-                            className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-red-900/60 px-3 py-2 text-sm text-red-400 transition hover:bg-red-950/50 disabled:cursor-not-allowed disabled:opacity-35"
-                          >
-                            <FiTrash2 />
-                            {deletingOrderId === order.id
-                              ? "در حال حذف..."
-                              : "حذف"}
-                          </button>
+                          {isArchived ? (
+                            <button type="button" onClick={() => handleRestoreOrder(order)}
+                              disabled={restoringOrderId === order.id}
+                              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-emerald-800/70 px-3 py-2 text-sm text-emerald-300 transition hover:bg-emerald-950/40 disabled:opacity-40">
+                              <FiRotateCcw />
+                              {restoringOrderId === order.id ? "در حال بازیابی..." : "بازیابی"}
+                            </button>
+                          ) : (
+                            <button type="button" onClick={() => handleArchiveOrder(order)}
+                              disabled={archivingOrderId === order.id}
+                              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-amber-800/70 px-3 py-2 text-sm text-amber-300 transition hover:bg-amber-950/40 disabled:opacity-40">
+                              <FiArchive />
+                              {archivingOrderId === order.id ? "در حال آرشیو..." : "آرشیو"}
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -674,7 +729,7 @@ const AdminOrders = () => {
                     disabled={
                       updatingStatus ||
                       updatingShipping ||
-                      deletingOrderId === selectedOrder.id
+                      archivingOrderId === selectedOrder.id || restoringOrderId === selectedOrder.id || inventoryUpdatingId !== null || resolvingIssueId !== null
                     }
                     className="rounded-xl border border-zinc-700 px-3 py-2 text-zinc-300 transition hover:bg-zinc-800 disabled:opacity-50"
                   >
@@ -922,6 +977,7 @@ const AdminOrders = () => {
                               "تعداد",
                               "قیمت واحد",
                               "جمع",
+                              "بازگشت موجودی",
                             ].map((label) => (
                               <th key={label} className="px-3 py-3">
                                 {label}
@@ -953,6 +1009,30 @@ const AdminOrders = () => {
                               <td className="whitespace-nowrap px-3 py-4 font-bold">
                                 {formatPrice(item.subtotal)} تومان
                               </td>
+                              <td className="px-3 py-4">
+                                <div className="flex min-w-[180px] flex-col items-start gap-2">
+                                  <span className={item.inventoryReturnStatus === "RETURNED" ? "text-xs font-bold text-emerald-300" : item.inventoryReturnStatus === "NEEDS_REVIEW" ? "text-xs font-bold text-amber-300" : "text-xs text-zinc-500"}>
+                                    {item.inventoryReturnStatus === "RETURNED" ? "موجودی برگشت داده شد" : item.inventoryReturnStatus === "NEEDS_REVIEW" ? "نیازمند بررسی" : "برگشت داده نشده"}
+                                  </span>
+                                  {["SHIPPED", "DELIVERED"].includes(selectedOrder.status) && item.inventoryReturnStatus !== "RETURNED" && (
+                                    <button type="button" onClick={() => handleInventoryReturn(item)}
+                                      disabled={inventoryUpdatingId === item.id}
+                                      className="rounded-lg border border-cyan-800/70 px-2.5 py-1.5 text-xs text-cyan-300 hover:bg-cyan-950/40 disabled:opacity-40">
+                                      {inventoryUpdatingId === item.id ? "در حال ثبت..." : "بررسی دریافت کالا"}
+                                    </button>
+                                  )}
+                                  {(item.inventoryReturnIssues || []).filter((issue) => issue.status === "OPEN").map((issue) => (
+                                    <div key={issue.id} className="w-full rounded-lg border border-amber-900/50 bg-amber-950/20 p-2">
+                                      <p className="text-[11px] leading-5 text-amber-200">{issue.reason}</p>
+                                      <button type="button" onClick={() => handleResolveInventoryIssue(issue)}
+                                        disabled={resolvingIssueId === issue.id}
+                                        className="mt-2 rounded-md border border-amber-800/70 px-2 py-1 text-[11px] text-amber-200 disabled:opacity-40">
+                                        {resolvingIssueId === issue.id ? "در حال ثبت..." : "تعیین‌تکلیف مشکل"}
+                                      </button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -962,29 +1042,28 @@ const AdminOrders = () => {
                 </section>
 
                 <div className="mt-5 flex flex-wrap justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteOrder(selectedOrder)}
-                    disabled={
-                      !DELETABLE_STATUSES.includes(selectedOrder.status) ||
-                      deletingOrderId === selectedOrder.id ||
-                      updatingStatus ||
-                      updatingShipping
-                    }
-                    className="inline-flex items-center gap-2 rounded-xl border border-red-900/60 px-5 py-3 text-sm text-red-400 transition hover:bg-red-950/50 disabled:cursor-not-allowed disabled:opacity-35"
-                  >
-                    <FiTrash2 />
-                    {deletingOrderId === selectedOrder.id
-                      ? "در حال حذف..."
-                      : "حذف سفارش"}
-                  </button>
+                  {selectedOrder.archivedAt ? (
+                    <button type="button" onClick={() => handleRestoreOrder(selectedOrder)}
+                      disabled={restoringOrderId === selectedOrder.id}
+                      className="inline-flex items-center gap-2 rounded-xl border border-emerald-800/70 px-5 py-3 text-sm text-emerald-300 transition hover:bg-emerald-950/40 disabled:opacity-40">
+                      <FiRotateCcw />
+                      {restoringOrderId === selectedOrder.id ? "در حال بازیابی..." : "بازیابی سفارش"}
+                    </button>
+                  ) : (
+                    <button type="button" onClick={() => handleArchiveOrder(selectedOrder)}
+                      disabled={archivingOrderId === selectedOrder.id}
+                      className="inline-flex items-center gap-2 rounded-xl border border-amber-800/70 px-5 py-3 text-sm text-amber-300 transition hover:bg-amber-950/40 disabled:opacity-40">
+                      <FiArchive />
+                      {archivingOrderId === selectedOrder.id ? "در حال آرشیو..." : "آرشیو سفارش"}
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={closeModal}
                     disabled={
                       updatingStatus ||
                       updatingShipping ||
-                      deletingOrderId === selectedOrder.id
+                      archivingOrderId === selectedOrder.id || restoringOrderId === selectedOrder.id || inventoryUpdatingId !== null || resolvingIssueId !== null
                     }
                     className="rounded-xl border border-zinc-700 px-5 py-3 text-sm transition hover:bg-zinc-800 disabled:opacity-50"
                   >
@@ -997,16 +1076,6 @@ const AdminOrders = () => {
         </div>
       )}
 
-      <FeedbackDialog
-        open={Boolean(orderToDelete)}
-        type="confirm"
-        title={`حذف سفارش شماره ${orderToDelete?.id ?? ""}`}
-        message={deleteDialogMessage}
-        confirmText={deletingOrderId ? "در حال حذف..." : "حذف دائمی سفارش"}
-        cancelText="انصراف"
-        onConfirm={confirmDeleteOrder}
-        onClose={closeDeleteDialog}
-      />
     </div>
   );
 };

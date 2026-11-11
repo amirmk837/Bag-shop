@@ -1,5 +1,6 @@
 import prisma from "../config/prisma.js";
 import { reserveStock, releaseStock } from "./stock.service.js";
+import { isAllowedOrderTransition } from "./orderLifecycle.rules.js";
 
 // =========================================
 // CONSTANTS
@@ -14,18 +15,6 @@ const VALID_STATUSES = [
   "DELIVERED",
   "CANCELLED",
 ];
-
-const ALLOWED_TRANSITIONS = {
-  PENDING: ["CANCELLED"],
-  PAID: ["CONFIRMED"],
-  CONFIRMED: ["PROCESSING", "CANCELLED"],
-  PROCESSING: ["SHIPPED", "CANCELLED"],
-  SHIPPED: ["DELIVERED"],
-  DELIVERED: [],
-  CANCELLED: ["PENDING"],
-};
-
-const DELETABLE_STATUSES = ["PENDING", "CONFIRMED", "PROCESSING", "CANCELLED"];
 
 const createOrderError = (status, message) => {
   const error = new Error(message);
@@ -72,6 +61,15 @@ const orderInclude = {
       unitPrice: true,
       quantity: true,
       subtotal: true,
+      inventoryReturnStatus: true,
+      inventoryReturnedAt: true,
+      inventoryReturnedById: true,
+      inventoryReturnReceived: true,
+      inventoryReturnSaleable: true,
+      inventoryReturnIssues: {
+        orderBy: { createdAt: "desc" },
+        select: { id: true, reason: true, status: true, resolutionNote: true, createdAt: true, resolvedAt: true },
+      },
     },
   },
 };
@@ -90,11 +88,18 @@ export const getAdminOrders = async ({
   period = "all",
   sortBy = "createdAt",
   sortOrder = "desc",
+  archiveMode = "active",
 } = {}) => {
   const currentPage = parsePositiveInt(page, 1, 100000);
   const currentPageSize = parsePositiveInt(pageSize, 10, 10);
 
   const where = {};
+  if (!["active", "archived", "all"].includes(archiveMode)) {
+    throw createOrderError(400, "فیلتر آرشیو سفارش‌ها معتبر نیست.");
+  }
+  if (archiveMode === "active") where.archivedAt = null;
+  if (archiveMode === "archived") where.archivedAt = { not: null };
+
   const now = new Date();
   let rangeStart = null;
   let rangeEnd = null;
@@ -164,6 +169,8 @@ export const getAdminOrders = async ({
   // مرتب‌سازی و صفحه‌بندی شناسه‌ها در دیتابیس؛ جزئیات فقط برای همین صفحه خوانده می‌شود.
   const sqlConditions = ["1 = 1"];
   const sqlParams = [];
+  if (archiveMode === "active") sqlConditions.push('o."archivedAt" IS NULL');
+  if (archiveMode === "archived") sqlConditions.push('o."archivedAt" IS NOT NULL');
 
   if (rangeStart && rangeEnd) {
     sqlParams.push(rangeStart, rangeEnd);
@@ -414,10 +421,11 @@ export const updateAdminOrderStatus = async (orderId, nextStatus, adminId) => {
           if (!order) {
             throw createOrderError(404, "سفارش پیدا نشد.");
           }
+          if (order.archivedAt) {
+            throw createOrderError(409, "ابتدا سفارش را از آرشیو خارج کنید.");
+          }
 
-          const allowedStatuses = ALLOWED_TRANSITIONS[order.status] ?? [];
-
-          if (!allowedStatuses.includes(nextStatus)) {
+          if (!isAllowedOrderTransition(order.status, nextStatus)) {
             throw createOrderError(
               400,
               `تغییر وضعیت از ${order.status} به ${nextStatus} مجاز نیست.`,
@@ -564,88 +572,6 @@ export const updateAdminOrderStatus = async (orderId, nextStatus, adminId) => {
 };
 
 // =========================================
-// DELETE ORDER PERMANENTLY
-// =========================================
-
-export const deleteAdminOrder = async (orderId, adminId) => {
-  const id = Number(orderId);
-
-  if (!Number.isSafeInteger(id) || id < 1) {
-    throw createOrderError(400, "شماره سفارش معتبر نیست.");
-  }
-
-  return prisma.$transaction(
-    async (tx) => {
-      const order = await tx.order.findUnique({
-        where: { id },
-        include: {
-          items: {
-            select: {
-              id: true,
-              productId: true,
-              productCode: true,
-              title: true,
-              color: true,
-              quantity: true,
-            },
-          },
-        },
-      });
-
-      if (!order) {
-        throw createOrderError(404, "سفارش پیدا نشد.");
-      }
-
-      if (!DELETABLE_STATUSES.includes(order.status)) {
-        throw createOrderError(
-          409,
-          "سفارش پرداخت‌شده، ارسال‌شده یا تحویل‌شده قابل حذف دائمی نیست.",
-        );
-      }
-
-      // حتی سفارش PENDING نیز در صورت داشتن تراکنش پرداخت نباید حذف شود.
-      const relatedPayment = await tx.payment.findFirst({
-        where: {
-          orderId: order.id,
-          status: { in: ["CREATED", "REQUESTING", "REQUESTED", "PAID"] },
-        },
-        select: { id: true, status: true },
-      });
-
-      if (relatedPayment) {
-        throw createOrderError(
-          409,
-          "این سفارش دارای تراکنش پرداخت است و حذف دائمی آن مجاز نیست.",
-        );
-      }
-
-      // سفارش لغوشده قبلاً موجودی را آزاد کرده؛ سایر سفارش‌ها فقط یک‌بار آزاد می‌شوند.
-      if (order.status !== "CANCELLED") {
-        await releaseOrderStockOnce(tx, order);
-      }
-
-      await tx.adminAuditLog.create({
-        data: {
-          adminId: Number(adminId),
-          action: "ORDER_DELETED",
-          targetType: "ORDER",
-          targetId: order.id,
-          orderId: order.id,
-          details: { previousStatus: order.status },
-        },
-      });
-
-      await tx.order.delete({
-        where: { id: order.id },
-      });
-
-      return { id: order.id };
-    },
-    { isolationLevel: "Serializable" },
-  );
-};
-
-// =========================================
 // UPDATE SHIPPING METHOD AND TRACKING CODE
 // =========================================
 
@@ -686,10 +612,11 @@ export const updateAdminOrderShipping = async (
   return prisma.$transaction(async (tx) => {
     const order = await tx.order.findUnique({
       where: { id },
-      select: { id: true, status: true, shippingMethod: true, trackingCode: true },
+      select: { id: true, status: true, archivedAt: true, shippingMethod: true, trackingCode: true },
     });
 
     if (!order) throw createOrderError(404, "سفارش پیدا نشد.");
+    if (order.archivedAt) throw createOrderError(409, "ابتدا سفارش را از آرشیو خارج کنید.");
     if (order.status !== "PROCESSING") {
       throw createOrderError(400, "اطلاعات ارسال فقط برای سفارش در حال پردازش قابل ثبت است.");
     }

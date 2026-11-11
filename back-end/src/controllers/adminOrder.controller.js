@@ -4,12 +4,17 @@ import { getAdminAuditLogs } from "../services/adminAudit.service.js";
 import {
   getPaymentReconciliationQueue,
   expireUnsentPayment,
-  deleteAdminOrder,
   getAdminOrderDetail,
   getAdminOrders,
   updateAdminOrderStatus,
   updateAdminOrderShipping,
 } from "../services/adminOrder.service.js";
+import {
+  archiveAdminOrder,
+  restoreAdminOrder,
+  updateAdminOrderItemInventoryReturn,
+  resolveInventoryReturnIssue,
+} from "../services/orderLifecycle.service.js";
 
 // =========================================
 // GET PAYMENT RECONCILIATION QUEUE
@@ -54,6 +59,7 @@ export const getAdminOrdersController = async (req, res) => {
       period: req.query.period,
       sortBy: req.query.sortBy,
       sortOrder: req.query.sortOrder,
+      archiveMode: req.query.archiveMode || "active",
     });
 
     return res.status(200).json(result);
@@ -130,22 +136,49 @@ export const updateAdminOrderShippingController = async (req, res) => {
 };
 
 // =========================================
-// DELETE ORDER
+// ARCHIVE AND RESTORE ORDER
 // =========================================
 
-export const deleteAdminOrderController = async (req, res) => {
+export const archiveAdminOrderController = async (req, res) => {
   try {
-    const result = await deleteAdminOrder(req.params.id, req.user.id);
-
-    return res.status(200).json({
-      message: "سفارش با موفقیت حذف شد.",
-      orderId: result.id,
-    });
+    const order = await archiveAdminOrder(req.params.id, req.body, req.user.id);
+    return res.status(200).json({ message: "سفارش با حفظ سوابق مالی به آرشیو منتقل شد.", order });
   } catch (error) {
-    console.error("DELETE ADMIN ORDER ERROR:", error);
-
     return res.status(error.status || 500).json({
-      message: error.status ? error.message : "خطا در حذف سفارش.",
+      message: error.status ? error.message : "آرشیو سفارش ناموفق بود.",
+    });
+  }
+};
+
+export const restoreAdminOrderController = async (req, res) => {
+  try {
+    const order = await restoreAdminOrder(req.params.id, req.user.id);
+    return res.status(200).json({ message: "سفارش از آرشیو بازیابی شد.", order });
+  } catch (error) {
+    return res.status(error.status || 500).json({
+      message: error.status ? error.message : "بازیابی سفارش ناموفق بود.",
+    });
+  }
+};
+
+export const updateAdminOrderItemInventoryReturnController = async (req, res) => {
+  try {
+    const order = await updateAdminOrderItemInventoryReturn(req.params.id, req.params.itemId, req.body, req.user.id);
+    return res.status(200).json({ message: "وضعیت بازگشت کالای سفارش ثبت شد.", order });
+  } catch (error) {
+    return res.status(error.status || 500).json({
+      message: error.status ? error.message : "ثبت بازگشت موجودی ناموفق بود.",
+    });
+  }
+};
+
+export const resolveInventoryReturnIssueController = async (req, res) => {
+  try {
+    const issue = await resolveInventoryReturnIssue(req.params.issueId, req.body, req.user.id);
+    return res.status(200).json({ message: "مشکل بازگشت موجودی تعیین‌تکلیف شد.", issue });
+  } catch (error) {
+    return res.status(error.status || 500).json({
+      message: error.status ? error.message : "تعیین‌تکلیف مشکل بازگشت موجودی ناموفق بود.",
     });
   }
 };

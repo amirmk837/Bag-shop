@@ -34,6 +34,7 @@ export const getAdminOrders = async ({
   period = "all",
   sortBy = "createdAt",
   sortOrder = "desc",
+  archiveMode = "active",
 } = {}) => {
   const params = new URLSearchParams({
     page: String(page),
@@ -42,6 +43,7 @@ export const getAdminOrders = async ({
     period,
     sortBy,
     sortOrder,
+    archiveMode,
   });
 
   if (from) params.set("from", from);
@@ -112,8 +114,25 @@ export const updateAdminOrderShipping = async (
   );
 };
 
-export const deleteAdminOrder = async (orderId) => {
-  return request(`${API_URL}/admin/orders/${encodeURIComponent(orderId)}`, {
-    method: "DELETE",
+export const archiveAdminOrder = async (orderId, payload) =>
+  request(`${API_URL}/admin/orders/${encodeURIComponent(orderId)}/archive`, {
+    method: "POST",
+    body: JSON.stringify(payload),
   });
-};
+
+export const restoreAdminOrder = async (orderId) =>
+  request(`${API_URL}/admin/orders/${encodeURIComponent(orderId)}/restore`, {
+    method: "POST",
+  });
+
+export const updateAdminOrderItemInventoryReturn = async (orderId, itemId, payload) =>
+  request(
+    `${API_URL}/admin/orders/${encodeURIComponent(orderId)}/items/${encodeURIComponent(itemId)}/inventory-return`,
+    { method: "PATCH", body: JSON.stringify(payload) },
+  );
+
+export const resolveInventoryReturnIssue = async (issueId, payload) =>
+  request(
+    `${API_URL}/admin/orders/inventory-return-issues/${encodeURIComponent(issueId)}/resolve`,
+    { method: "POST", body: JSON.stringify(payload) },
+  );
