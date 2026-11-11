@@ -306,23 +306,16 @@ model Banner {
   @@index([isActive, updatedAt])
 }
 
-enum SocialPlatform {
-  INSTAGRAM
-  TELEGRAM
-  WHATSAPP
-  BALE
-  RUBIKA
-}
-
 model SocialLink {
-  id          Int            @id @default(autoincrement())
-  platform    SocialPlatform @unique
+  id          Int      @id @default(autoincrement())
+  platform    String   @unique
+  label       String
   url         String?
   channelName String?
-  isActive    Boolean        @default(true)
-  sortOrder   Int            @default(0)
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([isActive, sortOrder])
 }
