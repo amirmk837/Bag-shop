@@ -219,7 +219,7 @@ const PopularShowcase = () => {
       dir="rtl"
       className="mx-auto my-10 w-full max-w-[1600px] px-3 sm:my-14 sm:px-5"
     >
-      <div className="relative isolate overflow-hidden rounded-[1.5rem] border border-cyan-300/15 bg-[#0d1723] p-3 shadow-[0_20px_60px_rgba(0,0,0,.28)] sm:rounded-[1.8rem] sm:p-5 lg:p-6">
+      <div className="theme-feature-panel relative isolate overflow-hidden rounded-[1.5rem] border border-cyan-300/15 bg-[#0d1723] p-3 shadow-[0_20px_60px_rgba(0,0,0,.28)] sm:rounded-[1.8rem] sm:p-5 lg:p-6">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_8%_0%,rgba(34,211,238,.12),transparent_36%),radial-gradient(ellipse_at_100%_100%,rgba(139,92,246,.10),transparent_38%)]"
@@ -301,9 +301,9 @@ const PopularShowcase = () => {
                     data-popular-card
                     key={product.productCode}
                     to={`/product/${product.productCode}`}
-                    className="group relative w-[calc((100%-0.5rem)/2)] shrink-0 snap-start overflow-hidden rounded-2xl border border-white/[.08] bg-[#121f2d] p-2 transition duration-300 hover:-translate-y-1 hover:border-cyan-200/35 hover:bg-[#17283a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 sm:w-[calc((100%-2.25rem)/4)] sm:rounded-[1.35rem] sm:p-2.5"
+                    className="theme-product-card group relative w-[calc((100%-0.5rem)/2)] shrink-0 snap-start overflow-hidden rounded-2xl border border-white/[.08] bg-[#121f2d] p-2 transition duration-300 hover:-translate-y-1 hover:border-cyan-200/35 hover:bg-[#17283a] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-200 sm:w-[calc((100%-2.25rem)/4)] sm:rounded-[1.35rem] sm:p-2.5"
                   >
-                    <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl border border-white/[.05] bg-[radial-gradient(ellipse_at_50%_45%,rgba(255,255,255,.08),transparent_68%),linear-gradient(145deg,#1c2b3c,#0a111b)] p-3">
+                    <div className="theme-media-surface relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl border border-white/[.05] bg-[radial-gradient(ellipse_at_50%_45%,rgba(255,255,255,.08),transparent_68%),linear-gradient(145deg,#1c2b3c,#0a111b)] p-3">
                       {product.url?.[0] ? (
                         <img
                           src={product.url[0]}
@@ -318,7 +318,7 @@ const PopularShowcase = () => {
                         </span>
                       )}
 
-                      <span className="absolute right-2 top-2 flex h-7 min-w-7 items-center justify-center rounded-lg border border-amber-200/25 bg-[#101923]/90 px-2 text-xs font-black text-amber-200">
+                      <span className="theme-dark-overlay absolute right-2 top-2 flex h-7 min-w-7 items-center justify-center rounded-lg border border-amber-200/25 bg-[#101923]/90 px-2 text-xs font-black text-amber-200">
                         {(index + 1).toLocaleString("fa-IR")}
                       </span>
                     </div>
