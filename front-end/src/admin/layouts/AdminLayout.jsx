@@ -10,8 +10,16 @@ const navItems = [
   { label: "تخفیف‌ها", to: "/admin/discounts" },
   { label: "بنرها", to: "/admin/banners" },
   { label: "سفارش‌ها", to: "/admin/orders" },
-  { label: "نظرات و پرسش‌ها", to: "/admin/product-comments", badgeKey: "pendingComments" },
-  { label: "پشتیبانی مشتریان", to: "/admin/support", badgeKey: "unansweredTickets" },
+  {
+    label: "نظرات و پرسش‌ها",
+    to: "/admin/product-comments",
+    badgeKey: "pendingComments",
+  },
+  {
+    label: "پشتیبانی مشتریان",
+    to: "/admin/support",
+    badgeKey: "unansweredTickets",
+  },
   { label: "دسته‌بندی‌ها", to: "/admin/categories" },
   { label: "کاربران", to: "/admin/users" },
   { label: "بازدیدکنندگان و آمار", to: "/admin/analytics" },
@@ -19,6 +27,7 @@ const navItems = [
   { label: "شبکه‌های اجتماعی", to: "/admin/social-links" },
   { label: "تنظیمات پرداخت", to: "/admin/payment-settings" },
   { label: "تنظیمات ارسال", to: "/admin/shipping-methods" },
+  { label: "نمادهای اعتماد فوتر", to: "/admin/footer-trust-badges" },
 ];
 
 const linkClass = ({ isActive }) =>
@@ -46,23 +55,41 @@ const AdminLayout = ({ children }) => {
     };
     loadSummary();
     const timer = window.setInterval(loadSummary, 30000);
-    return () => { active = false; window.clearInterval(timer); };
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
   }, []);
 
   const renderBadge = (item) => {
     const count = Number(summary[item.badgeKey] || 0);
-    return item.badgeKey && count > 0 ? <span className="mr-auto rounded-full bg-rose-500/15 px-2 py-0.5 text-[10px] font-bold tabular-nums text-rose-300">{count > 99 ? "۹۹+" : count.toLocaleString("fa-IR")}</span> : null;
+    return item.badgeKey && count > 0 ? (
+      <span className="mr-auto rounded-full bg-rose-500/15 px-2 py-0.5 text-[10px] font-bold tabular-nums text-rose-300">
+        {count > 99 ? "۹۹+" : count.toLocaleString("fa-IR")}
+      </span>
+    ) : null;
   };
 
   return (
-    <div className="min-h-screen overflow-x-clip bg-[#0d1119] text-white" dir="rtl">
+    <div
+      className="min-h-screen overflow-x-clip bg-[#0d1119] text-white"
+      dir="rtl"
+    >
       <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-[#111722]/95 shadow-lg shadow-black/10 backdrop-blur">
         <div className="flex min-h-14 flex-wrap items-center justify-between gap-3 px-3 py-2 sm:px-5 lg:px-6">
           <div className="flex min-w-0 items-center gap-2">
-            <img src="/images/brand-logo.svg" alt="لوگوی فروشگاه کاظمی" className="h-9 w-9 shrink-0 object-contain" />
+            <img
+              src="/images/brand-logo.svg"
+              alt="لوگوی فروشگاه کاظمی"
+              className="h-9 w-9 shrink-0 object-contain"
+            />
             <div className="min-w-0">
-              <h1 className="text-sm font-bold tracking-tight sm:text-base">پنل مدیریت</h1>
-              <p className="hidden text-[10px] text-zinc-500 sm:block">فروشگاه کاظمی</p>
+              <h1 className="text-sm font-bold tracking-tight sm:text-base">
+                پنل مدیریت
+              </h1>
+              <p className="hidden text-[10px] text-zinc-500 sm:block">
+                فروشگاه کاظمی
+              </p>
             </div>
             {!isDashboard && <BackPage fallback="/admin" />}
           </div>
@@ -81,7 +108,12 @@ const AdminLayout = ({ children }) => {
           className="flex gap-1 overflow-x-auto border-t border-white/[0.05] px-2 py-2 md:hidden"
         >
           {navItems.map((item) => (
-            <NavLink key={item.to} to={item.to} end={item.to === "/admin"} className={linkClass}>
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.to === "/admin"}
+              className={linkClass}
+            >
               <span>{item.label}</span>
               {renderBadge(item)}
             </NavLink>
@@ -114,7 +146,9 @@ const AdminLayout = ({ children }) => {
         </aside>
 
         <main className="min-w-0 w-full flex-1 p-3 sm:p-4 lg:p-5">
-          <div className="mx-auto w-full max-w-[1600px] min-w-0">{children}</div>
+          <div className="mx-auto w-full max-w-[1600px] min-w-0">
+            {children}
+          </div>
         </main>
       </div>
     </div>

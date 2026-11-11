@@ -545,3 +545,18 @@ model SupportMessage {
   @@index([ticketId, createdAt])
   @@index([senderId, createdAt])
 }
+
+model FooterTrustBadge {
+  id        Int     @id @default(autoincrement())
+  title     String  @db.VarChar(100)
+  imageUrl  String  @db.VarChar(500)
+  altText   String  @db.VarChar(180)
+  linkUrl   String? @db.VarChar(2048)
+  sortOrder Int     @default(0)
+  isActive  Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, sortOrder, id])
+}

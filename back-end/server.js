@@ -23,6 +23,7 @@ import feedbackRoutes from "./src/routes/feedback.routes.js";
 import { csrfProtection } from "./src/middlewares/csrf.middleware.js";
 import { securityHeaders } from "./src/middlewares/securityHeaders.middleware.js";
 import { requireHttpsInProduction } from "./src/middlewares/https.middleware.js";
+import footerTrustBadgeRoutes from "./src/routes/footerTrustBadge.routes.js";
 
 const app = express();
 const PORT = config.PORT;
@@ -85,6 +86,7 @@ app.use("/api/admin/payment-settings", paymentSettingsRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/admin/shipping-methods", adminShippingMethodRoutes);
 app.use("/api/shipping-methods", shippingMethodRoutes);
+app.use("/api/footer-trust-badges", footerTrustBadgeRoutes);
 
 // بنرها؛ خواندن بنر فعال عمومی و مدیریت سایر عملیات فقط ادمین
 app.use("/api/banners", bannerRoutes);
@@ -138,9 +140,10 @@ app.use((error, req, res, next) => {
 
   return res.status(statusCode).json({
     success: false,
-    message: statusCode === 500
-      ? "خطای داخلی سرور رخ داد. لطفاً بعداً دوباره تلاش کنید."
-      : "درخواست نامعتبر است.",
+    message:
+      statusCode === 500
+        ? "خطای داخلی سرور رخ داد. لطفاً بعداً دوباره تلاش کنید."
+        : "درخواست نامعتبر است.",
   });
 });
 
@@ -149,5 +152,7 @@ app.use((error, req, res, next) => {
 // =========================================
 
 app.listen(PORT, () => {
-  console.log(`Backend server is listening on port ${PORT} (${config.NODE_ENV}).`);
+  console.log(
+    `Backend server is listening on port ${PORT} (${config.NODE_ENV}).`,
+  );
 });

@@ -7,15 +7,41 @@ const ImageNavigation = ({ onPrev, onNext, position = "card" }) => {
     ? `
       absolute top-1/2 z-50 hidden -translate-y-1/2
       items-center justify-center rounded-full
-      bg-white/10 text-white backdrop-blur
-      transition hover:bg-white/20 sm:flex
+      border border-white/15
+      bg-[#071426]/65 text-cyan-50
+      shadow-[0_8px_25px_rgba(0,0,0,0.3)]
+      backdrop-blur-xl
+      transition-all duration-300 ease-out
+      hover:scale-110 hover:border-cyan-300/50
+      hover:bg-[#0b2940]/90
+      hover:text-cyan-200
+      hover:shadow-[0_0_20px_rgba(34,211,238,0.2)]
+      active:scale-95
+      focus-visible:outline-none
+      focus-visible:ring-2 focus-visible:ring-cyan-400
+      focus-visible:ring-offset-2
+      focus-visible:ring-offset-[#071426]
+      sm:flex
       h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14
     `
     : `
       absolute top-1/2 z-10 hidden -translate-y-1/2
       items-center justify-center rounded-full
-      bg-black/50 text-white backdrop-blur
-      transition hover:bg-black/80 sm:flex
+      border border-white/15
+      bg-[#071426]/75 text-cyan-50
+      shadow-[0_5px_18px_rgba(0,0,0,0.3)]
+      backdrop-blur-lg
+      transition-all duration-300 ease-out
+      hover:scale-110 hover:border-cyan-300/50
+      hover:bg-[#0b2940]/95
+      hover:text-cyan-200
+      hover:shadow-[0_0_15px_rgba(34,211,238,0.2)]
+      active:scale-95
+      focus-visible:outline-none
+      focus-visible:ring-2 focus-visible:ring-cyan-400
+      focus-visible:ring-offset-2
+      focus-visible:ring-offset-[#071426]
+      sm:flex
       h-8 w-8 sm:h-9 sm:w-9
     `;
 

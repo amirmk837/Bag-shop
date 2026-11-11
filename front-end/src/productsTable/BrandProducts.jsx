@@ -75,9 +75,16 @@ const BrandProducts = ({
 
   if (loading) {
     return (
-      <section className="w-full px-3 py-6 sm:px-5 md:px-6" dir="rtl" aria-busy="true">
+      <section
+        className="w-full px-3 py-6 sm:px-5 md:px-6"
+        dir="rtl"
+        aria-busy="true"
+      >
         <div className="mx-auto w-full max-w-7xl">
-          <ProductGridSkeleton count={8} className="grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4 lg:gap-7" />
+          <ProductGridSkeleton
+            count={8}
+            className="grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4 lg:gap-7"
+          />
         </div>
       </section>
     );

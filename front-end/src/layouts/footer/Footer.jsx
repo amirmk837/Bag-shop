@@ -2,6 +2,7 @@ import FooterTop from "./FooterTop";
 import { Link } from "react-router-dom";
 import FooterAbout from "./FooterAbout";
 import { useSiteSettings } from "../../context/useSiteSettings";
+import FooterTrustBadges from "./FooterTrustBadges";
 
 const Footer = () => {
   const { siteSettings: site } = useSiteSettings();
@@ -20,19 +21,15 @@ const Footer = () => {
     >
       <div className="container relative mx-auto max-w-7xl">
         <FooterTop />
+        <FooterTrustBadges />
         <div className="mt-8 sm:mt-10">
           <FooterAbout />
         </div>
         <div className="mt-8 border-t border-white/10 pt-5 text-center">
           <p className="text-xs text-zinc-500 sm:text-sm">
-            {site?.footerCaption || `© ${site?.storeName || "فروشگاه کاظمی"} — تمامی حقوق محفوظ است.`}
+            {site?.footerCaption ||
+              `© ${site?.storeName || "فروشگاه کاظمی"} — تمامی حقوق محفوظ است.`}
           </p>
-          <Link
-            to="/privacy"
-            className="mt-3 inline-block text-xs text-zinc-400 underline-offset-4 transition hover:text-white hover:underline"
-          >
-            حریم خصوصی و آمار بازدید
-          </Link>
         </div>
       </div>
     </footer>

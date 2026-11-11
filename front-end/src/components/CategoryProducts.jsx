@@ -1,24 +1,211 @@
-import {useCallback,useEffect,useLayoutEffect,useRef,useState} from "react";
-import {Link,useParams} from "react-router-dom";
-import {getCategories,getProductsPage} from "../services/api";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import { Link, useParams } from "react-router-dom";
+import { getCategories, getProductsPage } from "../services/api";
 import ProductCard from "../productsTable/ProductCard";
 import BackPage from "./BackPage";
 import ProductGridSkeleton from "./ProductGridSkeleton";
-const PAGE_SIZE=12;
-const CategoryProducts=()=>{
- const {slug}=useParams(),sentinelRef=useRef(null),loadingMoreRef=useRef(false),currentSlugRef=useRef(slug);
- const [products,setProducts]=useState([]),[category,setCategory]=useState(null),[pagination,setPagination]=useState(null),[loading,setLoading]=useState(true),[loadingMore,setLoadingMore]=useState(false),[error,setError]=useState(""),[loadMoreError,setLoadMoreError]=useState("");
- useLayoutEffect(()=>{currentSlugRef.current=slug;loadingMoreRef.current=false;},[slug]);
- useEffect(()=>{let ignore=false;const load=async()=>{try{setLoading(true);setError("");setProducts([]);setPagination(null);setLoadingMore(false);setLoadMoreError("");loadingMoreRef.current=false;const [page,cats]=await Promise.all([getProductsPage({categorySlug:slug,page:1,limit:PAGE_SIZE}),getCategories()]);if(ignore)return;const found=cats.find(c=>c.slug===slug);if(!found){setError("دسته‌بندی پیدا نشد");return;}setCategory(found);setProducts(page.products);setPagination(page.pagination);}catch(e){console.error("Category products error:",e);if(!ignore)setError("خطا در دریافت اطلاعات دسته‌بندی");}finally{if(!ignore)setLoading(false);}};load();return()=>{ignore=true;};},[slug]);
- const loadMore=useCallback(async()=>{if(!pagination?.hasMore||loadingMoreRef.current)return;const requested=slug;loadingMoreRef.current=true;setLoadingMore(true);setLoadMoreError("");try{const page=await getProductsPage({categorySlug:slug,page:pagination.page+1,limit:PAGE_SIZE});if(currentSlugRef.current!==requested)return;setProducts(old=>[...old,...page.products]);setPagination(page.pagination);}catch(e){if(currentSlugRef.current!==requested)return;console.error("Load more products error:",e);setLoadMoreError("دریافت محصولات بعدی ناموفق بود. دوباره تلاش کنید.");}finally{if(currentSlugRef.current===requested){loadingMoreRef.current=false;setLoadingMore(false);}}},[pagination,slug]);
- useEffect(()=>{const node=sentinelRef.current;if(!node||!pagination?.hasMore||loadMoreError||typeof IntersectionObserver==="undefined")return;const observer=new IntersectionObserver(([entry])=>{if(entry.isIntersecting)loadMore();},{rootMargin:"500px 0px"});observer.observe(node);return()=>observer.disconnect();},[pagination?.hasMore,loadMore,loadMoreError]);
- if(loading)return <main dir="rtl" className="min-h-screen px-4 py-10" aria-busy="true"><div className="mx-auto max-w-7xl"><div className="mb-5 h-9 w-24 animate-pulse rounded-lg bg-zinc-700/60"/><ProductGridSkeleton count={8}/></div></main>;
- if(error)return <div className="flex min-h-[50vh] items-center justify-center text-red-400">{error}</div>;
- return <main dir="rtl" className="min-h-screen px-4 py-8 sm:py-10"><div className="mx-auto max-w-7xl"><div className="mb-5"><BackPage fallback="/"/></div>
- <header className="mb-8 flex flex-col items-center text-center">{category?.image&&<img src={category.image} alt={category.name} loading="eager" decoding="async" className="mb-4 h-28 object-contain"/>}{category?.parent&&<Link to={`/category/${category.parent.slug}`} className="mb-2 text-xs font-bold text-cyan-300">{category.parent.name}</Link>}<h1 className="text-2xl font-black text-white sm:text-3xl">{category?.name}</h1>{category?.children?.length>0&&<p className="mt-2 text-sm text-zinc-400">محصولات این گروه و زیرمجموعه‌های آن</p>}</header>
- {category?.children?.length>0&&<nav aria-label="زیر دسته‌بندی‌ها" className="mb-8 flex flex-wrap justify-center gap-2">{category.children.map(ch=><Link key={ch.id} to={`/category/${ch.slug}`} className="rounded-xl border border-cyan-300/15 bg-cyan-300/[.05] px-4 py-2 text-sm font-semibold text-cyan-100 hover:border-cyan-300/35">{ch.name}</Link>)}</nav>}
- {products.length===0?<div className="flex min-h-[30vh] items-center justify-center text-zinc-500">محصولی در این دسته‌بندی وجود ندارد.</div>:<div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{products.map((p,i)=><ProductCard key={p.productCode} product={p} priority={i<2}/>)}</div>}
- {pagination?.hasMore&&<div ref={sentinelRef} className="flex min-h-24 flex-col items-center justify-center gap-3 py-6">{loadingMore&&<p className="text-sm text-zinc-400">در حال دریافت محصولات بیشتر...</p>}{loadMoreError&&<p role="alert" className="text-sm text-red-400">{loadMoreError}</p>}<button type="button" onClick={loadMore} disabled={loadingMore} className="rounded-xl border border-zinc-600 px-5 py-2.5 text-sm font-semibold text-zinc-200 hover:bg-white/10 disabled:opacity-50">{loadingMore?"در حال بارگذاری...":"نمایش محصولات بیشتر"}</button></div>}
- </div></main>;
+const PAGE_SIZE = 12;
+const CategoryProducts = () => {
+  const { slug } = useParams(),
+    sentinelRef = useRef(null),
+    loadingMoreRef = useRef(false),
+    currentSlugRef = useRef(slug);
+  const [products, setProducts] = useState([]),
+    [category, setCategory] = useState(null),
+    [pagination, setPagination] = useState(null),
+    [loading, setLoading] = useState(true),
+    [loadingMore, setLoadingMore] = useState(false),
+    [error, setError] = useState(""),
+    [loadMoreError, setLoadMoreError] = useState("");
+  useLayoutEffect(() => {
+    currentSlugRef.current = slug;
+    loadingMoreRef.current = false;
+  }, [slug]);
+  useEffect(() => {
+    let ignore = false;
+    const load = async () => {
+      try {
+        setLoading(true);
+        setError("");
+        setProducts([]);
+        setPagination(null);
+        setLoadingMore(false);
+        setLoadMoreError("");
+        loadingMoreRef.current = false;
+        const [page, cats] = await Promise.all([
+          getProductsPage({ categorySlug: slug, page: 1, limit: PAGE_SIZE }),
+          getCategories(),
+        ]);
+        if (ignore) return;
+        const found = cats.find((c) => c.slug === slug);
+        if (!found) {
+          setError("دسته‌بندی پیدا نشد");
+          return;
+        }
+        setCategory(found);
+        setProducts(page.products);
+        setPagination(page.pagination);
+      } catch (e) {
+        console.error("Category products error:", e);
+        if (!ignore) setError("خطا در دریافت اطلاعات دسته‌بندی");
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      ignore = true;
+    };
+  }, [slug]);
+  const loadMore = useCallback(async () => {
+    if (!pagination?.hasMore || loadingMoreRef.current) return;
+    const requested = slug;
+    loadingMoreRef.current = true;
+    setLoadingMore(true);
+    setLoadMoreError("");
+    try {
+      const page = await getProductsPage({
+        categorySlug: slug,
+        page: pagination.page + 1,
+        limit: PAGE_SIZE,
+      });
+      if (currentSlugRef.current !== requested) return;
+      setProducts((old) => [...old, ...page.products]);
+      setPagination(page.pagination);
+    } catch (e) {
+      if (currentSlugRef.current !== requested) return;
+      console.error("Load more products error:", e);
+      setLoadMoreError("دریافت محصولات بعدی ناموفق بود. دوباره تلاش کنید.");
+    } finally {
+      if (currentSlugRef.current === requested) {
+        loadingMoreRef.current = false;
+        setLoadingMore(false);
+      }
+    }
+  }, [pagination, slug]);
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (
+      !node ||
+      !pagination?.hasMore ||
+      loadMoreError ||
+      typeof IntersectionObserver === "undefined"
+    )
+      return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) loadMore();
+      },
+      { rootMargin: "500px 0px" },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [pagination?.hasMore, loadMore, loadMoreError]);
+  if (loading)
+    return (
+      <main dir="rtl" className="min-h-screen px-4 py-10" aria-busy="true">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-5 h-9 w-24 animate-pulse rounded-lg bg-zinc-700/60" />
+          <ProductGridSkeleton count={8} />
+        </div>
+      </main>
+    );
+  if (error)
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center text-red-400">
+        {error}
+      </div>
+    );
+  return (
+    <main dir="rtl" className="min-h-screen px-4 py-8 sm:py-10">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-5">
+          <BackPage fallback="/" />
+        </div>
+        <header className="mb-8 flex flex-col items-center text-center">
+          {category?.image && (
+            <img
+              src={category.image}
+              alt={category.name}
+              loading="eager"
+              decoding="async"
+              className="mb-4 h-28 object-contain"
+            />
+          )}
+          {category?.parent && (
+            <Link
+              to={`/category/${category.parent.slug}`}
+              className="mb-2 text-xs font-bold text-cyan-300"
+            >
+              {category.parent.name}
+            </Link>
+          )}
+          {category?.children?.length > 0 && (
+            <p className="mt-2 text-sm text-zinc-400">
+              محصولات این گروه و زیرمجموعه‌های آن
+            </p>
+          )}
+        </header>
+        {category?.children?.length > 0 && (
+          <nav
+            aria-label="زیر دسته‌بندی‌ها"
+            className="mb-8 flex flex-wrap justify-center gap-2"
+          >
+            {category.children.map((ch) => (
+              <Link
+                key={ch.id}
+                to={`/category/${ch.slug}`}
+                className="rounded-xl border border-cyan-300/15 bg-cyan-300/[.05] px-4 py-2 text-sm font-semibold text-cyan-100 hover:border-cyan-300/35"
+              >
+                {ch.name}
+              </Link>
+            ))}
+          </nav>
+        )}
+        {products.length === 0 ? (
+          <div className="flex min-h-[30vh] items-center justify-center text-zinc-500">
+            محصولی در این دسته‌بندی وجود ندارد.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {products.map((p, i) => (
+              <ProductCard key={p.productCode} product={p} priority={i < 2} />
+            ))}
+          </div>
+        )}
+        {pagination?.hasMore && (
+          <div
+            ref={sentinelRef}
+            className="flex min-h-24 flex-col items-center justify-center gap-3 py-6"
+          >
+            {loadingMore && (
+              <p className="text-sm text-zinc-400">
+                در حال دریافت محصولات بیشتر...
+              </p>
+            )}
+            {loadMoreError && (
+              <p role="alert" className="text-sm text-red-400">
+                {loadMoreError}
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={loadMore}
+              disabled={loadingMore}
+              className="rounded-xl border border-zinc-600 px-5 py-2.5 text-sm font-semibold text-zinc-200 hover:bg-white/10 disabled:opacity-50"
+            >
+              {loadingMore ? "در حال بارگذاری..." : "نمایش محصولات بیشتر"}
+            </button>
+          </div>
+        )}
+      </div>
+    </main>
+  );
 };
 export default CategoryProducts;

@@ -20,10 +20,14 @@ const AdminDashboard = lazy(() => import("./admin/pages/AdminDashboard"));
 const AdminProducts = lazy(() => import("./admin/pages/AdminProducts"));
 const AdminDiscounts = lazy(() => import("./admin/pages/AdminDiscounts"));
 const DiscountProducts = lazy(() => import("./pages/DiscountProducts"));
-const AdminProductCreate = lazy(() => import("./admin/pages/AdminProductCreate"));
+const AdminProductCreate = lazy(
+  () => import("./admin/pages/AdminProductCreate"),
+);
 const AdminProductEdit = lazy(() => import("./admin/pages/AdminProductEdit"));
 const AdminCategories = lazy(() => import("./admin/pages/AdminCategories"));
-const AdminCategoryProducts = lazy(() => import("./admin/pages/AdminCategoryProducts"));
+const AdminCategoryProducts = lazy(
+  () => import("./admin/pages/AdminCategoryProducts"),
+);
 const AdminOrders = lazy(() => import("./admin/pages/AdminOrders"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
 const CategoryProducts = lazy(() => import("./components/CategoryProducts"));
@@ -35,23 +39,24 @@ const Account = lazy(() => import("./pages/account/Account"));
 const AdminBanners = lazy(() => import("./admin/pages/AdminBanners"));
 const AdminSocialLinks = lazy(() => import("./admin/pages/AdminSocialLinks"));
 const AdminSiteSettings = lazy(() => import("./admin/pages/AdminSiteSettings"));
-const AdminPaymentSettings = lazy(() => import("./admin/pages/AdminPaymentSettings"));
+const AdminPaymentSettings = lazy(
+  () => import("./admin/pages/AdminPaymentSettings"),
+);
 const PaymentResult = lazy(() => import("./pages/payment/PaymentResult"));
 const MyOrders = lazy(() => import("./pages/account/MyOrders"));
-const AdminShippingMethods = lazy(() => import("./admin/pages/AdminShippingMethods"));
+const AdminShippingMethods = lazy(
+  () => import("./admin/pages/AdminShippingMethods"),
+);
 const AdminAnalytics = lazy(() => import("./admin/pages/AdminAnalytics"));
-const AdminProductComments = lazy(() => import("./admin/pages/AdminProductComments"));
+const AdminProductComments = lazy(
+  () => import("./admin/pages/AdminProductComments"),
+);
 const AdminSupport = lazy(() => import("./admin/pages/AdminSupport"));
-const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 // =========================================
 // ROUTES
 // =========================================
 
 const routes = [
-  {
-    path: "/privacy",
-    element: <PrivacyPolicy />,
-  },
   {
     path: "/",
     element: <Content />,
@@ -345,10 +350,18 @@ const routes = [
   {
     path: "*",
     element: (
-      <div dir="rtl" className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4 text-center text-white">
+      <div
+        dir="rtl"
+        className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4 text-center text-white"
+      >
         <p className="text-2xl font-black">صفحه پیدا نشد</p>
-        <p className="text-sm text-zinc-400">آدرس واردشده معتبر نیست یا این صفحه وجود ندارد.</p>
-        <Link to="/" className="rounded-xl bg-cyan-500 px-5 py-2.5 text-sm font-bold text-slate-950 transition hover:bg-cyan-400">
+        <p className="text-sm text-zinc-400">
+          آدرس واردشده معتبر نیست یا این صفحه وجود ندارد.
+        </p>
+        <Link
+          to="/"
+          className="rounded-xl bg-cyan-500 px-5 py-2.5 text-sm font-bold text-slate-950 transition hover:bg-cyan-400"
+        >
           بازگشت به فروشگاه
         </Link>
       </div>
@@ -364,10 +377,10 @@ const App = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (!location.pathname.startsWith("/admin")) trackPageView(location.pathname);
+    if (!location.pathname.startsWith("/admin"))
+      trackPageView(location.pathname);
   }, [location.pathname]);
 
-  const isProductPage = location.pathname.startsWith("/product/");
   const isAdminArea = location.pathname.startsWith("/admin");
 
   return (
@@ -389,11 +402,17 @@ const App = () => {
       <main className="relative z-0 min-w-0 flex-1">
         <Suspense
           fallback={
-            <div className="mx-auto min-h-[50vh] w-full max-w-7xl px-4 py-10" aria-busy="true">
+            <div
+              className="mx-auto min-h-[50vh] w-full max-w-7xl px-4 py-10"
+              aria-busy="true"
+            >
               <div className="mx-auto mb-8 h-8 w-40 animate-pulse rounded-lg bg-zinc-700/60" />
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {Array.from({ length: 8 }, (_, index) => (
-                  <div key={index} className="rounded-2xl border border-zinc-700/60 bg-zinc-900 p-2">
+                  <div
+                    key={index}
+                    className="rounded-2xl border border-zinc-700/60 bg-zinc-900 p-2"
+                  >
                     <div className="h-48 animate-pulse rounded-xl bg-zinc-700/60" />
                     <div className="mt-4 h-4 w-3/4 animate-pulse rounded bg-zinc-700/60" />
                     <div className="mt-3 h-3 w-1/2 animate-pulse rounded bg-zinc-800" />
@@ -405,7 +424,11 @@ const App = () => {
         >
           <Routes>
             {routes.map((route) => (
-              <Route key={route.path} path={route.path} element={route.element} />
+              <Route
+                key={route.path}
+                path={route.path}
+                element={route.element}
+              />
             ))}
           </Routes>
         </Suspense>

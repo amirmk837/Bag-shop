@@ -1,6 +1,15 @@
 import { useRef } from "react";
 
-const ProductImage = ({ image, title, id, onNext, onPrev, onClick, loading = "lazy", fetchPriority = "auto" }) => {
+const ProductImage = ({
+  image,
+  title,
+  id,
+  onNext,
+  onPrev,
+  onClick,
+  loading = "lazy",
+  fetchPriority = "auto",
+}) => {
   const touchStartX = useRef(null);
   const touchEndX = useRef(null);
 
@@ -50,11 +59,16 @@ const ProductImage = ({ image, title, id, onNext, onPrev, onClick, loading = "la
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       className="
+        relative z-0
         h-full w-full cursor-pointer
-        select-none object-contain p-4
+        select-none object-contain
+        p-4 sm:p-5
         touch-pan-y
-        transition-transform duration-700
-        group-hover:scale-105
+        drop-shadow-[0_8px_14px_rgba(0,0,0,0.2)]
+        transition-all duration-700 ease-out
+        group-hover:scale-[1.045]
+        group-hover:drop-shadow-[0_12px_22px_rgba(34,211,238,0.16)]
+        active:scale-[0.98]
       "
     />
   );
