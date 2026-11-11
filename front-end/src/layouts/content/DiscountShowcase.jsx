@@ -255,7 +255,7 @@ const DiscountShowcase = () => {
         )}
 
         <div className="relative">
-          <div className="relative mb-5 overflow-hidden rounded-2xl border border-cyan-800/50 bg-slate-950/45 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,.04)] sm:mb-6 sm:px-6 sm:py-5">
+          <div className="theme-feature-chip relative mb-5 overflow-hidden rounded-2xl border border-cyan-800/50 bg-slate-950/45 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,.04)] sm:mb-6 sm:px-6 sm:py-5">
             <div
               aria-hidden="true"
               className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full bg-cyan-500/10 blur-3xl"
