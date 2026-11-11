@@ -182,11 +182,6 @@
   color: #8290a3 !important;
 }
 
-/* Keep the decorative ambient layer subtle on light surfaces. */
-:root[data-theme="light"] [class*="bg-cyan-500/"],
-:root[data-theme="light"] [class*="bg-violet-500/"] {
-  opacity: 0.35;
-}
 
 :root[data-theme="light"] .discount-carousel-scrollbar {
   scrollbar-color: #b8c3d2 transparent;
@@ -353,9 +348,6 @@
 :root[data-theme="light"] [class*="bg-[#151d2a]"],
 :root[data-theme="light"] [class*="bg-[#101722]"] {
   border-color: #d9cebd !important;
-}
-:root[data-theme="light"] [class*="bg-white/"] {
-  --tw-bg-opacity: 1;
 }
 :root[data-theme="light"] input::placeholder,
 :root[data-theme="light"] textarea::placeholder {
