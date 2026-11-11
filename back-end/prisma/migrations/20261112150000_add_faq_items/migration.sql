@@ -1,4 +1,4 @@
-CREATE TABLE "FAQItem" (
+CREATE TABLE "FaqItem" (
     "id" SERIAL NOT NULL,
     "question" VARCHAR(240) NOT NULL,
     "answer" TEXT NOT NULL,
@@ -9,8 +9,8 @@ CREATE TABLE "FAQItem" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "FAQItem_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "FaqItem_pkey" PRIMARY KEY ("id")
 );
 
-CREATE INDEX "FAQItem_isActive_sortOrder_id_idx"
-ON "FAQItem"("isActive", "sortOrder", "id");
+CREATE INDEX "FaqItem_isActive_sortOrder_id_idx"
+ON "FaqItem"("isActive", "sortOrder", "id");
