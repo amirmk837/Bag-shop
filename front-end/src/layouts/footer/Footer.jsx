@@ -11,7 +11,7 @@ const Footer = () => {
     <footer
       dir="rtl"
       className="
-        relative overflow-hidden
+        site-footer-shell relative overflow-hidden
         border-t border-white/10
         bg-gradient-to-br from-black via-zinc-900 to-black
         px-4 py-8 text-white
