@@ -373,15 +373,20 @@ const App = () => {
   return (
     <div
       dir="rtl"
-      className={
-        isProductPage
-          ? "min-h-screen bg-zinc-950"
-          : "min-h-screen bg-gradient-to-br from-zinc-900 via-zinc-800 to-black"
-      }
+      className="relative isolate flex min-h-screen flex-col overflow-hidden bg-[#080c13] text-white"
     >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+      >
+        <div className="absolute -right-48 top-20 h-[28rem] w-[28rem] rounded-full bg-cyan-500/[0.07] blur-[130px]" />
+        <div className="absolute -left-48 top-[38rem] h-[32rem] w-[32rem] rounded-full bg-violet-500/[0.07] blur-[140px]" />
+        <div className="absolute inset-0 opacity-[0.035] [background-image:linear-gradient(rgba(255,255,255,.22)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.22)_1px,transparent_1px)] [background-size:54px_54px]" />
+      </div>
+
       {!isAdminArea && <Header />}
 
-      <main className="min-h-screen">
+      <main className="relative z-0 min-w-0 flex-1">
         <Suspense
           fallback={
             <div className="mx-auto min-h-[50vh] w-full max-w-7xl px-4 py-10" aria-busy="true">
