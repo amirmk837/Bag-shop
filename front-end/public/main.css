@@ -533,32 +533,32 @@ html {
 
 /* =========================================
    ADMIN LIGHT THEME
-   Scoped to the admin shell so storefront and dark mode stay isolated.
+   Scoped to the admin shell; storefront and dark mode remain isolated.
 ========================================= */
 :root[data-theme="light"] .admin-theme-scope {
   background: var(--app-canvas) !important;
   color: var(--app-text) !important;
 }
-
+:root[data-theme="light"] .admin-theme-scope.admin-login-shell {
+  background: radial-gradient(ellipse at 50% 0%, #e5edf2 0%, transparent 48%), var(--app-canvas) !important;
+}
 :root[data-theme="light"] .admin-theme-scope .admin-header-shell {
   background: rgb(250 251 253 / 94%) !important;
   border-color: var(--app-border) !important;
   box-shadow: 0 8px 26px rgb(32 43 58 / 6%) !important;
   color: var(--app-text) !important;
 }
-
 :root[data-theme="light"] .admin-theme-scope .admin-sidebar-shell {
   background: #f7f9fc !important;
   border-color: var(--app-border) !important;
 }
-
 :root[data-theme="light"] .admin-theme-scope .admin-content-surface {
   background: linear-gradient(160deg, #ffffff 0%, #f8fafd 72%, #f1f4f8 100%) !important;
   border-color: var(--app-border) !important;
   box-shadow: 0 14px 36px rgb(32 43 58 / 6%) !important;
 }
 
-/* Admin cards and nested panels: one clear elevation step per layer. */
+/* Surface hierarchy: page canvas → white cards → soft inset panels. */
 :root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-900"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-[#151d2a]"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-[#151923]"],
@@ -566,7 +566,6 @@ html {
 :root[data-theme="light"] .admin-theme-scope [class~="bg-[#111722]"] {
   background-color: #ffffff !important;
 }
-
 :root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-950"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-[#090e16]"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-[#10151f]"],
@@ -577,17 +576,20 @@ html {
 :root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-950/70"] {
   background-color: #f0f3f7 !important;
 }
-
 :root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-800"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-700"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-800/30"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-800/40"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-800/50"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-800/60"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-white/5"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-white/[0.025]"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-white/[0.035]"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-white/[0.05]"] {
   background-color: #e9eef4 !important;
 }
 
-/* Text hierarchy applies to static labels, tables, forms and dynamic content. */
+/* Primary, secondary and tertiary typography. */
 :root[data-theme="light"] .admin-theme-scope [class~="text-white"]:not(button):not(button *),
 :root[data-theme="light"] .admin-theme-scope [class~="text-zinc-100"],
 :root[data-theme="light"] .admin-theme-scope [class~="text-zinc-200"],
@@ -595,28 +597,25 @@ html {
 :root[data-theme="light"] .admin-theme-scope [class~="text-slate-200"] {
   color: var(--app-text) !important;
 }
-
 :root[data-theme="light"] .admin-theme-scope [class~="text-zinc-300"],
 :root[data-theme="light"] .admin-theme-scope [class~="text-slate-300"] {
   color: #3d4a5e !important;
 }
-
 :root[data-theme="light"] .admin-theme-scope [class~="text-zinc-400"],
 :root[data-theme="light"] .admin-theme-scope [class~="text-slate-400"] {
   color: var(--app-text-secondary) !important;
 }
-
 :root[data-theme="light"] .admin-theme-scope [class~="text-zinc-500"],
 :root[data-theme="light"] .admin-theme-scope [class~="text-zinc-600"],
 :root[data-theme="light"] .admin-theme-scope [class~="text-slate-500"],
 :root[data-theme="light"] .admin-theme-scope [class~="text-slate-600"] {
   color: var(--app-text-tertiary) !important;
 }
-
-/* Semantic accents are muted enough for light surfaces but remain distinct. */
+:root[data-theme="light"] .admin-theme-scope [class~="text-cyan-50"],
 :root[data-theme="light"] .admin-theme-scope [class~="text-cyan-100"],
 :root[data-theme="light"] .admin-theme-scope [class~="text-cyan-200"],
 :root[data-theme="light"] .admin-theme-scope [class~="text-cyan-300"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-cyan-300/70"],
 :root[data-theme="light"] .admin-theme-scope [class~="text-cyan-400"] {
   color: var(--app-accent) !important;
 }
@@ -641,22 +640,43 @@ html {
   color: var(--app-danger) !important;
 }
 :root[data-theme="light"] .admin-theme-scope [class~="text-blue-300"],
-:root[data-theme="light"] .admin-theme-scope [class~="text-sky-300"],
-:root[data-theme="light"] .admin-theme-scope [class~="text-violet-300"] {
+:root[data-theme="light"] .admin-theme-scope [class~="text-blue-400"],
+:root[data-theme="light"] .admin-theme-scope [class~="text-sky-300"] {
   color: var(--app-info) !important;
 }
+:root[data-theme="light"] .admin-theme-scope [class~="text-violet-300"] {
+  color: var(--app-violet) !important;
+}
 
-/* Borders, dividers and table structure become visible without heavy outlines. */
+/* Borders and table separators provide visible component boundaries. */
 :root[data-theme="light"] .admin-theme-scope [class~="border-zinc-800"],
 :root[data-theme="light"] .admin-theme-scope [class~="border-zinc-700"],
 :root[data-theme="light"] .admin-theme-scope [class~="border-zinc-600"],
 :root[data-theme="light"] .admin-theme-scope [class~="border-white/10"],
-:root[data-theme="light"] .admin-theme-scope [class~="border-white/[0.08]"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-white/[0.05]"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-white/[0.06]"],
 :root[data-theme="light"] .admin-theme-scope [class~="border-white/[0.07]"],
-:root[data-theme="light"] .admin-theme-scope [class~="border-white/[0.06]"] {
+:root[data-theme="light"] .admin-theme-scope [class~="border-white/[0.08]"],
+:root[data-theme="light"] .admin-theme-scope [class~="border-white/15"] {
   border-color: var(--app-border) !important;
 }
-
+:root[data-theme="light"] .admin-theme-scope [class*="border-red-"],
+:root[data-theme="light"] .admin-theme-scope [class*="border-rose-"] {
+  border-color: #e5c4c8 !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class*="border-amber-"] {
+  border-color: #e6d4b5 !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class*="border-emerald-"] {
+  border-color: #c7dfd0 !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class*="border-cyan-"] {
+  border-color: #bfdad8 !important;
+}
+:root[data-theme="light"] .admin-theme-scope [class*="border-blue-"],
+:root[data-theme="light"] .admin-theme-scope [class*="border-sky-"] {
+  border-color: #cbd9e9 !important;
+}
 :root[data-theme="light"] .admin-theme-scope table thead {
   background: #edf1f6 !important;
   color: var(--app-text-secondary) !important;
@@ -668,7 +688,7 @@ html {
   background-color: #f4f7fa !important;
 }
 
-/* Inputs have a raised surface, clear focus ring and readable placeholders. */
+/* Inputs and selects use a raised white surface with a visible focus state. */
 :root[data-theme="light"] .admin-theme-scope input:not([type="checkbox"]):not([type="radio"]),
 :root[data-theme="light"] .admin-theme-scope textarea,
 :root[data-theme="light"] .admin-theme-scope select {
@@ -688,56 +708,72 @@ html {
   box-shadow: 0 0 0 3px rgb(23 107 112 / 12%) !important;
 }
 
-/* Primary actions and selected navigation share the mineral-teal accent. */
-:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-500"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-600"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-700"] {
-  background-color: var(--app-accent) !important;
-  color: #ffffff !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-400/10"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-500/10"],
+/* Semantic status surfaces use controlled, role-specific tints. */
+:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-950/10"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-950/20"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-950/60"] {
+:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-950/60"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-400/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-400/15"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-500/10"] {
   background-color: var(--app-accent-soft) !important;
 }
-:root[data-theme="light"] .admin-theme-scope button[class~="bg-zinc-800"],
-:root[data-theme="light"] .admin-theme-scope button[class~="bg-zinc-700"] {
-  color: var(--app-text) !important;
-}
-
-/* Status pills and alerts use consistent semantic fills. */
 :root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-950/30"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-950/40"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-950/50"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-500/10"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-green-950"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-green-950/40"] {
+:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-400/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-green-950"] {
   background-color: var(--app-success-soft) !important;
 }
 :root[data-theme="light"] .admin-theme-scope [class~="bg-amber-950/20"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-amber-950/30"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-amber-950/40"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-amber-500/10"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-400/10"] {
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-400/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-400/15"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-300/[0.07]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-300/[0.08]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-300/[0.12]"] {
   background-color: var(--app-warning-soft) !important;
 }
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/20"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/30"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/40"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/50"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/60"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-red-500/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-red-400/[0.07]"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-rose-500/10"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-500/15"] {
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-500/15"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-500/20"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-400/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-400/[0.07]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-400/[0.14]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-950/40"] {
   background-color: var(--app-danger-soft) !important;
 }
+:root[data-theme="light"] .admin-theme-scope [class~="bg-blue-950/40"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-blue-500/10"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-sky-950/40"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-sky-500/10"] {
   background-color: var(--app-info-soft) !important;
 }
+:root[data-theme="light"] .admin-theme-scope [class~="bg-violet-950/40"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-violet-500/10"] {
   background-color: var(--app-violet-soft) !important;
 }
 
-/* Solid semantic buttons keep white labels on a deep, accessible fill. */
+/* Filled actions use solid, high-contrast brand or semantic colors. */
+:root[data-theme="light"] .admin-theme-scope button[class~="bg-cyan-500"],
+:root[data-theme="light"] .admin-theme-scope button[class~="bg-cyan-600"],
+:root[data-theme="light"] .admin-theme-scope button[class~="bg-cyan-700"] {
+  background-color: var(--app-accent) !important;
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .admin-theme-scope button[class*="bg-cyan-"] * {
+  color: inherit !important;
+}
 :root[data-theme="light"] .admin-theme-scope button[class~="bg-red-500"],
 :root[data-theme="light"] .admin-theme-scope button[class~="bg-red-600"],
 :root[data-theme="light"] .admin-theme-scope button[class~="bg-red-900"] {
@@ -752,142 +788,8 @@ html {
   background-color: var(--app-warning) !important;
   color: #ffffff !important;
 }
-
-/* Additional states present in the full admin route inventory. */
-:root[data-theme="light"] .admin-theme-scope.admin-login-shell {
-  background: radial-gradient(ellipse at 50% 0%, #e5edf2 0%, transparent 48%), var(--app-canvas) !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="bg-white/5"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-white/[0.025]"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-white/[0.05]"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-800/30"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-800/50"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-800/60"] {
-  background-color: #edf1f6 !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="bg-cyan-950/10"] {
-  background-color: #edf5f4 !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-400/10"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-500/10"] {
-  background-color: var(--app-success-soft) !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-300/[0.07]"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-300/[0.08]"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-300/[0.12]"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-400/10"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-400/15"] {
-  background-color: var(--app-warning-soft) !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="bg-red-400/[0.07]"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/60"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-400/10"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-400/[0.07]"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-400/[0.14]"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-500/20"] {
-  background-color: var(--app-danger-soft) !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="bg-blue-950/40"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-sky-950/40"] {
-  background-color: var(--app-info-soft) !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="bg-violet-950/40"] {
-  background-color: var(--app-violet-soft) !important;
-}
-
-:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/50"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/60"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-950/40"] {
-  background-color: var(--app-danger-soft) !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-950/50"] {
-  background-color: var(--app-success-soft) !important;
-}
-
-/* Semantic outlines make alert and status boundaries legible on pale cards. */
-:root[data-theme="light"] .admin-theme-scope [class*="border-red-"],
-:root[data-theme="light"] .admin-theme-scope [class*="border-rose-"] {
-  border-color: #e7c5c8 !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class*="border-amber-"] {
-  border-color: #e8d6b6 !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class*="border-emerald-"] {
-  border-color: #c8dfd1 !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class*="border-cyan-"] {
-  border-color: #bfdad8 !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class*="border-blue-"],
-:root[data-theme="light"] .admin-theme-scope [class*="border-sky-"] {
-  border-color: #cbd9e9 !important;
-}
-
-/* Small status fills and borders used by tables, badges and inline feedback. */
-:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-950/30"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-950/40"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-emerald-950/50"] {
-  background-color: var(--app-success-soft) !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-950/20"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-950/40"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-500/10"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-400/10"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-amber-400/15"] {
-  background-color: var(--app-warning-soft) !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/20"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/30"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/40"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/50"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-red-950/60"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-red-500/10"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-500/10"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-500/20"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-rose-950/40"] {
-  background-color: var(--app-danger-soft) !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="bg-blue-950/40"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-sky-950/40"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-blue-500/10"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-sky-500/10"] {
-  background-color: var(--app-info-soft) !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="bg-violet-950/40"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-violet-500/10"] {
-  background-color: var(--app-violet-soft) !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="border-red-900/50"],
-:root[data-theme="light"] .admin-theme-scope [class~="border-red-900/60"],
-:root[data-theme="light"] .admin-theme-scope [class~="border-red-800/70"],
-:root[data-theme="light"] .admin-theme-scope [class~="border-red-500/30"],
-:root[data-theme="light"] .admin-theme-scope [class~="border-rose-500/30"],
-:root[data-theme="light"] .admin-theme-scope [class~="border-rose-400/15"] {
-  border-color: #e5c4c8 !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="border-amber-500/20"],
-:root[data-theme="light"] .admin-theme-scope [class~="border-amber-500/30"],
-:root[data-theme="light"] .admin-theme-scope [class~="border-amber-800/70"],
-:root[data-theme="light"] .admin-theme-scope [class~="border-amber-900/50"] {
-  border-color: #e6d4b5 !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="border-emerald-500/20"],
-:root[data-theme="light"] .admin-theme-scope [class~="border-emerald-500/30"],
-:root[data-theme="light"] .admin-theme-scope [class~="border-emerald-800/70"],
-:root[data-theme="light"] .admin-theme-scope [class~="border-emerald-900/50"] {
-  border-color: #c7dfd0 !important;
-}
-
-/* Icons and inline action content inherit the accessible primary foreground. */
-:root[data-theme="light"] .admin-theme-scope button[class*="bg-cyan-"] * {
-  color: inherit !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="text-cyan-50"],
-:root[data-theme="light"] .admin-theme-scope [class~="text-cyan-300/70"] {
-  color: var(--app-accent) !important;
-}
-:root[data-theme="light"] .admin-theme-scope [class~="text-slate-950"] {
+:root[data-theme="light"] .admin-theme-scope button[class~="bg-zinc-800"],
+:root[data-theme="light"] .admin-theme-scope button[class~="bg-zinc-700"] {
   color: var(--app-text) !important;
 }
 :root[data-theme="light"] .admin-theme-scope .admin-primary-action {
@@ -899,7 +801,7 @@ html {
   background: var(--app-accent-hover) !important;
 }
 
-/* Discount prices are presented as one calm price block, never a cyan-violet gradient. */
+/* Discount prices: a single calm surface and one clear price color. */
 :root[data-theme="light"] .discount-price-panel {
   background: #eaf3f2 !important;
   border-color: #c9dfdc !important;
