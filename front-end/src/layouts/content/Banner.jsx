@@ -235,6 +235,7 @@ const Banner = () => {
           <div
             dir="ltr"
             role="region"
+            className="theme-dark-overlay"
             aria-roledescription="carousel"
             aria-label="بنرهای فروشگاه کاظمی"
             className="
