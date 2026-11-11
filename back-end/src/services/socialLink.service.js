@@ -4,15 +4,9 @@ import {
   normalizeChannelName,
   normalizeSortOrder,
   normalizeActive,
+  normalizeSocialPlatform,
+  normalizeSocialLabel,
 } from "../validators/socialLink.validation.js";
-
-export const SOCIAL_PLATFORMS = [
-  { platform: "INSTAGRAM", label: "اینستاگرام" },
-  { platform: "TELEGRAM", label: "تلگرام" },
-  { platform: "WHATSAPP", label: "واتساپ" },
-  { platform: "BALE", label: "بله" },
-  { platform: "RUBIKA", label: "روبیکا" },
-];
 
 const createError = (status, message) => {
   const error = new Error(message);
@@ -20,45 +14,70 @@ const createError = (status, message) => {
   return error;
 };
 
-export const getPublicSocialLinks = async () =>
+const selectSocialLink = {
+  id: true,
+  platform: true,
+  label: true,
+  url: true,
+  channelName: true,
+  isActive: true,
+  sortOrder: true,
+};
+
+export const getPublicSocialLinks = () =>
   prisma.socialLink.findMany({
     where: { url: { not: null }, isActive: true },
-    select: { platform: true, url: true, channelName: true, sortOrder: true },
+    select: selectSocialLink,
     orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
   });
 
-export const getAdminSocialLinks = async () => {
-  const savedLinks = await prisma.socialLink.findMany();
-  return SOCIAL_PLATFORMS.map(({ platform, label }, index) => {
-    const saved = savedLinks.find((item) => item.platform === platform);
-    return {
-      platform,
-      label,
-      url: saved?.url ?? "",
-      channelName: saved?.channelName ?? "",
-      isActive: saved?.isActive ?? true,
-      sortOrder: saved?.sortOrder ?? index,
-    };
-  }).sort((a, b) => a.sortOrder - b.sortOrder);
-};
+export const getAdminSocialLinks = () =>
+  prisma.socialLink.findMany({
+    select: selectSocialLink,
+    orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
+  });
 
-export const saveSocialLink = async (platformValue, payload = {}) => {
-  const platform = String(platformValue || "").toUpperCase();
-  if (!SOCIAL_PLATFORMS.some((item) => item.platform === platform)) {
-    throw createError(400, "شبکه اجتماعی نامعتبر است.");
-  }
+const normalizePayload = (payload = {}, existing = {}) => {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
     throw createError(400, "اطلاعات شبکه اجتماعی نامعتبر است.");
   }
-  const url = normalizeSocialUrl(payload.url);
-  const channelName = normalizeChannelName(payload.channelName);
-  const isActive = normalizeActive(payload.isActive);
-  const sortOrder = normalizeSortOrder(payload.sortOrder);
+  return {
+    label: payload.label === undefined ? existing.label : normalizeSocialLabel(payload.label),
+    url: payload.url === undefined ? existing.url ?? null : normalizeSocialUrl(payload.url),
+    channelName: payload.channelName === undefined
+      ? existing.channelName ?? null
+      : normalizeChannelName(payload.channelName),
+    isActive: payload.isActive === undefined ? existing.isActive ?? true : normalizeActive(payload.isActive),
+    sortOrder: payload.sortOrder === undefined ? existing.sortOrder ?? 0 : normalizeSortOrder(payload.sortOrder),
+  };
+};
 
-  return prisma.socialLink.upsert({
-    where: { platform },
-    create: { platform, url, channelName, isActive, sortOrder },
-    update: { url, channelName, isActive, sortOrder },
-    select: { platform: true, url: true, channelName: true, isActive: true, sortOrder: true },
+export const createSocialLink = async (payload = {}) => {
+  const platform = normalizeSocialPlatform(payload.platform);
+  const data = normalizePayload(payload);
+  if (!data.label) throw createError(400, "نام پلتفرم الزامی است.");
+  return prisma.socialLink.create({
+    data: { platform, ...data },
+    select: selectSocialLink,
   });
+};
+
+export const saveSocialLink = async (platformValue, payload = {}) => {
+  const platform = normalizeSocialPlatform(platformValue);
+  const existing = await prisma.socialLink.findUnique({ where: { platform } });
+  if (!existing) throw createError(404, "پلتفرم شبکه اجتماعی پیدا نشد.");
+  const data = normalizePayload(payload, existing);
+  return prisma.socialLink.update({
+    where: { platform },
+    data,
+    select: selectSocialLink,
+  });
+};
+
+export const deleteSocialLink = async (platformValue) => {
+  const platform = normalizeSocialPlatform(platformValue);
+  const existing = await prisma.socialLink.findUnique({ where: { platform } });
+  if (!existing) throw createError(404, "پلتفرم شبکه اجتماعی پیدا نشد.");
+  await prisma.socialLink.delete({ where: { platform } });
+  return { platform };
 };
