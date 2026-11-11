@@ -79,7 +79,7 @@ const ProductInfoes = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-4">
+      <div className="flex min-h-[50vh] items-center justify-center bg-transparent px-4">
         <p className="text-xl text-zinc-400">در حال دریافت محصول...</p>
       </div>
     );
@@ -87,7 +87,7 @@ const ProductInfoes = () => {
 
   if (error || !product) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-4">
+      <div className="flex min-h-[50vh] items-center justify-center bg-transparent px-4">
         <div className="flex flex-col items-center gap-5 text-center">
           <p className="text-xl text-zinc-400">{error || "محصول پیدا نشد"}</p>
           {error && error !== "محصول پیدا نشد" && (
@@ -107,7 +107,7 @@ const ProductInfoes = () => {
 
   return (
     <div
-      className="min-h-screen bg-zinc-950 px-3 py-6 text-white sm:px-6 sm:py-10"
+      className="w-full bg-transparent px-3 py-6 text-white sm:px-6 sm:py-10"
       dir="rtl"
     >
       <div className="mx-auto max-w-6xl">
