@@ -67,7 +67,7 @@ const AboutPage = () => {
 
       {page.contactText && <section className="mt-10 flex flex-col gap-4 rounded-3xl border border-white/10 bg-zinc-900/60 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
         <div><h2 className="text-lg font-bold text-white">در ارتباط باشیم</h2><p className="mt-2 text-sm leading-7 text-zinc-400">{page.contactText}</p></div>
-        <Link to="/#contact" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/5">راه‌های ارتباطی <FiArrowLeft /></Link>
+        <Link to="/" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/5">بازگشت به فروشگاه <FiArrowLeft /></Link>
       </section>}
     </main>
   );
