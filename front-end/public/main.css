@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* =========================================
-   GLOBAL
+   GLOBAL FOUNDATION
 ========================================= */
 
 * {
@@ -9,29 +9,67 @@
   direction: rtl;
 }
 
-/* =========================================
-   SCROLLBAR THEME — ZINC
-========================================= */
-
 :root {
-  scrollbar-color: #3f3f46 #18181b;
-  scrollbar-width: thin;
+  color-scheme: dark;
+  --app-canvas: #080c13;
+  --app-surface: #111722;
+  --app-surface-raised: #151d2a;
+  --app-surface-muted: #0b111c;
+  --app-border: rgb(255 255 255 / 10%);
+  --app-text: #f4f7fb;
+  --app-text-secondary: #a1adbd;
+  --app-text-tertiary: #778598;
+  --app-accent: #22d3ee;
+  --app-accent-strong: #0891b2;
 }
 
-/* Chrome, Edge, Safari */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  /* A cool porcelain palette with a restrained mineral-teal identity. */
+  --app-canvas: #f1f3f7;
+  --app-surface: #fafbfd;
+  --app-surface-raised: #ffffff;
+  --app-surface-muted: #e8ecf2;
+  --app-surface-strong: #dfe6ee;
+  --app-border: #d5dde7;
+  --app-border-strong: #c2ccd9;
+  --app-text: #202b3a;
+  --app-text-secondary: #566477;
+  --app-text-tertiary: #647083;
+  --app-accent: #176b70;
+  --app-accent-hover: #10575c;
+  --app-accent-soft: #e2f0ef;
+  --app-accent-border: #b7d6d3;
+  --app-violet: #66527d;
+  --app-violet-soft: #eeeaf3;
+  --app-success: #246b4a;
+  --app-success-soft: #e7f2eb;
+  --app-warning: #8a5a16;
+  --app-warning-soft: #f7eedc;
+  --app-danger: #a63f4a;
+  --app-danger-soft: #f8e9ea;
+  --app-info: #315f91;
+  --app-info-soft: #e8eff8;
+
+  scrollbar-color: #aab6c5 var(--app-canvas);
+  background: var(--app-canvas);
+  color: var(--app-text);
+}
+
+html {
+  scrollbar-width: thin;
+}
 
 *::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 
-/* Background / Track */
-
-*::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-corner {
   background: #18181b;
 }
-
-/* Scrollbar Thumb */
 
 *::-webkit-scrollbar-thumb {
   background-color: #3f3f46;
@@ -39,26 +77,29 @@
   border-radius: 999px;
 }
 
-/* Hover */
-
 *::-webkit-scrollbar-thumb:hover {
   background-color: #52525b;
 }
-
-/* Active drag */
 
 *::-webkit-scrollbar-thumb:active {
   background-color: #71717a;
 }
 
-/* Scrollbar corners */
-
-*::-webkit-scrollbar-corner {
-  background: #18181b;
+:root[data-theme="light"] *::-webkit-scrollbar-track,
+:root[data-theme="light"] *::-webkit-scrollbar-corner {
+  background: var(--app-canvas);
 }
 
+:root[data-theme="light"] *::-webkit-scrollbar-thumb {
+  background-color: #aab6c5;
+  border-color: var(--app-canvas);
+}
 
-/* Hide only the discount carousel scrollbar; keep scrolling enabled. */
+:root[data-theme="light"] *::-webkit-scrollbar-thumb:hover {
+  background-color: #8190a3;
+}
+
+/* Hide only the discount carousel scrollbar; scrolling remains enabled. */
 .discount-carousel-scrollbar {
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
@@ -70,296 +111,308 @@
   height: 0 !important;
 }
 
-
 /* =========================================
-   THEME SYSTEM — LIGHT MODE OVERRIDES
-   Dark mode remains the unchanged default.
+   LIGHT MODE — APPLICATION SURFACES
+   No blanket opacity filters or broad substring
+   selectors: each role has a deliberate purpose.
 ========================================= */
 
-:root {
-  color-scheme: dark;
-}
-
-:root[data-theme="light"] {
-  color-scheme: light;
-  scrollbar-color: #b8c3d2 #edf1f6;
-  background: #f4f7fb;
-  color: #172033;
-}
-
 :root[data-theme="light"] body {
-  background: #f4f7fb;
-  color: #172033;
+  background: var(--app-canvas);
+  color: var(--app-text);
 }
 
-:root[data-theme="light"] *::-webkit-scrollbar-track,
-:root[data-theme="light"] *::-webkit-scrollbar-corner {
-  background: #edf1f6;
+:root[data-theme="light"] .app-shell {
+  background: var(--app-canvas) !important;
+  color: var(--app-text) !important;
 }
 
-:root[data-theme="light"] *::-webkit-scrollbar-thumb {
-  background-color: #b8c3d2;
-  border-color: #edf1f6;
+:root[data-theme="light"] .app-background-glow {
+  opacity: 0.16;
 }
 
-:root[data-theme="light"] *::-webkit-scrollbar-thumb:hover {
-  background-color: #8795a9;
+:root[data-theme="light"] .site-header-shell {
+  background: linear-gradient(135deg, #fbfcfe 0%, #edf1f6 54%, #f8fafc 100%) !important;
+  border-color: var(--app-border) !important;
+  box-shadow: 0 10px 30px rgb(31 45 64 / 7%) !important;
 }
 
-/* Main application and admin shell surfaces. */
-:root[data-theme="light"] [class*="bg-[#080c13]"],
-:root[data-theme="light"] [class*="bg-[#0d1119]"] {
-  background-color: #f4f7fb !important;
+:root[data-theme="light"] .site-footer-shell {
+  background: linear-gradient(145deg, #e9edf3 0%, #f5f7fa 48%, #e7ecf2 100%) !important;
+  border-color: var(--app-border) !important;
+  color: var(--app-text) !important;
 }
 
-:root[data-theme="light"] [class*="bg-[#111722]"],
-:root[data-theme="light"] [class*="bg-[#151923]"],
-:root[data-theme="light"] [class*="bg-[#10151f]"] {
-  background-color: #ffffff !important;
+:root[data-theme="light"] .admin-layout-shell {
+  background: var(--app-canvas) !important;
+  color: var(--app-text) !important;
 }
 
-:root[data-theme="light"] [class*="bg-zinc-950"],
-:root[data-theme="light"] [class*="bg-zinc-900"] {
-  background-color: #ffffff !important;
+:root[data-theme="light"] .admin-content-surface {
+  min-height: calc(100vh - 100px);
+  padding: clamp(0.75rem, 1.5vw, 1.5rem);
+  border: 1px solid var(--app-border);
+  border-radius: 1.25rem;
+  background: linear-gradient(145deg, var(--app-surface-raised), #f1f4f8 100%);
+  box-shadow: 0 14px 34px rgb(39 54 73 / 6%);
 }
 
-:root[data-theme="light"] [class*="bg-zinc-800"] {
-  background-color: #edf1f6 !important;
+/* Dark surfaces used by existing components are translated by role. */
+:root[data-theme="light"] .app-shell [class~="bg-zinc-950"],
+:root[data-theme="light"] .app-shell [class~="bg-[#090e16]"],
+:root[data-theme="light"] .app-shell [class~="bg-[#10151f]"],
+:root[data-theme="light"] .app-shell [class~="bg-[#101722]"],
+:root[data-theme="light"] .app-shell [class~="bg-[#080f1d]"] {
+  background-color: var(--app-surface-muted) !important;
 }
 
-:root[data-theme="light"] [class*="bg-zinc-700"] {
-  background-color: #e2e8f0 !important;
+:root[data-theme="light"] .app-shell [class~="bg-zinc-900"],
+:root[data-theme="light"] .app-shell [class~="bg-[#111722]"],
+:root[data-theme="light"] .app-shell [class~="bg-[#151923]"],
+:root[data-theme="light"] .app-shell [class~="bg-[#151d2a]"],
+:root[data-theme="light"] .app-shell [class~="bg-[#111824]"],
+:root[data-theme="light"] .app-shell [class~="bg-[#121f2d]"],
+:root[data-theme="light"] .app-shell [class~="bg-[#0d1723]"],
+:root[data-theme="light"] .app-shell [class~="bg-[#0d1119]"] {
+  background-color: var(--app-surface) !important;
 }
 
-/* Neutral text hierarchy. */
-:root[data-theme="light"] [class~="text-white"],
-:root[data-theme="light"] [class*="text-zinc-100"],
-:root[data-theme="light"] [class*="text-zinc-200"] {
-  color: #172033 !important;
+:root[data-theme="light"] .app-shell [class~="bg-zinc-800"],
+:root[data-theme="light"] .app-shell [class~="bg-zinc-700"] {
+  background-color: var(--app-surface-muted) !important;
 }
 
-:root[data-theme="light"] [class*="text-zinc-300"] {
-  color: #344258 !important;
+:root[data-theme="light"] .app-shell [class~="bg-[#080c13]"] {
+  background-color: var(--app-canvas) !important;
 }
 
-:root[data-theme="light"] [class*="text-zinc-400"] {
-  color: #526176 !important;
+/* Subtle white overlays become neutral tonal surfaces in light mode. */
+:root[data-theme="light"] .app-shell [class~="bg-white/5"],
+:root[data-theme="light"] .app-shell [class~="bg-white/10"],
+:root[data-theme="light"] .app-shell [class~="bg-white/[0.025]"],
+:root[data-theme="light"] .app-shell [class~="bg-white/[0.03]"],
+:root[data-theme="light"] .app-shell [class~="bg-white/[0.035]"],
+:root[data-theme="light"] .app-shell [class~="bg-white/[0.04]"],
+:root[data-theme="light"] .app-shell [class~="bg-white/[0.045]"],
+:root[data-theme="light"] .app-shell [class~="bg-white/[0.05]"],
+:root[data-theme="light"] .app-shell [class~="bg-white/[0.06]"],
+:root[data-theme="light"] .app-shell [class~="bg-white/[0.07]"],
+:root[data-theme="light"] .app-shell [class~="bg-white/[0.08]"] {
+  background-color: var(--app-surface-muted) !important;
 }
 
-:root[data-theme="light"] [class*="text-zinc-500"] {
-  color: #66758a !important;
+/* Text hierarchy. Interactive contrast labels and intentionally dark media
+   overlays are excluded so white-on-color and white-on-image remain intact. */
+:root[data-theme="light"] .app-shell [class~="text-white"]:not(button):not(button *):not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-zinc-50"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-zinc-100"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-zinc-200"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-slate-100"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-slate-200"]:not(.theme-dark-overlay *) {
+  color: var(--app-text) !important;
 }
 
-/* Borders and separators. */
-:root[data-theme="light"] [class*="border-zinc-800"],
-:root[data-theme="light"] [class*="border-zinc-700"],
-:root[data-theme="light"] [class*="border-white/"] {
-  border-color: #dce3ec !important;
+:root[data-theme="light"] .app-shell [class~="text-zinc-300"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-slate-300"]:not(.theme-dark-overlay *) {
+  color: #3d4a5e !important;
 }
 
-/* Header surfaces retain their gradient identity in a lighter palette. */
-:root[data-theme="light"] header[class*="bg-gradient-to-br"] {
-  background-image: linear-gradient(135deg, #ffffff, #eaf0f8 55%, #ffffff) !important;
-  border-color: #dce3ec !important;
-  box-shadow: 0 12px 28px rgb(30 50 80 / 8%) !important;
+:root[data-theme="light"] .app-shell [class~="text-zinc-400"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-slate-400"]:not(.theme-dark-overlay *) {
+  color: var(--app-text-secondary) !important;
 }
 
-:root[data-theme="light"] [class*="bg-[#111722]"] {
-  border-color: #dce3ec !important;
+:root[data-theme="light"] .app-shell [class~="text-zinc-500"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-zinc-600"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-slate-500"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-slate-600"]:not(.theme-dark-overlay *) {
+  color: var(--app-text-tertiary) !important;
 }
 
-/* Inputs and editable controls. */
-:root[data-theme="light"] input:not([type="checkbox"]):not([type="radio"]),
-:root[data-theme="light"] textarea,
-:root[data-theme="light"] select {
-  background-color: #ffffff !important;
-  color: #172033 !important;
-  border-color: #cbd5e1 !important;
+/* Brand accents become deep enough for readable text on pale surfaces. */
+:root[data-theme="light"] .app-shell [class~="text-cyan-100"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-cyan-200"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-cyan-300"]:not(.theme-dark-overlay *) {
+  color: var(--app-accent) !important;
 }
 
-:root[data-theme="light"] input::placeholder,
-:root[data-theme="light"] textarea::placeholder {
-  color: #8290a3 !important;
+:root[data-theme="light"] .app-shell [class~="text-violet-100"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-violet-200"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-violet-300"]:not(.theme-dark-overlay *) {
+  color: var(--app-violet) !important;
 }
 
-
-:root[data-theme="light"] .discount-carousel-scrollbar {
-  scrollbar-color: #b8c3d2 transparent;
+:root[data-theme="light"] .app-shell [class~="text-amber-100"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-amber-200"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-amber-300"]:not(.theme-dark-overlay *) {
+  color: var(--app-warning) !important;
 }
 
+:root[data-theme="light"] .app-shell [class~="text-emerald-200"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-emerald-300"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-green-300"]:not(.theme-dark-overlay *) {
+  color: var(--app-success) !important;
+}
+
+:root[data-theme="light"] .app-shell [class~="text-red-200"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-red-300"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-red-400"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-rose-200"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-rose-300"]:not(.theme-dark-overlay *) {
+  color: var(--app-danger) !important;
+}
+
+:root[data-theme="light"] .app-shell [class~="text-blue-300"]:not(.theme-dark-overlay *),
+:root[data-theme="light"] .app-shell [class~="text-sky-300"]:not(.theme-dark-overlay *) {
+  color: var(--app-info) !important;
+}
+
+/* Borders use a low-noise neutral rather than bright white or dark zinc. */
+:root[data-theme="light"] .app-shell [class~="border-white/10"],
+:root[data-theme="light"] .app-shell [class~="border-white/[0.04]"],
+:root[data-theme="light"] .app-shell [class~="border-white/[0.05]"],
+:root[data-theme="light"] .app-shell [class~="border-white/[0.06]"],
+:root[data-theme="light"] .app-shell [class~="border-white/[0.07]"],
+:root[data-theme="light"] .app-shell [class~="border-white/[0.08]"],
+:root[data-theme="light"] .app-shell [class~="border-white/[0.09]"],
+:root[data-theme="light"] .app-shell [class~="border-white/[0.1]"],
+:root[data-theme="light"] .app-shell [class~="border-zinc-800"],
+:root[data-theme="light"] .app-shell [class~="border-zinc-700"],
+:root[data-theme="light"] .app-shell [class~="border-zinc-600"] {
+  border-color: var(--app-border) !important;
+}
+
+/* Inputs are consistent across customer and admin workflows. */
+:root[data-theme="light"] .app-shell input:not([type="checkbox"]):not([type="radio"]),
+:root[data-theme="light"] .app-shell textarea,
+:root[data-theme="light"] .app-shell select {
+  background-color: var(--app-surface-raised);
+  color: var(--app-text);
+  border-color: var(--app-border-strong);
+}
+
+:root[data-theme="light"] .app-shell input::placeholder,
+:root[data-theme="light"] .app-shell textarea::placeholder {
+  color: #647083;
+  opacity: 1;
+}
+
+/* Primary controls retain one consistent mineral-teal action color. */
+:root[data-theme="light"] .app-shell [class~="bg-cyan-500"],
+:root[data-theme="light"] .app-shell [class~="bg-cyan-600"],
+:root[data-theme="light"] .app-shell [class~="bg-cyan-700"] {
+  background-color: var(--app-accent) !important;
+}
+
+:root[data-theme="light"] .app-shell [class~="bg-cyan-400"] {
+  background-color: #287f83 !important;
+}
+
+:root[data-theme="light"] .app-shell [class~="bg-cyan-500/10"],
+:root[data-theme="light"] .app-shell [class~="bg-cyan-950/20"],
+:root[data-theme="light"] .app-shell [class~="bg-cyan-950/30"],
+:root[data-theme="light"] .app-shell [class~="bg-cyan-950/40"] {
+  background-color: var(--app-accent-soft) !important;
+}
+
+/* Semantic states remain recognizable without neon-on-pale combinations. */
+:root[data-theme="light"] .app-shell [class~="bg-emerald-950/30"],
+:root[data-theme="light"] .app-shell [class~="bg-emerald-950/40"],
+:root[data-theme="light"] .app-shell [class~="bg-emerald-500/10"] {
+  background-color: var(--app-success-soft) !important;
+}
+
+:root[data-theme="light"] .app-shell [class~="bg-amber-950/20"],
+:root[data-theme="light"] .app-shell [class~="bg-amber-950/30"],
+:root[data-theme="light"] .app-shell [class~="bg-amber-950/40"],
+:root[data-theme="light"] .app-shell [class~="bg-amber-500/10"] {
+  background-color: var(--app-warning-soft) !important;
+}
+
+:root[data-theme="light"] .app-shell [class~="bg-red-950/20"],
+:root[data-theme="light"] .app-shell [class~="bg-red-950/30"],
+:root[data-theme="light"] .app-shell [class~="bg-red-950/40"],
+:root[data-theme="light"] .app-shell [class~="bg-red-500/10"],
+:root[data-theme="light"] .app-shell [class~="bg-rose-500/10"] {
+  background-color: var(--app-danger-soft) !important;
+}
+
+:root[data-theme="light"] .app-shell [class~="bg-blue-950/40"],
+:root[data-theme="light"] .app-shell [class~="bg-blue-500/10"],
+:root[data-theme="light"] .app-shell [class~="bg-sky-950/40"],
+:root[data-theme="light"] .app-shell [class~="bg-sky-500/10"] {
+  background-color: var(--app-info-soft) !important;
+}
+
+:root[data-theme="light"] .app-shell [class~="bg-violet-950/40"],
+:root[data-theme="light"] .app-shell [class~="bg-violet-500/10"] {
+  background-color: var(--app-violet-soft) !important;
+}
+
+/* Purpose-built component surfaces. */
+:root[data-theme="light"] .theme-product-card {
+  background: linear-gradient(155deg, #ffffff 0%, #f7f9fc 100%) !important;
+  border-color: #d6dee8 !important;
+  color: var(--app-text) !important;
+  box-shadow: 0 10px 28px rgb(34 48 67 / 8%) !important;
+}
+
+:root[data-theme="light"] .theme-media-surface {
+  background: radial-gradient(ellipse at 50% 35%, #ffffff 0%, #edf1f6 62%, #e5eaf1 100%) !important;
+  border-color: #dce3eb !important;
+}
+
+:root[data-theme="light"] .theme-feature-panel {
+  background: linear-gradient(145deg, #f9fbfd 0%, #edf1f6 100%) !important;
+  border-color: #d5dee8 !important;
+  box-shadow: 0 16px 42px rgb(34 48 67 / 7%) !important;
+}
+
+:root[data-theme="light"] .theme-category-card {
+  background: linear-gradient(145deg, #ffffff 0%, #edf2f6 100%) !important;
+  border-color: #d5dee8 !important;
+  box-shadow: 0 10px 28px rgb(34 48 67 / 7%) !important;
+}
+
+:root[data-theme="light"] .theme-admin-hero {
+  background: radial-gradient(ellipse at 5% 0%, #e9e5f1 0%, transparent 36%), linear-gradient(135deg, #ffffff 0%, #edf2f6 100%) !important;
+  border-color: #d6dee8 !important;
+  box-shadow: 0 16px 40px rgb(34 48 67 / 8%) !important;
+}
+
+/* The product details and comments panels share the same calm surface language. */
+:root[data-theme="light"] .theme-content-panel {
+  background: linear-gradient(145deg, #ffffff 0%, #f4f7fa 100%) !important;
+  border-color: var(--app-border) !important;
+  color: var(--app-text) !important;
+  box-shadow: 0 12px 34px rgb(34 48 67 / 7%) !important;
+}
+
+/* A dark media overlay is intentional (image controls, badges, social marks). */
+:root[data-theme="light"] .theme-dark-overlay {
+  color: #ffffff !important;
+}
+
+/* Theme toggle uses a visible neutral control in both appearances. */
+:root[data-theme="light"] .theme-toggle-control {
+  background: #ffffff !important;
+  border-color: var(--app-border-strong) !important;
+  color: var(--app-accent) !important;
+}
+
+:root[data-theme="light"] .theme-toggle-control:hover {
+  background: var(--app-accent-soft) !important;
+  border-color: var(--app-accent-border) !important;
+}
+
+/* Reduced-motion preference is respected in both appearances. */
 @media (prefers-reduced-motion: reduce) {
-  :root[data-theme="light"] *,
-  :root[data-theme="light"] *::before,
-  :root[data-theme="light"] *::after {
+  *,
+  *::before,
+  *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-
-/* =========================================
-   LIGHT THEME — COMPONENT COVERAGE PATCH
-   Warm layered palette; dark theme is untouched.
-========================================= */
-:root[data-theme="light"] {
-  --light-canvas: #f2eee5;
-  --light-surface: #fffaf0;
-  --light-surface-raised: #f8f1e5;
-  --light-surface-muted: #eee6d8;
-  --light-border: #d9cebd;
-  --light-text: #202b3b;
-  --light-text-muted: #526174;
-  --light-accent: #087f86;
-}
-
-/* Replace dark hard-coded surfaces used by storefront and admin screens. */
-:root[data-theme="light"] [class*="bg-[#080c13]"],
-:root[data-theme="light"] [class*="bg-[#0d1119]"],
-:root[data-theme="light"] [class*="bg-[#0b111c]"] {
-  background-color: var(--light-canvas) !important;
-}
-:root[data-theme="light"] [class*="bg-[#111722]"],
-:root[data-theme="light"] [class*="bg-[#151923]"],
-:root[data-theme="light"] [class*="bg-[#151d2a]"],
-:root[data-theme="light"] [class*="bg-[#111824]"],
-:root[data-theme="light"] [class*="bg-zinc-900"] {
-  background-color: var(--light-surface) !important;
-}
-:root[data-theme="light"] [class*="bg-[#10151f]"],
-:root[data-theme="light"] [class*="bg-[#101722]"],
-:root[data-theme="light"] [class*="bg-[#090e16]"],
-:root[data-theme="light"] [class*="bg-zinc-950"] {
-  background-color: var(--light-surface-raised) !important;
-}
-:root[data-theme="light"] [class*="bg-zinc-800"] {
-  background-color: var(--light-surface-muted) !important;
-}
-:root[data-theme="light"] [class*="bg-black/"] {
-  background-color: rgb(231 222 207 / 82%) !important;
-}
-
-/* Warm product gallery and product detail panel. */
-:root[data-theme="light"] [class*="from-zinc-900"][class*="via-zinc-800"] {
-  background-image: linear-gradient(135deg, #eee6d8, #e2d8c8 55%, #f7f0e5) !important;
-}
-:root[data-theme="light"] [class*="to-black"] {
-  --tw-gradient-to: #f7f0e5 var(--tw-gradient-to-position) !important;
-}
-
-/* Make all common neutral text levels readable, including smaller labels. */
-:root[data-theme="light"] [class~="text-white"],
-:root[data-theme="light"] [class*="text-zinc-50"],
-:root[data-theme="light"] [class*="text-zinc-100"],
-:root[data-theme="light"] [class*="text-zinc-200"] {
-  color: var(--light-text) !important;
-}
-:root[data-theme="light"] [class*="text-zinc-300"] {
-  color: #354357 !important;
-}
-:root[data-theme="light"] [class*="text-zinc-400"] {
-  color: var(--light-text-muted) !important;
-}
-:root[data-theme="light"] [class*="text-zinc-500"],
-:root[data-theme="light"] [class*="text-zinc-600"] {
-  color: #657286 !important;
-}
-:root[data-theme="light"] [class*="text-cyan-100"],
-:root[data-theme="light"] [class*="text-cyan-200"],
-:root[data-theme="light"] [class*="text-cyan-300"] {
-  color: #087780 !important;
-}
-:root[data-theme="light"] [class*="text-amber-100"],
-:root[data-theme="light"] [class*="text-amber-200"],
-:root[data-theme="light"] [class*="text-amber-300"] {
-  color: #87530b !important;
-}
-:root[data-theme="light"] [class*="text-rose-200"],
-:root[data-theme="light"] [class*="text-rose-300"],
-:root[data-theme="light"] [class*="text-red-200"],
-:root[data-theme="light"] [class*="text-red-300"],
-:root[data-theme="light"] [class*="text-red-400"] {
-  color: #a52d36 !important;
-}
-:root[data-theme="light"] [class*="text-emerald-200"],
-:root[data-theme="light"] [class*="text-emerald-300"] {
-  color: #16734b !important;
-}
-:root[data-theme="light"] [class*="text-blue-300"],
-:root[data-theme="light"] [class*="text-sky-300"],
-:root[data-theme="light"] [class*="text-violet-300"] {
-  color: #365e9a !important;
-}
-
-/* Borders: visible separation without harsh black outlines. */
-:root[data-theme="light"] [class*="border-white/"],
-:root[data-theme="light"] [class*="border-zinc-800"],
-:root[data-theme="light"] [class*="border-zinc-700"],
-:root[data-theme="light"] [class*="border-zinc-600"] {
-  border-color: var(--light-border) !important;
-}
-
-/* Pastel semantic status chips retain meaning with readable contrast. */
-:root[data-theme="light"] [class*="bg-amber-950/"],
-:root[data-theme="light"] [class*="bg-amber-500/"] {
-  background-color: #f8e8c6 !important;
-}
-:root[data-theme="light"] [class*="bg-blue-950/"],
-:root[data-theme="light"] [class*="bg-blue-500/"],
-:root[data-theme="light"] [class*="bg-sky-950/"],
-:root[data-theme="light"] [class*="bg-sky-500/"] {
-  background-color: #e2ebf8 !important;
-}
-:root[data-theme="light"] [class*="bg-violet-950/"],
-:root[data-theme="light"] [class*="bg-violet-500/"] {
-  background-color: #eee7fa !important;
-}
-:root[data-theme="light"] [class*="bg-cyan-950/"],
-:root[data-theme="light"] [class*="bg-cyan-500/"] {
-  background-color: #dff1ef !important;
-}
-:root[data-theme="light"] [class*="bg-emerald-950/"],
-:root[data-theme="light"] [class*="bg-emerald-500/"] {
-  background-color: #e1f1e7 !important;
-}
-:root[data-theme="light"] [class*="bg-red-950/"],
-:root[data-theme="light"] [class*="bg-red-500/"],
-:root[data-theme="light"] [class*="bg-rose-950/"],
-:root[data-theme="light"] [class*="bg-rose-500/"] {
-  background-color: #f8e4e3 !important;
-}
-
-/* Admin workspace gets a distinct contained surface in light mode. */
-:root[data-theme="light"] .admin-content-surface {
-  min-height: calc(100vh - 100px);
-  padding: clamp(0.75rem, 1.5vw, 1.5rem);
-  border: 1px solid #ded4c5;
-  border-radius: 1.25rem;
-  background: linear-gradient(145deg, #fffaf1 0%, #f8f1e5 100%);
-  box-shadow: 0 14px 34px rgb(67 52 31 / 7%);
-}
-
-/* Discount-management hero and analytics cards receive warm raised layers. */
-:root[data-theme="light"] [class*="bg-[#0b111c]"] {
-  background-image: linear-gradient(135deg, #fffaf0, #eee5d6 100%) !important;
-  border-color: #d9cdbb !important;
-}
-:root[data-theme="light"] [class*="bg-[#151d2a]"],
-:root[data-theme="light"] [class*="bg-[#101722]"] {
-  border-color: #d9cebd !important;
-}
-:root[data-theme="light"] input::placeholder,
-:root[data-theme="light"] textarea::placeholder {
-  color: #788497 !important;
-}
-
-/* Category badges and product surfaces stay distinct from the page canvas. */
-:root[data-theme="light"] [class*="border-cyan-300/"],
-:root[data-theme="light"] [class*="border-cyan-400/"] {
-  border-color: #9ac8c5 !important;
-}
-:root[data-theme="light"] [class*="bg-cyan-300/"],
-:root[data-theme="light"] [class*="bg-cyan-400/"] {
-  background-color: #e1f1ef !important;
 }
