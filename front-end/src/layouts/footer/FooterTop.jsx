@@ -21,14 +21,14 @@ const SocialIcon = ({ platform }) => {
   if (item.Icon) {
     const Icon = item.Icon;
     return (
-      <span className={`flex h-11 w-11 items-center justify-center rounded-xl text-white ${item.color}`}>
+      <span className={`theme-dark-overlay flex h-11 w-11 items-center justify-center rounded-xl text-white ${item.color}`}>
         <Icon size={23} />
       </span>
     );
   }
 
   return (
-    <span aria-hidden="true" className={`flex h-11 w-11 items-center justify-center rounded-xl text-xl font-black text-white ${item.color}`}>
+    <span aria-hidden="true" className={`theme-dark-overlay flex h-11 w-11 items-center justify-center rounded-xl text-xl font-black text-white ${item.color}`}>
       {item.mark}
     </span>
   );
