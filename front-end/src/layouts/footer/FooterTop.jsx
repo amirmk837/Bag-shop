@@ -16,8 +16,7 @@ const SOCIAL_META = {
 };
 
 const SocialIcon = ({ platform }) => {
-  const item = SOCIAL_META[platform];
-  if (!item) return null;
+  const item = SOCIAL_META[platform] || { label: platform, color: "bg-zinc-700", mark: "↗" };
 
   if (item.Icon) {
     const Icon = item.Icon;
@@ -54,7 +53,7 @@ const FooterTop = () => {
 
         setSocialLinks(
           links
-            .filter((item) => SOCIAL_META[item.platform] && item.isActive !== false && typeof item.url === "string" && item.url.trim() !== "")
+            .filter((item) => item.isActive !== false && typeof item.url === "string" && item.url.trim() !== "")
             .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)),
         );
       } catch (error) {
@@ -104,18 +103,18 @@ const FooterTop = () => {
 
       <div aria-label="شبکه‌های اجتماعی فروشگاه" className="flex flex-wrap items-center justify-center gap-3 sm:col-span-2 lg:col-span-1 lg:justify-end">
         {socialLinks.map((item) => {
-          const meta = SOCIAL_META[item.platform];
+          const label = item.label || item.platform;
           return (
             <a
               key={item.platform}
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={item.channelName?.trim() || meta.label}
-              title={item.channelName?.trim() || meta.label}
+              aria-label={item.channelName?.trim() || label}
+              title={item.channelName?.trim() || label}
               className="rounded-xl transition duration-300 hover:-translate-y-1 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
             >
-              <span className="flex flex-col items-center gap-1"><SocialIcon platform={item.platform} /><span className="max-w-24 truncate text-[11px] text-zinc-400">{item.channelName?.trim() || meta.label}</span></span>
+              <span className="flex flex-col items-center gap-1"><SocialIcon platform={item.platform} /><span className="max-w-24 truncate text-[11px] text-zinc-400">{item.channelName?.trim() || label}</span></span>
             </a>
           );
         })}
