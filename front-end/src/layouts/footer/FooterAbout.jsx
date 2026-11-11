@@ -18,10 +18,9 @@ const FooterAbout = () => {
         </p>
         <Link
           to="/about"
-          className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-cyan-500 transition hover:text-cyan-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
+          className="mt-3 inline-block text-sm font-medium text-zinc-400 transition-colors hover:text-cyan-500 focus-visible:outline-none focus-visible:underline focus-visible:underline-offset-4"
         >
-          آشنایی بیشتر با فروشگاه
-          <span aria-hidden="true">←</span>
+          درباره ما
         </Link>
       </div>
     </section>
