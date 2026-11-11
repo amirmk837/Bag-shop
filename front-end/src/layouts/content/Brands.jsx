@@ -45,11 +45,11 @@ const Brands = () => {
       {/* Ambient lighting */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-20 top-10 -z-10 h-64 w-64 rounded-full bg-cyan-500/[0.07] blur-[100px]"
+        className="category-section-glow pointer-events-none absolute -right-20 top-10 -z-10 h-64 w-64 rounded-full bg-cyan-500/[0.07] blur-[100px]"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-20 bottom-0 -z-10 h-64 w-64 rounded-full bg-violet-500/[0.07] blur-[100px]"
+        className="category-section-glow pointer-events-none absolute -left-20 bottom-0 -z-10 h-64 w-64 rounded-full bg-violet-500/[0.07] blur-[100px]"
       />
 
       {/* Section heading */}
@@ -89,7 +89,7 @@ const Brands = () => {
           <article
             key={category.id}
             className="
-              theme-category-card group relative isolate min-w-0
+              theme-category-card category-card-shell group relative isolate min-w-0
               overflow-hidden rounded-[1.35rem]
               border border-white/[0.09]
               bg-gradient-to-br from-[#172536] via-[#101b29] to-[#0b121d]
@@ -106,7 +106,7 @@ const Brands = () => {
             <div
               aria-hidden="true"
               className="
-                pointer-events-none absolute -left-16 -top-16 -z-10
+                category-card-glow pointer-events-none absolute -left-16 -top-16 -z-10
                 h-40 w-40 rounded-full
                 bg-cyan-400/[0.08] blur-[65px]
                 transition-all duration-700
@@ -118,7 +118,7 @@ const Brands = () => {
             <div
               aria-hidden="true"
               className="
-                pointer-events-none absolute -bottom-20 -right-16 -z-10
+                category-card-glow pointer-events-none absolute -bottom-20 -right-16 -z-10
                 h-40 w-40 rounded-full
                 bg-violet-500/[0.07] blur-[65px]
                 transition-all duration-700
@@ -140,7 +140,7 @@ const Brands = () => {
               {/* Image area */}
               <div
                 className="
-                  relative flex aspect-[5/4]
+                  category-thumbnail-surface relative flex aspect-[5/4]
                   items-center justify-center
                   overflow-hidden rounded-[1rem]
                   border border-white/[0.07]
@@ -153,7 +153,7 @@ const Brands = () => {
                 <div
                   aria-hidden="true"
                   className="
-                    pointer-events-none absolute inset-0
+                    category-thumbnail-wash pointer-events-none absolute inset-0
                     bg-[linear-gradient(135deg,rgba(255,255,255,.045),transparent_40%,rgba(34,211,238,.035))]
                   "
                 />
@@ -161,7 +161,7 @@ const Brands = () => {
                 <div
                   aria-hidden="true"
                   className="
-                    pointer-events-none absolute left-1/2 top-1/2
+                    category-thumbnail-ring pointer-events-none absolute left-1/2 top-1/2
                     h-[65%] w-[65%] -translate-x-1/2
                     -translate-y-1/2 rounded-full
                     border border-white/[0.045]
@@ -178,7 +178,7 @@ const Brands = () => {
                     loading="lazy"
                     decoding="async"
                     className="
-                      relative z-[1] h-full w-full
+                      category-thumbnail-image relative z-[1] h-full w-full
                       object-contain
                       drop-shadow-[0_15px_20px_rgba(0,0,0,.4)]
                       transition-transform duration-700
@@ -199,7 +199,7 @@ const Brands = () => {
                 <span
                   dir="ltr"
                   className="
-                    absolute right-2.5 top-2.5 z-[2]
+                    category-thumbnail-index absolute right-2.5 top-2.5 z-[2]
                     text-[10px] font-bold
                     tracking-widest text-white/35
                     sm:right-3 sm:top-3
@@ -214,7 +214,7 @@ const Brands = () => {
                 <div className="min-w-0">
                   <h3
                     className="
-                    truncate text-sm font-black text-white
+                    category-card-title truncate text-sm font-black text-white
                     transition-colors duration-300
                     group-hover:text-cyan-200
                     sm:text-base
@@ -223,7 +223,7 @@ const Brands = () => {
                     {category.name}
                   </h3>
 
-                  <p className="mt-1 text-[9px] font-medium text-zinc-500 sm:text-[10px]">
+                  <p className="category-card-description mt-1 text-[9px] font-medium text-zinc-500 sm:text-[10px]">
                     مشاهده محصولات برند
                   </p>
                 </div>
@@ -231,7 +231,7 @@ const Brands = () => {
                 <span
                   aria-hidden="true"
                   className="
-                    flex h-8 w-8 shrink-0
+                    category-card-arrow flex h-8 w-8 shrink-0
                     items-center justify-center
                     rounded-xl border border-white/[0.09]
                     bg-white/[0.045] text-sm text-zinc-400
@@ -250,7 +250,7 @@ const Brands = () => {
 
             {/* Child categories */}
             {category.children?.length > 0 && (
-              <div className="mt-2.5 border-t border-white/[0.075] pt-2.5 sm:mt-3 sm:pt-3">
+              <div className="category-card-children mt-2.5 border-t border-white/[0.075] pt-2.5 sm:mt-3 sm:pt-3">
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-[9px] font-bold text-zinc-500">
                     زیرمجموعه‌ها
@@ -267,7 +267,7 @@ const Brands = () => {
                       key={child.id}
                       to={`/category/${child.slug}`}
                       className="
-                        rounded-lg border border-white/[0.08]
+                        category-card-child rounded-lg border border-white/[0.08]
                         bg-white/[0.035] px-2 py-1.5
                         text-[9px] font-semibold text-zinc-400
                         transition-all duration-300
