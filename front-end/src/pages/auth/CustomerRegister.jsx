@@ -48,7 +48,7 @@ const CustomerRegister = () => {
   return (
     <div
       dir="rtl"
-      className="flex min-h-screen items-center justify-center bg-zinc-950 px-4"
+      className="flex min-h-[60vh] items-center justify-center bg-transparent px-4 py-10"
     >
       <Formik
         initialValues={{
