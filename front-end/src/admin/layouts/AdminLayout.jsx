@@ -3,6 +3,7 @@ import { FiExternalLink } from "react-icons/fi";
 import BackPage from "../../components/BackPage";
 import { useEffect, useState } from "react";
 import { getAdminFeedbackSummary } from "../../services/feedbackApi";
+import ThemeToggle from "../../components/ThemeToggle";
 
 const navItems = [
   { label: "داشبورد", to: "/admin" },
@@ -94,6 +95,8 @@ const AdminLayout = ({ children }) => {
             {!isDashboard && <BackPage fallback="/admin" />}
           </div>
 
+          <div className="flex shrink-0 items-center gap-2">
+          <ThemeToggle />
           <Link
             to="/"
             className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-cyan-400/20 bg-cyan-400/10 px-3 py-2 text-xs font-semibold text-cyan-200 transition hover:bg-cyan-400/20"
@@ -101,6 +104,7 @@ const AdminLayout = ({ children }) => {
             <FiExternalLink size={14} />
             مشاهده فروشگاه
           </Link>
+          </div>
         </div>
 
         <nav
