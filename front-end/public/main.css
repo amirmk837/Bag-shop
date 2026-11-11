@@ -69,3 +69,136 @@
   width: 0 !important;
   height: 0 !important;
 }
+
+
+/* =========================================
+   THEME SYSTEM — LIGHT MODE OVERRIDES
+   Dark mode remains the unchanged default.
+========================================= */
+
+:root {
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  scrollbar-color: #b8c3d2 #edf1f6;
+  background: #f4f7fb;
+  color: #172033;
+}
+
+:root[data-theme="light"] body {
+  background: #f4f7fb;
+  color: #172033;
+}
+
+:root[data-theme="light"] *::-webkit-scrollbar-track,
+:root[data-theme="light"] *::-webkit-scrollbar-corner {
+  background: #edf1f6;
+}
+
+:root[data-theme="light"] *::-webkit-scrollbar-thumb {
+  background-color: #b8c3d2;
+  border-color: #edf1f6;
+}
+
+:root[data-theme="light"] *::-webkit-scrollbar-thumb:hover {
+  background-color: #8795a9;
+}
+
+/* Main application and admin shell surfaces. */
+:root[data-theme="light"] [class*="bg-[#080c13]"],
+:root[data-theme="light"] [class*="bg-[#0d1119]"] {
+  background-color: #f4f7fb !important;
+}
+
+:root[data-theme="light"] [class*="bg-[#111722]"],
+:root[data-theme="light"] [class*="bg-[#151923]"],
+:root[data-theme="light"] [class*="bg-[#10151f]"] {
+  background-color: #ffffff !important;
+}
+
+:root[data-theme="light"] [class*="bg-zinc-950"],
+:root[data-theme="light"] [class*="bg-zinc-900"] {
+  background-color: #ffffff !important;
+}
+
+:root[data-theme="light"] [class*="bg-zinc-800"] {
+  background-color: #edf1f6 !important;
+}
+
+:root[data-theme="light"] [class*="bg-zinc-700"] {
+  background-color: #e2e8f0 !important;
+}
+
+/* Neutral text hierarchy. */
+:root[data-theme="light"] [class~="text-white"],
+:root[data-theme="light"] [class*="text-zinc-100"],
+:root[data-theme="light"] [class*="text-zinc-200"] {
+  color: #172033 !important;
+}
+
+:root[data-theme="light"] [class*="text-zinc-300"] {
+  color: #344258 !important;
+}
+
+:root[data-theme="light"] [class*="text-zinc-400"] {
+  color: #526176 !important;
+}
+
+:root[data-theme="light"] [class*="text-zinc-500"] {
+  color: #66758a !important;
+}
+
+/* Borders and separators. */
+:root[data-theme="light"] [class*="border-zinc-800"],
+:root[data-theme="light"] [class*="border-zinc-700"],
+:root[data-theme="light"] [class*="border-white/"] {
+  border-color: #dce3ec !important;
+}
+
+/* Header surfaces retain their gradient identity in a lighter palette. */
+:root[data-theme="light"] header[class*="bg-gradient-to-br"] {
+  background-image: linear-gradient(135deg, #ffffff, #eaf0f8 55%, #ffffff) !important;
+  border-color: #dce3ec !important;
+  box-shadow: 0 12px 28px rgb(30 50 80 / 8%) !important;
+}
+
+:root[data-theme="light"] [class*="bg-[#111722]"] {
+  border-color: #dce3ec !important;
+}
+
+/* Inputs and editable controls. */
+:root[data-theme="light"] input:not([type="checkbox"]):not([type="radio"]),
+:root[data-theme="light"] textarea,
+:root[data-theme="light"] select {
+  background-color: #ffffff !important;
+  color: #172033 !important;
+  border-color: #cbd5e1 !important;
+}
+
+:root[data-theme="light"] input::placeholder,
+:root[data-theme="light"] textarea::placeholder {
+  color: #8290a3 !important;
+}
+
+/* Keep the decorative ambient layer subtle on light surfaces. */
+:root[data-theme="light"] [class*="bg-cyan-500/"],
+:root[data-theme="light"] [class*="bg-violet-500/"] {
+  opacity: 0.35;
+}
+
+:root[data-theme="light"] .discount-carousel-scrollbar {
+  scrollbar-color: #b8c3d2 transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme="light"] *,
+  :root[data-theme="light"] *::before,
+  :root[data-theme="light"] *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
