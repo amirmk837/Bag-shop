@@ -1119,3 +1119,38 @@ html {
 :root[data-theme="light"] .app-shell .theme-thumbnail-button:not(.is-active):hover {
   border-color: #91a8aa;
 }
+
+
+/* =========================================
+   DARK MODE — CONTINUOUS GLOBAL BACKDROP
+   One page-wide gradient; no tiled/grid pattern.
+========================================= */
+:root[data-theme="dark"] body {
+  background: #0b121c;
+  color: var(--app-text);
+}
+
+:root[data-theme="dark"] .app-shell {
+  background:
+    radial-gradient(ellipse 78% 52% at 12% 4%, rgb(40 76 96 / 18%) 0%, transparent 72%),
+    radial-gradient(ellipse 70% 58% at 92% 76%, rgb(39 57 73 / 13%) 0%, transparent 74%),
+    linear-gradient(138deg, #0b1420 0%, #101d29 38%, #111b26 68%, #0b121c 100%) !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  color: var(--app-text);
+}
+
+/* Keep only two restrained ambient washes; remove the old square grid. */
+:root[data-theme="dark"] .app-shell .app-background-glow > div:nth-child(1) {
+  background: rgb(66 101 119 / 12%) !important;
+  opacity: 0.55 !important;
+}
+
+:root[data-theme="dark"] .app-shell .app-background-glow > div:nth-child(2) {
+  background: rgb(67 83 101 / 8%) !important;
+  opacity: 0.45 !important;
+}
+
+:root[data-theme="dark"] .app-shell .app-background-glow > div:nth-child(3) {
+  display: none !important;
+}
