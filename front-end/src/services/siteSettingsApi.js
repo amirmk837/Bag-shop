@@ -9,7 +9,7 @@ export const getSiteSettings = async () => {
 
 export const saveSiteSettings = async (values) => {
   const body = new FormData();
-  for (const key of ["storeName", "phone", "headerText", "footerAbout", "footerCaption"]) {
+  for (const key of ["storeName", "phone", "headerText", "footerAbout", "footerCaption", "showPopularShowcase", "showDiscountShowcase"]) {
     body.append(key, values[key] || "");
   }
   if (values.logoFile) body.append("logo", values.logoFile);
