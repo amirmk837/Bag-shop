@@ -563,14 +563,14 @@ html {
 :root[data-theme="light"] .admin-theme-scope [class~="bg-[#151d2a]"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-[#151923]"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-[#111824]"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-[#111722]"],
-:root[data-theme="light"] .admin-theme-scope [class~="bg-[#101722]"] {
+:root[data-theme="light"] .admin-theme-scope [class~="bg-[#111722]"] {
   background-color: #ffffff !important;
 }
 
 :root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-950"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-[#090e16]"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-[#10151f]"],
+:root[data-theme="light"] .admin-theme-scope [class~="bg-[#101722]"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-black/20"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-950/40"],
 :root[data-theme="light"] .admin-theme-scope [class~="bg-zinc-950/50"],
