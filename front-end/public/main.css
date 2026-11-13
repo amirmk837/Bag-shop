@@ -1222,3 +1222,152 @@ html {
   border-color: #dfe4e7 !important;
   box-shadow: none !important;
 }
+
+
+/* =========================================
+   STOREFRONT LIGHT THEME — ACCESSIBILITY PASS
+   Public pages only. Admin theme and dark mode
+   intentionally remain unchanged.
+========================================= */
+:root[data-theme="light"] .storefront-theme-scope {
+  --app-canvas: #f2f4f5;
+  --app-surface: #f8fafb;
+  --app-surface-raised: #ffffff;
+  --app-surface-muted: #edf1f3;
+  --app-surface-strong: #e4e9ec;
+  --app-border: #d2dbe0;
+  --app-border-strong: #b9c6ce;
+  --app-text: #202b33;
+  --app-text-secondary: #465661;
+  --app-text-tertiary: #596973;
+  --app-accent: #285d62;
+  --app-accent-hover: #1f4e53;
+  --app-accent-soft: #e7f0f0;
+  --app-accent-border: #bfd2d3;
+  --app-violet: #5b4b70;
+  --app-violet-soft: #efedf3;
+  --app-success: #246044;
+  --app-success-soft: #e8f2ec;
+  --app-warning: #765014;
+  --app-warning-soft: #f5efdf;
+  --app-danger: #963b45;
+  --app-danger-soft: #f7e9eb;
+  --app-info: #315c83;
+  --app-info-soft: #eaf0f6;
+}
+
+/* Improve secondary text contrast without flattening semantic colors. */
+:root[data-theme="light"] .storefront-theme-scope [class~="text-zinc-400"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-slate-400"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-gray-400"] {
+  color: #52616b !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class~="text-zinc-500"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-zinc-600"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-slate-500"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-slate-600"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-gray-500"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-gray-600"] {
+  color: #596973 !important;
+}
+
+/* Form controls: consistent surfaces, readable hints and visible focus. */
+:root[data-theme="light"] .storefront-theme-scope input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+:root[data-theme="light"] .storefront-theme-scope textarea,
+:root[data-theme="light"] .storefront-theme-scope select {
+  background-color: #ffffff !important;
+  color: #202b33 !important;
+  border-color: #b9c6ce !important;
+  box-shadow: 0 1px 2px rgb(24 39 48 / 4%);
+}
+:root[data-theme="light"] .storefront-theme-scope input::placeholder,
+:root[data-theme="light"] .storefront-theme-scope textarea::placeholder {
+  color: #687780 !important;
+  opacity: 1;
+}
+:root[data-theme="light"] .storefront-theme-scope select option {
+  background: #ffffff;
+  color: #202b33;
+}
+:root[data-theme="light"] .storefront-theme-scope input[type="checkbox"],
+:root[data-theme="light"] .storefront-theme-scope input[type="radio"] {
+  accent-color: #285d62;
+}
+:root[data-theme="light"] .storefront-theme-scope input:focus-visible,
+:root[data-theme="light"] .storefront-theme-scope textarea:focus-visible,
+:root[data-theme="light"] .storefront-theme-scope select:focus-visible,
+:root[data-theme="light"] .storefront-theme-scope button:focus-visible,
+:root[data-theme="light"] .storefront-theme-scope a:focus-visible {
+  outline: 2px solid #285d62 !important;
+  outline-offset: 2px;
+}
+
+/* Neutral secondary actions; explicitly colored semantic/primary buttons
+   keep their existing role-specific colors. */
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-zinc-800"],
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-zinc-700"],
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-white/5"],
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-white/10"] {
+  background-color: #e9eef0 !important;
+  border-color: #d0d9de !important;
+  color: #293740 !important;
+}
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-zinc-800"]:hover,
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-zinc-700"]:hover,
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-white/5"]:hover,
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-white/10"]:hover {
+  background-color: #dfe7ea !important;
+}
+
+/* Tables remain legible on narrow screens and have clear row separation. */
+:root[data-theme="light"] .storefront-theme-scope table {
+  color: #26343d;
+  border-color: #d2dbe0;
+}
+:root[data-theme="light"] .storefront-theme-scope thead {
+  background-color: #e9eef1;
+  color: #344650;
+}
+:root[data-theme="light"] .storefront-theme-scope th {
+  color: #344650 !important;
+  font-weight: 700;
+}
+:root[data-theme="light"] .storefront-theme-scope td {
+  color: #34424b;
+  border-color: #dce3e7;
+}
+:root[data-theme="light"] .storefront-theme-scope tbody tr:nth-child(even) {
+  background-color: rgb(231 237 240 / 42%);
+}
+:root[data-theme="light"] .storefront-theme-scope tbody tr:hover {
+  background-color: #edf3f4;
+}
+
+/* Dialogs and popovers rendered inside the storefront use a distinct,
+   high-contrast panel instead of inheriting dark translucent surfaces. */
+:root[data-theme="light"] .storefront-theme-scope dialog,
+:root[data-theme="light"] .storefront-theme-scope [role="dialog"],
+:root[data-theme="light"] .storefront-theme-scope [data-modal-panel],
+:root[data-theme="light"] .storefront-theme-scope .modal-content,
+:root[data-theme="light"] .storefront-theme-scope .modal-panel {
+  background-color: #ffffff !important;
+  color: #26343d !important;
+  border: 1px solid #d2dbe0;
+  box-shadow: 0 18px 55px rgb(25 39 48 / 18%);
+}
+:root[data-theme="light"] .storefront-theme-scope dialog::backdrop {
+  background: rgb(24 35 43 / 42%);
+}
+
+/* Disabled controls remain distinguishable without looking active. */
+:root[data-theme="light"] .storefront-theme-scope :disabled {
+  cursor: not-allowed;
+}
+:root[data-theme="light"] .storefront-theme-scope input:disabled,
+:root[data-theme="light"] .storefront-theme-scope textarea:disabled,
+:root[data-theme="light"] .storefront-theme-scope select:disabled {
+  background-color: #edf0f2 !important;
+  color: #697780 !important;
+  border-color: #d5dde1 !important;
+  opacity: 1;
+}
