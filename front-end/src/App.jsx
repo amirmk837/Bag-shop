@@ -430,7 +430,7 @@ const App = () => {
   return (
     <div
       dir="rtl"
-      className="app-shell relative isolate flex min-h-screen flex-col overflow-hidden bg-[#080c13] text-white"
+      className={`app-shell relative isolate flex min-h-screen flex-col overflow-hidden bg-[#080c13] text-white ${!isAdminArea ? "storefront-theme-scope" : ""}`}
     >
       <div
         aria-hidden="true"
