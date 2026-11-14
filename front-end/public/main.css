@@ -1978,3 +1978,106 @@ html {
   color: rgb(242 247 248 / 82%) !important;
 }
 
+/* LIGHT MODE — CONSISTENT BORDERS + SOFT ELEVATION */
+:root[data-theme="light"] .storefront-theme-scope {
+  --app-border: #e5eaec;
+  --app-border-strong: #d3dde0;
+  --app-shadow-soft: 0 3px 14px rgb(28 47 54 / 5%);
+  --app-shadow-card: 0 5px 18px rgb(28 47 54 / 6%);
+  --app-shadow-hover: 0 9px 24px rgb(28 47 54 / 8%);
+}
+
+/* Translate dark-theme and bright-white border utilities to quiet light neutrals. */
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/5"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/10"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/15"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/20"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/25"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/30"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.04]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.05]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.06]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.08]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.1]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.12]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.15]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.16]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.2]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-zinc-700"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-zinc-800"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-zinc-600"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-slate-700"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-slate-800"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-gray-700"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-gray-800"] {
+  border-color: var(--app-border) !important;
+}
+
+:root[data-theme="light"] .storefront-theme-scope [class~="border-cyan-300"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-cyan-400"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-cyan-500"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-cyan-400/30"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-cyan-500/30"] {
+  border-color: var(--app-accent-border) !important;
+}
+
+:root[data-theme="light"] .storefront-theme-scope [class~="border-violet-400"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-violet-500"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-violet-500/30"] {
+  border-color: #e1dbe9 !important;
+}
+
+:root[data-theme="light"] .storefront-theme-scope [class~="border-emerald-400"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-emerald-500"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-emerald-500/30"] {
+  border-color: #d5e6db !important;
+}
+
+:root[data-theme="light"] .storefront-theme-scope [class~="border-amber-400"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-amber-500"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-amber-500/30"] {
+  border-color: #eadfc8 !important;
+}
+
+:root[data-theme="light"] .storefront-theme-scope [class~="border-red-400"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-red-500"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-rose-500/30"] {
+  border-color: #ebd5d8 !important;
+}
+
+/* Soft, cool shadows give white panels separation without a harsh halo. */
+:root[data-theme="light"] .storefront-theme-scope .theme-product-card,
+:root[data-theme="light"] .storefront-theme-scope .theme-category-card,
+:root[data-theme="light"] .storefront-theme-scope .theme-content-panel,
+:root[data-theme="light"] .storefront-theme-scope .theme-feature-panel,
+:root[data-theme="light"] .storefront-theme-scope .category-card-shell,
+:root[data-theme="light"] .storefront-theme-scope .discount-price-panel,
+:root[data-theme="light"] .storefront-theme-scope .theme-feature-chip {
+  border-color: var(--app-border) !important;
+  box-shadow: var(--app-shadow-card) !important;
+}
+
+:root[data-theme="light"] .storefront-theme-scope .theme-product-card:hover,
+:root[data-theme="light"] .storefront-theme-scope .theme-category-card:hover,
+:root[data-theme="light"] .storefront-theme-scope .category-card-shell:hover {
+  border-color: var(--app-accent-border) !important;
+  box-shadow: var(--app-shadow-hover) !important;
+}
+
+:root[data-theme="light"] .storefront-theme-scope .theme-media-surface,
+:root[data-theme="light"] .storefront-theme-scope .theme-thumbnail-rail {
+  border-color: #e3e9eb !important;
+  box-shadow: var(--app-shadow-soft) !important;
+}
+
+/* Keep form controls and compact buttons crisp, not elevated like cards. */
+:root[data-theme="light"] .storefront-theme-scope input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+:root[data-theme="light"] .storefront-theme-scope textarea,
+:root[data-theme="light"] .storefront-theme-scope select {
+  border-color: var(--app-border-strong) !important;
+  box-shadow: inset 0 1px 2px rgb(28 47 54 / 3%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope button:not(.store-primary-cta) {
+  border-color: var(--app-border) ;
+}
+
