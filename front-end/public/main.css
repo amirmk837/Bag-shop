@@ -1790,3 +1790,146 @@ html {
   border-color: #e1e6e9 !important;
   opacity: 1;
 }
+
+
+/* ==========================================================================
+   LIGHT MODE COMFORT + CONTRAST PASS
+   Preserve pure-white canvas; soften decorative intensity, never fade text.
+========================================================================== */
+:root[data-theme="light"] .storefront-theme-scope {
+  --app-canvas: #ffffff;
+  --app-surface: #ffffff;
+  --app-surface-raised: #ffffff;
+  --app-surface-muted: #f8f9fa;
+  --app-surface-strong: #f1f3f4;
+  --app-border: #e7ebed;
+  --app-border-strong: #d5dde1;
+  --app-text: #182329;
+  --app-text-secondary: #52616a;
+  --app-text-tertiary: #66747b;
+  --app-accent: #21666a;
+  --app-accent-hover: #1a595d;
+  --app-accent-soft: #eff5f4;
+  --app-accent-border: #d7e5e2;
+  --app-violet: #66527d;
+  --app-violet-soft: #f4f1f6;
+  --app-success: #246b4a;
+  --app-success-soft: #f0f5f1;
+  --app-warning: #805511;
+  --app-warning-soft: #fbf6eb;
+  --app-danger: #a33d49;
+  --app-danger-soft: #fbf1f2;
+  --app-info: #315f91;
+  --app-info-soft: #f1f5fa;
+  background: #ffffff !important;
+  color: var(--app-text) !important;
+}
+
+/* Brand color is calmer, while every stop remains readable on white. */
+:root[data-theme="light"] .storefront-theme-scope .theme-brand-gradient {
+  background-image: linear-gradient(100deg, #34777a 0%, #526e78 58%, #766985 100%) !important;
+}
+
+/* Lower visual glare from shadows, glows and translucent overlays only. */
+:root[data-theme="light"] .storefront-theme-scope .site-header-shell {
+  box-shadow: 0 2px 14px rgb(24 35 41 / 3%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .site-footer-shell {
+  background: #f8f9fa !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .theme-product-card,
+:root[data-theme="light"] .storefront-theme-scope .theme-category-card,
+:root[data-theme="light"] .storefront-theme-scope .theme-content-panel,
+:root[data-theme="light"] .storefront-theme-scope .theme-feature-panel,
+:root[data-theme="light"] .storefront-theme-scope .category-card-shell,
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-white"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-gray-50"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-slate-50"] {
+  box-shadow: 0 2px 12px rgb(24 35 41 / 3%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .theme-product-card:hover,
+:root[data-theme="light"] .storefront-theme-scope .theme-category-card:hover,
+:root[data-theme="light"] .storefront-theme-scope .category-card-shell:hover {
+  box-shadow: 0 7px 20px rgb(23 107 112 / 5%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .theme-thumbnail-rail {
+  box-shadow: 0 4px 16px rgb(24 35 41 / 6%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame {
+  box-shadow: 0 5px 18px rgb(24 35 41 / 4%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .theme-feature-chip {
+  box-shadow: 0 2px 10px rgb(24 35 41 / 3%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [role="dialog"],
+:root[data-theme="light"] .storefront-theme-scope dialog,
+:root[data-theme="light"] .storefront-theme-scope [data-modal-panel],
+:root[data-theme="light"] .storefront-theme-scope .modal-content,
+:root[data-theme="light"] .storefront-theme-scope .modal-panel,
+:root[data-theme="light"] .storefront-theme-scope #account-menu {
+  box-shadow: 0 16px 44px rgb(24 35 41 / 8%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope dialog::backdrop {
+  background: rgb(24 35 41 / 28%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .store-primary-cta,
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-cyan-400"],
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-cyan-500"],
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-cyan-600"],
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-cyan-700"] {
+  box-shadow: 0 3px 10px rgb(33 102 106 / 8%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope input:focus-visible,
+:root[data-theme="light"] .storefront-theme-scope textarea:focus-visible,
+:root[data-theme="light"] .storefront-theme-scope select:focus-visible,
+:root[data-theme="light"] .storefront-theme-scope button:focus-visible,
+:root[data-theme="light"] .storefront-theme-scope a:focus-visible {
+  outline-color: rgb(33 102 106 / 78%) !important;
+}
+
+/* Fix low-contrast tertiary, placeholder and disabled text. Text stays opaque. */
+:root[data-theme="light"] .storefront-theme-scope input::placeholder,
+:root[data-theme="light"] .storefront-theme-scope textarea::placeholder {
+  color: #626f76 !important;
+  opacity: 1 !important;
+}
+:root[data-theme="light"] .storefront-theme-scope input:disabled,
+:root[data-theme="light"] .storefront-theme-scope textarea:disabled,
+:root[data-theme="light"] .storefront-theme-scope select:disabled {
+  color: #626f76 !important;
+  background: #f1f3f4 !important;
+  border-color: #e1e6e9 !important;
+  opacity: 1 !important;
+}
+
+/* Complete the cyan utility mapping used by product detail selection and markers. */
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-400"] {
+  background-color: var(--app-accent) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-400/15"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-400/[0.15]"] {
+  background-color: var(--app-accent-soft) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-violet-400"] {
+  background-color: #81758b !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class*="shadow-[0_0_10px_rgba(34,211,238"] {
+  box-shadow: none !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class*="shadow-[0_0_18px_rgba(34,211,238"] {
+  box-shadow: 0 0 0 1px var(--app-accent-border) !important;
+}
+
+/* White text on outline/neutral buttons was disappearing on the white canvas.
+   Keep white only on the solid cyan primary actions. */
+:root[data-theme="light"] .storefront-theme-scope button[class~="text-white"]:not([class~="bg-cyan-400"]):not([class~="bg-cyan-500"]):not([class~="bg-cyan-600"]):not([class~="bg-cyan-700"]):not([class~="bg-cyan-800"]):not(.store-primary-cta):not(.theme-dark-overlay),
+:root[data-theme="light"] .storefront-theme-scope button[class~="text-white"]:not([class~="bg-cyan-400"]):not([class~="bg-cyan-500"]):not([class~="bg-cyan-600"]):not([class~="bg-cyan-700"]):not([class~="bg-cyan-800"]):not(.store-primary-cta):not(.theme-dark-overlay) [class~="text-white"] {
+  color: var(--app-text) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class~="hover:text-white"]:hover {
+  color: var(--app-accent) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class~="hover:bg-zinc-900"]:hover {
+  background-color: #f2f5f6 !important;
+  color: var(--app-text) !important;
+}
