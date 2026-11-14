@@ -1380,7 +1380,7 @@ html {
 ========================================= */
 :root[data-theme="light"] .storefront-theme-scope {
   /* Surfaces: approximately 30% lower luminance than the previous palette. */
-  --app-canvas: #a9afb2;
+  --app-canvas: #ffffff;
   --app-surface: #b3b8ba;
   --app-surface-raised: #bfc3c5;
   --app-surface-muted: #a1a8ab;
