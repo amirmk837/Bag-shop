@@ -2198,3 +2198,13 @@ html {
   border-color: #d5dde1 !important;
   opacity: 1 !important;
 }
+
+/* Discount card brand chip: explicit contrast on the light product image. */
+:root[data-theme="light"] .storefront-theme-scope .discount-brand-label {
+  background: rgb(241 247 246 / 97%) !important;
+  border: 1px solid #b9d5d1 !important;
+  color: #174e50 !important;
+  box-shadow: 0 3px 10px rgb(24 55 57 / 14%) !important;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
