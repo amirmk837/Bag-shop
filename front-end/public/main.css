@@ -1978,16 +1978,52 @@ html {
   color: rgb(242 247 248 / 82%) !important;
 }
 
-/* LIGHT MODE — CONSISTENT BORDERS + SOFT ELEVATION */
+/* ==========================================================================
+   STOREFRONT LIGHT MODE — FINAL COMPONENT TOKENS
+   Single final authority for storefront borders, shadows and control states.
+   Keep the white canvas, component geometry, dark theme and admin untouched.
+========================================================================== */
+
 :root[data-theme="light"] .storefront-theme-scope {
-  --app-border: #e5eaec;
-  --app-border-strong: #d3dde0;
-  --app-shadow-soft: 0 3px 14px rgb(28 47 54 / 5%);
-  --app-shadow-card: 0 5px 18px rgb(28 47 54 / 6%);
-  --app-shadow-hover: 0 9px 24px rgb(28 47 54 / 8%);
+  --app-canvas: #ffffff;
+  --app-surface: #ffffff;
+  --app-surface-raised: #ffffff;
+  --app-surface-muted: #f8f9fa;
+  --app-surface-strong: #f1f3f4;
+
+  /* Decorative separators stay quiet; interactive boundaries are clearer. */
+  --app-border: #e1e7e9;
+  --app-border-strong: #c8d3d8;
+  --app-border-control: #aebfc5;
+
+  --app-text: #182329;
+  --app-text-secondary: #52616a;
+  --app-text-tertiary: #66747b;
+
+  --app-accent: #21666a;
+  --app-accent-hover: #1a595d;
+  --app-accent-soft: #eff5f4;
+  --app-accent-border: #d7e5e2;
+
+  --app-violet: #66527d;
+  --app-violet-soft: #f4f1f6;
+  --app-success: #246b4a;
+  --app-success-soft: #f0f5f1;
+  --app-warning: #805511;
+  --app-warning-soft: #fbf6eb;
+  --app-danger: #a33d49;
+  --app-danger-soft: #fbf1f2;
+  --app-info: #315f91;
+  --app-info-soft: #f1f5fa;
+
+  /* Three deliberate elevation levels; no decorative neon glow. */
+  --app-shadow-soft: 0 2px 10px rgb(28 47 54 / 4%);
+  --app-shadow-card: 0 4px 16px rgb(28 47 54 / 5%);
+  --app-shadow-hover: 0 8px 22px rgb(28 47 54 / 7%);
+  --app-shadow-overlay: 0 16px 42px rgb(24 35 41 / 12%);
 }
 
-/* Translate dark-theme and bright-white border utilities to quiet light neutrals. */
+/* Neutralize dark-theme borders and bright translucent white borders. */
 :root[data-theme="light"] .storefront-theme-scope [class~="border-white/5"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-white/10"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-white/15"],
@@ -1997,66 +2033,93 @@ html {
 :root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.04]"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.05]"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.06]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.07]"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.08]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.09]"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.1]"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.12]"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.15]"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.16]"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-white/[0.2]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-zinc-600"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-zinc-700"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-zinc-800"],
-:root[data-theme="light"] .storefront-theme-scope [class~="border-zinc-600"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-slate-600"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-slate-700"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-slate-800"],
+:root[data-theme="light"] .storefront-theme-scope [class~="border-gray-600"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-gray-700"],
 :root[data-theme="light"] .storefront-theme-scope [class~="border-gray-800"] {
   border-color: var(--app-border) !important;
 }
 
-:root[data-theme="light"] .storefront-theme-scope [class~="border-cyan-300"],
-:root[data-theme="light"] .storefront-theme-scope [class~="border-cyan-400"],
-:root[data-theme="light"] .storefront-theme-scope [class~="border-cyan-500"],
-:root[data-theme="light"] .storefront-theme-scope [class~="border-cyan-400/30"],
-:root[data-theme="light"] .storefront-theme-scope [class~="border-cyan-500/30"] {
+/* Semantic border families retain their meaning without competing intensity. */
+:root[data-theme="light"] .storefront-theme-scope [class*="border-cyan-"],
+:root[data-theme="light"] .storefront-theme-scope [class*="border-teal-"] {
   border-color: var(--app-accent-border) !important;
 }
-
-:root[data-theme="light"] .storefront-theme-scope [class~="border-violet-400"],
-:root[data-theme="light"] .storefront-theme-scope [class~="border-violet-500"],
-:root[data-theme="light"] .storefront-theme-scope [class~="border-violet-500/30"] {
+:root[data-theme="light"] .storefront-theme-scope [class*="border-violet-"],
+:root[data-theme="light"] .storefront-theme-scope [class*="border-purple-"] {
   border-color: #e1dbe9 !important;
 }
-
-:root[data-theme="light"] .storefront-theme-scope [class~="border-emerald-400"],
-:root[data-theme="light"] .storefront-theme-scope [class~="border-emerald-500"],
-:root[data-theme="light"] .storefront-theme-scope [class~="border-emerald-500/30"] {
+:root[data-theme="light"] .storefront-theme-scope [class*="border-emerald-"],
+:root[data-theme="light"] .storefront-theme-scope [class*="border-green-"] {
   border-color: #d5e6db !important;
 }
-
-:root[data-theme="light"] .storefront-theme-scope [class~="border-amber-400"],
-:root[data-theme="light"] .storefront-theme-scope [class~="border-amber-500"],
-:root[data-theme="light"] .storefront-theme-scope [class~="border-amber-500/30"] {
+:root[data-theme="light"] .storefront-theme-scope [class*="border-amber-"],
+:root[data-theme="light"] .storefront-theme-scope [class*="border-yellow-"] {
   border-color: #eadfc8 !important;
 }
-
-:root[data-theme="light"] .storefront-theme-scope [class~="border-red-400"],
-:root[data-theme="light"] .storefront-theme-scope [class~="border-red-500"],
-:root[data-theme="light"] .storefront-theme-scope [class~="border-rose-500/30"] {
+:root[data-theme="light"] .storefront-theme-scope [class*="border-red-"],
+:root[data-theme="light"] .storefront-theme-scope [class*="border-rose-"] {
   border-color: #ebd5d8 !important;
 }
+:root[data-theme="light"] .storefront-theme-scope [class*="border-blue-"],
+:root[data-theme="light"] .storefront-theme-scope [class*="border-sky-"],
+:root[data-theme="light"] .storefront-theme-scope [class*="border-indigo-"] {
+  border-color: #d8e2ef !important;
+}
 
-/* Soft, cool shadows give white panels separation without a harsh halo. */
+/* Interactive controls need a stronger edge than decorative card borders. */
+:root[data-theme="light"] .storefront-theme-scope input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+:root[data-theme="light"] .storefront-theme-scope textarea,
+:root[data-theme="light"] .storefront-theme-scope select {
+  background-color: #ffffff !important;
+  color: var(--app-text) !important;
+  border-color: var(--app-border-control) !important;
+  box-shadow: inset 0 1px 2px rgb(28 47 54 / 3%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope input::placeholder,
+:root[data-theme="light"] .storefront-theme-scope textarea::placeholder {
+  color: #626f76 !important;
+  opacity: 1 !important;
+}
+:root[data-theme="light"] .storefront-theme-scope select option {
+  background: #ffffff;
+  color: var(--app-text);
+}
+:root[data-theme="light"] .storefront-theme-scope input[type="checkbox"],
+:root[data-theme="light"] .storefront-theme-scope input[type="radio"] {
+  accent-color: var(--app-accent);
+}
+:root[data-theme="light"] .storefront-theme-scope input:focus-visible,
+:root[data-theme="light"] .storefront-theme-scope textarea:focus-visible,
+:root[data-theme="light"] .storefront-theme-scope select:focus-visible,
+:root[data-theme="light"] .storefront-theme-scope button:focus-visible,
+:root[data-theme="light"] .storefront-theme-scope a:focus-visible {
+  outline: 2px solid #3b8588 !important;
+  outline-offset: 2px;
+}
+
+/* Card elevation: one resting level and one restrained hover level. */
 :root[data-theme="light"] .storefront-theme-scope .theme-product-card,
 :root[data-theme="light"] .storefront-theme-scope .theme-category-card,
 :root[data-theme="light"] .storefront-theme-scope .theme-content-panel,
 :root[data-theme="light"] .storefront-theme-scope .theme-feature-panel,
-:root[data-theme="light"] .storefront-theme-scope .category-card-shell,
-:root[data-theme="light"] .storefront-theme-scope .discount-price-panel,
-:root[data-theme="light"] .storefront-theme-scope .theme-feature-chip {
+:root[data-theme="light"] .storefront-theme-scope .category-card-shell {
   border-color: var(--app-border) !important;
   box-shadow: var(--app-shadow-card) !important;
 }
-
 :root[data-theme="light"] .storefront-theme-scope .theme-product-card:hover,
 :root[data-theme="light"] .storefront-theme-scope .theme-category-card:hover,
 :root[data-theme="light"] .storefront-theme-scope .category-card-shell:hover {
@@ -2064,20 +2127,74 @@ html {
   box-shadow: var(--app-shadow-hover) !important;
 }
 
+/* Nested surfaces should not look more elevated than their parent cards. */
 :root[data-theme="light"] .storefront-theme-scope .theme-media-surface,
 :root[data-theme="light"] .storefront-theme-scope .theme-thumbnail-rail {
-  border-color: #e3e9eb !important;
+  border-color: #e1e7e9 !important;
   box-shadow: var(--app-shadow-soft) !important;
 }
-
-/* Keep form controls and compact buttons crisp, not elevated like cards. */
-:root[data-theme="light"] .storefront-theme-scope input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
-:root[data-theme="light"] .storefront-theme-scope textarea,
-:root[data-theme="light"] .storefront-theme-scope select {
-  border-color: var(--app-border-strong) !important;
-  box-shadow: inset 0 1px 2px rgb(28 47 54 / 3%) !important;
+:root[data-theme="light"] .storefront-theme-scope .theme-feature-chip {
+  border-color: var(--app-border) !important;
+  box-shadow: none !important;
 }
-:root[data-theme="light"] .storefront-theme-scope button:not(.store-primary-cta) {
-  border-color: var(--app-border) ;
+:root[data-theme="light"] .storefront-theme-scope .discount-price-panel {
+  border-color: #dce7e6 !important;
+  box-shadow: none !important;
 }
 
+/* Header, banner and primary action use separate, restrained elevations. */
+:root[data-theme="light"] .storefront-theme-scope .site-header-shell {
+  box-shadow: 0 2px 12px rgb(28 47 54 / 4%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame {
+  border-color: var(--app-border) !important;
+  box-shadow: var(--app-shadow-soft) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .store-primary-cta,
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-cyan-400"],
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-cyan-500"],
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-cyan-600"],
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-cyan-700"] {
+  box-shadow: 0 2px 8px rgb(33 102 106 / 9%) !important;
+}
+
+/* Overlays remain the highest elevation level. */
+:root[data-theme="light"] .storefront-theme-scope dialog,
+:root[data-theme="light"] .storefront-theme-scope [role="dialog"],
+:root[data-theme="light"] .storefront-theme-scope [data-modal-panel],
+:root[data-theme="light"] .storefront-theme-scope .modal-content,
+:root[data-theme="light"] .storefront-theme-scope .modal-panel,
+:root[data-theme="light"] .storefront-theme-scope #account-menu {
+  box-shadow: var(--app-shadow-overlay) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope dialog::backdrop {
+  background: rgb(24 35 41 / 28%) !important;
+}
+
+/* Keep banner controls legible over both light and dark banner artwork. */
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay button[aria-label="بنر قبلی"],
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay button[aria-label="بنر بعدی"] {
+  background: rgb(246 248 249 / 88%) !important;
+  border-color: rgb(76 99 108 / 20%) !important;
+  color: #31545b !important;
+  box-shadow: 0 3px 10px rgb(24 35 41 / 10%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay button[aria-label="بنر قبلی"]:hover,
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay button[aria-label="بنر بعدی"]:hover {
+  background: #e8f1f0 !important;
+  border-color: #bfd6d3 !important;
+  color: var(--app-accent) !important;
+}
+
+/* Disabled controls are muted, but their labels remain readable. */
+:root[data-theme="light"] .storefront-theme-scope :disabled {
+  cursor: not-allowed;
+}
+:root[data-theme="light"] .storefront-theme-scope input:disabled,
+:root[data-theme="light"] .storefront-theme-scope textarea:disabled,
+:root[data-theme="light"] .storefront-theme-scope select:disabled {
+  background: #f1f3f4 !important;
+  color: #626f76 !important;
+  border-color: #d5dde1 !important;
+  opacity: 1 !important;
+}
