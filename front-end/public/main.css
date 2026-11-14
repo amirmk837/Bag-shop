@@ -1933,3 +1933,48 @@ html {
   background-color: #f2f5f6 !important;
   color: var(--app-text) !important;
 }
+
+/* LIGHT MODE — BANNER CONTROLS + WHITE GLARE REDUCTION */
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay button[aria-label="بنر قبلی"],
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay button[aria-label="بنر بعدی"] {
+  background: rgb(246 248 249 / 88%) !important;
+  border-color: rgb(76 99 108 / 20%) !important;
+  color: #31545b !important;
+  box-shadow: 0 4px 14px rgb(24 35 41 / 12%) !important;
+}
+
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay button[aria-label="بنر قبلی"]:hover,
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay button[aria-label="بنر بعدی"]:hover {
+  background: #e8f1f0 !important;
+  border-color: #bfd6d3 !important;
+  color: #21666a !important;
+}
+
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay button[aria-label="بنر قبلی"]:focus-visible,
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay button[aria-label="بنر بعدی"]:focus-visible {
+  outline-color: #43888a !important;
+}
+
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay [class~="border-white/20"],
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay [class~="border-white/[0.12]"],
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay [class~="border-white/[0.16]"] {
+  border-color: rgb(224 232 234 / 48%) !important;
+}
+
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay [class~="via-white/35"] {
+  --tw-gradient-to: transparent;
+  --tw-gradient-stops: var(--tw-gradient-from), rgb(220 230 232 / 24%), var(--tw-gradient-to);
+}
+
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay [class~="bg-white/45"] {
+  background-color: rgb(218 228 230 / 58%) !important;
+}
+
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay [class~="bg-white/90"] {
+  background-color: rgb(240 246 246 / 82%) !important;
+}
+
+:root[data-theme="light"] .storefront-theme-scope .theme-banner-frame .theme-dark-overlay [class~="text-white/90"] {
+  color: rgb(242 247 248 / 82%) !important;
+}
+
