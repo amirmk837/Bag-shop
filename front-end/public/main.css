@@ -1433,7 +1433,7 @@ html {
 }
 
 /* Flatten dark decorative gradients, while retaining the explicit brand wordmark. */
-:root[data-theme="light"] .storefront-theme-scope [class*="bg-gradient"]:not(.theme-media-overlay):not(.theme-dark-overlay) {
+:root[data-theme="light"] .storefront-theme-scope [class*="bg-gradient"]:not(.theme-media-overlay):not(.theme-media-overlay *):not(.theme-dark-overlay):not(.theme-dark-overlay *) {
   background-image: none !important;
 }
 :root[data-theme="light"] .storefront-theme-scope .theme-brand-gradient {
@@ -1535,58 +1535,58 @@ html {
 
 /* Typography */
 :root[data-theme="light"] .storefront-theme-scope [class~="text-white"]:not(button):not(button *):not(.theme-dark-overlay):not(.theme-dark-overlay *),
-:root[data-theme="light"] .storefront-theme-scope [class~="text-zinc-50"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-zinc-100"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-zinc-200"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-slate-100"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-slate-200"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-zinc-900"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-slate-950"] {
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-zinc-50"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-zinc-100"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-zinc-200"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-slate-100"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-slate-200"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-zinc-900"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-slate-950"] {
   color: var(--app-text) !important;
 }
-:root[data-theme="light"] .storefront-theme-scope [class~="text-zinc-300"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-slate-300"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-gray-700"] {
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-zinc-300"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-slate-300"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-gray-700"] {
   color: #35444c !important;
 }
-:root[data-theme="light"] .storefront-theme-scope [class~="text-zinc-400"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-zinc-500"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-zinc-600"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-slate-400"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-slate-500"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-slate-600"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-gray-400"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-gray-500"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-gray-600"] {
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-zinc-400"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-zinc-500"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-zinc-600"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-slate-400"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-slate-500"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-slate-600"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-gray-400"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-gray-500"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-gray-600"] {
   color: var(--app-text-secondary) !important;
 }
-:root[data-theme="light"] .storefront-theme-scope [class~="text-cyan-100"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-cyan-200"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-cyan-300"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-cyan-400"] { color: var(--app-accent) !important; }
-:root[data-theme="light"] .storefront-theme-scope [class~="text-violet-100"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-violet-200"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-violet-300"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-violet-400"] { color: var(--app-violet) !important; }
-:root[data-theme="light"] .storefront-theme-scope [class~="text-amber-200"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-amber-300"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-amber-400"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-amber-500"] { color: var(--app-warning) !important; }
-:root[data-theme="light"] .storefront-theme-scope [class~="text-emerald-200"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-emerald-300"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-emerald-400"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-green-300"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-green-400"] { color: var(--app-success) !important; }
-:root[data-theme="light"] .storefront-theme-scope [class~="text-red-200"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-red-300"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-red-400"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-rose-200"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-rose-300"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-rose-400"] { color: var(--app-danger) !important; }
-:root[data-theme="light"] .storefront-theme-scope [class~="text-blue-300"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-blue-400"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-sky-300"],
-:root[data-theme="light"] .storefront-theme-scope [class~="text-sky-400"] { color: var(--app-info) !important; }
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-cyan-100"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-cyan-200"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-cyan-300"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-cyan-400"] { color: var(--app-accent) !important; }
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-violet-100"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-violet-200"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-violet-300"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-violet-400"] { color: var(--app-violet) !important; }
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-amber-200"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-amber-300"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-amber-400"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-amber-500"] { color: var(--app-warning) !important; }
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-emerald-200"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-emerald-300"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-emerald-400"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-green-300"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-green-400"] { color: var(--app-success) !important; }
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-red-200"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-red-300"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-red-400"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-rose-200"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-rose-300"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-rose-400"] { color: var(--app-danger) !important; }
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-blue-300"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-blue-400"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-sky-300"],
+:root[data-theme="light"]:not(.theme-dark-overlay):not(.theme-dark-overlay *) .storefront-theme-scope [class~="text-sky-400"] { color: var(--app-info) !important; }
 
 /* Borders */
 :root[data-theme="light"] .storefront-theme-scope [class~="border-white/10"],
@@ -1662,6 +1662,24 @@ html {
   color: var(--app-text) !important;
 }
 
+
+/* Solid status badges used in order history. */
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-amber-950"] { background-color: var(--app-warning-soft) !important; }
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-blue-950"] { background-color: var(--app-info-soft) !important; }
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-indigo-950"] { background-color: var(--app-violet-soft) !important; }
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-emerald-950"] { background-color: var(--app-success-soft) !important; }
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-red-950"] { background-color: var(--app-danger-soft) !important; }
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-slate-950/65"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-zinc-950/40"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-zinc-950/50"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-zinc-700/60"] { background-color: var(--app-surface-muted) !important; }
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-300/[.05]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-300/[0.07]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-400/[0.07]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-500/[0.06]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-500/[0.07]"] { background-color: var(--app-accent-soft) !important; }
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-800"] { background-color: var(--app-accent) !important; }
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-violet-400"] { background-color: var(--app-violet) !important; }
 /* Semantic fills */
 :root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-500/10"],
 :root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-950"],
