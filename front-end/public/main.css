@@ -1371,3 +1371,241 @@ html {
   border-color: #d5dde1 !important;
   opacity: 1;
 }
+
+
+/* =========================================
+   STOREFRONT LIGHT THEME — GLOBAL 30% DEEPENING
+   Public storefront only. Dark theme, admin UI,
+   product photography and banner artwork are excluded.
+========================================= */
+:root[data-theme="light"] .storefront-theme-scope {
+  /* Surfaces: approximately 30% lower luminance than the previous palette. */
+  --app-canvas: #a9afb2;
+  --app-surface: #b3b8ba;
+  --app-surface-raised: #bfc3c5;
+  --app-surface-muted: #a1a8ab;
+  --app-surface-strong: #969fa3;
+  --app-border: #879398;
+  --app-border-strong: #68777d;
+
+  /* Foreground hierarchy is deepened while retaining readable contrast. */
+  --app-text: #151e24;
+  --app-text-secondary: #293942;
+  --app-text-tertiary: #3b4c55;
+
+  /* Brand and semantic colors are deepened consistently. */
+  --app-accent: #1c4145;
+  --app-accent-hover: #163438;
+  --app-accent-soft: #a2b5b5;
+  --app-accent-border: #718d8f;
+  --app-violet: #40344e;
+  --app-violet-soft: #aaa4b2;
+  --app-success: #19432f;
+  --app-success-soft: #a2b5a9;
+  --app-warning: #53380e;
+  --app-warning-soft: #b4a98e;
+  --app-danger: #692a32;
+  --app-danger-soft: #b9a0a3;
+  --app-info: #22415c;
+  --app-info-soft: #a5b0bf;
+}
+
+/* Page-level, header and footer surfaces. */
+:root[data-theme="light"] .storefront-theme-scope,
+:root[data-theme="light"] .storefront-theme-scope main {
+  background-color: var(--app-canvas);
+  color: var(--app-text);
+}
+:root[data-theme="light"] .storefront-theme-scope .site-header-shell {
+  background: linear-gradient(135deg, #b9bec0 0%, #a9afb2 100%) !important;
+  border-color: var(--app-border) !important;
+  box-shadow: 0 5px 18px rgb(20 30 36 / 12%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .site-footer-shell {
+  background: linear-gradient(145deg, #a5abae 0%, #b5babc 100%) !important;
+  border-color: var(--app-border) !important;
+}
+
+/* Common Tailwind surface utilities used throughout customer pages. */
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-white"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-gray-50"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-slate-50"] {
+  background-color: #bfc3c5 !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-gray-100"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-slate-100"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-zinc-100"] {
+  background-color: #aeb4b7 !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-gray-200"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-slate-200"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-zinc-200"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-zinc-800"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-zinc-700"] {
+  background-color: #969fa3 !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-white/5"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-white/10"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-white/[0.025]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-white/[0.03]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-white/[0.035]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-white/[0.04]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-white/[0.045]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-white/[0.06]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-white/[0.07]"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-white/[0.08]"] {
+  background-color: #aab1b4 !important;
+}
+
+/* Deepen card, category, feature and media-stage surfaces without filtering images. */
+:root[data-theme="light"] .storefront-theme-scope .theme-product-card,
+:root[data-theme="light"] .storefront-theme-scope .theme-category-card,
+:root[data-theme="light"] .storefront-theme-scope .theme-content-panel,
+:root[data-theme="light"] .storefront-theme-scope .theme-feature-panel,
+:root[data-theme="light"] .storefront-theme-scope .category-card-shell {
+  background: linear-gradient(145deg, #c0c4c6 0%, #adb3b6 100%) !important;
+  border-color: #879398 !important;
+  color: var(--app-text) !important;
+  box-shadow: 0 7px 20px rgb(20 30 36 / 12%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .theme-product-card:hover,
+:root[data-theme="light"] .storefront-theme-scope .theme-category-card:hover,
+:root[data-theme="light"] .storefront-theme-scope .category-card-shell:hover {
+  border-color: #64767d !important;
+  box-shadow: 0 9px 24px rgb(20 30 36 / 16%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .theme-media-surface,
+:root[data-theme="light"] .storefront-theme-scope .category-thumbnail-surface,
+:root[data-theme="light"] .storefront-theme-scope .discount-price-panel {
+  background: #a1a9ad !important;
+  border-color: #7f8d93 !important;
+}
+
+/* Header text, muted labels and category copy become darker with the surfaces. */
+:root[data-theme="light"] .storefront-theme-scope [class~="text-zinc-400"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-slate-400"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-gray-400"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-zinc-500"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-slate-500"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-gray-500"] {
+  color: #293942 !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class~="text-zinc-600"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-slate-600"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-gray-600"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-zinc-700"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-slate-700"],
+:root[data-theme="light"] .storefront-theme-scope [class~="text-gray-700"] {
+  color: #202c32 !important;
+}
+
+/* All colored action families are deepened; white button labels stay white. */
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-400"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-500"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-600"],
+:root[data-theme="light"] .storefront-theme-scope .store-primary-cta {
+  background-color: #1c4145 !important;
+  border-color: #163438 !important;
+  color: #ffffff !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-500/10"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-950/20"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-950/30"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-cyan-950/40"] {
+  background-color: #9eafb0 !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-emerald-500/10"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-emerald-950/30"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-emerald-950/40"] {
+  background-color: #9eafa4 !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-amber-500/10"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-amber-950/20"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-amber-950/30"] {
+  background-color: #b2a58b !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-red-500/10"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-red-950/20"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-red-950/30"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-rose-500/10"] {
+  background-color: #b59b9f !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-blue-500/10"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-sky-500/10"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-blue-950/40"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-sky-950/40"] {
+  background-color: #a0adba !important;
+}
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-violet-500/10"],
+:root[data-theme="light"] .storefront-theme-scope [class~="bg-violet-950/40"] {
+  background-color: #aaa3b3 !important;
+}
+
+/* Forms, tables, dialogs, chips and secondary controls follow the same deeper tone. */
+:root[data-theme="light"] .storefront-theme-scope input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+:root[data-theme="light"] .storefront-theme-scope textarea,
+:root[data-theme="light"] .storefront-theme-scope select {
+  background-color: #bfc3c5 !important;
+  color: #151e24 !important;
+  border-color: #68777d !important;
+}
+:root[data-theme="light"] .storefront-theme-scope input::placeholder,
+:root[data-theme="light"] .storefront-theme-scope textarea::placeholder {
+  color: #3b4c55 !important;
+}
+:root[data-theme="light"] .storefront-theme-scope select option {
+  background: #bfc3c5;
+  color: #151e24;
+}
+:root[data-theme="light"] .storefront-theme-scope input[type="checkbox"],
+:root[data-theme="light"] .storefront-theme-scope input[type="radio"] {
+  accent-color: #1c4145;
+}
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-zinc-800"],
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-zinc-700"],
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-white/5"],
+:root[data-theme="light"] .storefront-theme-scope button[class~="bg-white/10"] {
+  background-color: #969fa3 !important;
+  border-color: #78878d !important;
+  color: #172229 !important;
+}
+:root[data-theme="light"] .storefront-theme-scope table,
+:root[data-theme="light"] .storefront-theme-scope thead,
+:root[data-theme="light"] .storefront-theme-scope th,
+:root[data-theme="light"] .storefront-theme-scope td {
+  color: #172229 !important;
+  border-color: #879398 !important;
+}
+:root[data-theme="light"] .storefront-theme-scope thead {
+  background-color: #a1a9ad !important;
+}
+:root[data-theme="light"] .storefront-theme-scope tbody tr:nth-child(even) {
+  background-color: #adb4b7 !important;
+}
+:root[data-theme="light"] .storefront-theme-scope tbody tr:hover {
+  background-color: #9fa8ac !important;
+}
+:root[data-theme="light"] .storefront-theme-scope dialog,
+:root[data-theme="light"] .storefront-theme-scope [role="dialog"],
+:root[data-theme="light"] .storefront-theme-scope [data-modal-panel],
+:root[data-theme="light"] .storefront-theme-scope .modal-content,
+:root[data-theme="light"] .storefront-theme-scope .modal-panel {
+  background-color: #bfc3c5 !important;
+  color: #151e24 !important;
+  border-color: #78878d !important;
+  box-shadow: 0 18px 55px rgb(15 25 31 / 24%) !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .theme-thumbnail-rail {
+  background: rgb(177 184 187 / 97%) !important;
+  border-color: #879398 !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .theme-thumbnail-button {
+  background: #9fa8ac !important;
+  border-color: #78878d !important;
+}
+:root[data-theme="light"] .storefront-theme-scope .theme-thumbnail-button.is-active {
+  border-color: #1c4145 !important;
+}
+:root[data-theme="light"] .storefront-theme-scope :disabled {
+  opacity: 0.72;
+}
