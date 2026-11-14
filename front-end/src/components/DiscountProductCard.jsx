@@ -54,7 +54,7 @@ const DiscountProductCard = ({ product }) => {
         </div>
 
         {/* Brand */}
-        <div className="theme-dark-overlay absolute bottom-3 right-3 z-10 max-w-[75%] truncate rounded-full border border-white/10 bg-slate-950/65 px-3 py-1.5 text-[10px] font-bold text-cyan-200 shadow-lg backdrop-blur-md sm:text-xs">
+        <div className="discount-brand-label theme-dark-overlay absolute bottom-3 right-3 z-10 max-w-[75%] truncate rounded-full border border-white/10 bg-slate-950/65 px-3 py-1.5 text-[10px] font-bold text-cyan-200 shadow-lg backdrop-blur-md sm:text-xs">
           {product.brand || "فروشگاه کاظمی"}
         </div>
       </div>
