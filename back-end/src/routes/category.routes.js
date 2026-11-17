@@ -6,15 +6,15 @@ import {
   updateCategoryController,
   deleteCategoryController,
 } from "../controllers/category.controller.js";
-import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
+import { requireAuth, requirePermission } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
 // مشاهده دسته‌بندی‌ها عمومی است؛ تغییرات فقط توسط مدیر انجام می‌شود.
 router.get("/", getCategoriesController);
 
-router.post("/", requireAuth, requireAdmin, createCategoryController);
-router.patch("/:categoryId", requireAuth, requireAdmin, updateCategoryController);
-router.delete("/:categoryId", requireAuth, requireAdmin, deleteCategoryController);
+router.post("/", requireAuth, requirePermission("MANAGE_CATEGORIES"), createCategoryController);
+router.patch("/:categoryId", requireAuth, requirePermission("MANAGE_CATEGORIES"), updateCategoryController);
+router.delete("/:categoryId", requireAuth, requirePermission("MANAGE_CATEGORIES"), deleteCategoryController);
 
 export default router;
