@@ -401,6 +401,8 @@ const validateUserMutationIds = (targetUserId, actorUserId) => {
 };
 
 const ensureAnotherActiveAdmin = async (tx) => {
+  // Serialize concurrent demotion/deactivation/deletion attempts.
+  await tx.$queryRaw`SELECT pg_advisory_xact_lock(741852963)`;
   const activeAdminCount = await tx.user.count({
     where: {
       role: "ADMIN",
