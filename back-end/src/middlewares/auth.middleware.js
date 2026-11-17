@@ -123,22 +123,5 @@ export const requireAdmin = (req, res, next) => {
   return next();
 };
 
-// =========================================
-// PERMISSION
-// =========================================
-
-export const requirePermission = (permission) => {
-  return (req, res, next) => {
-    if (req.user?.role === "ADMIN") {
-      return next();
-    }
-
-    if (req.user?.permissions?.includes(permission)) {
-      return next();
-    }
-
-    return res.status(403).json({
-      message: "شما مجوز انجام این عملیات را ندارید.",
-    });
-  };
-};
+// Keep the legacy import path, but use the role-safe implementation.
+export { requirePermission } from "./authorization.middleware.js";
