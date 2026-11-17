@@ -1,9 +1,32 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getAnalyticsReport, getLoggedInUsers } from "../../services/adminAnalyticsApi";
+import { getAnalyticsReport, getLoggedInUsers, getRecentAdminPageVisits } from "../../services/adminAnalyticsApi";
 
 const number = (value) => Number(value || 0).toLocaleString("fa-IR");
 const money = (value) => `${number(value)} تومان`;
 const date = (value) => value ? new Date(value).toLocaleString("fa-IR") : "—";
+
+const ADMIN_PAGE_LABELS = {
+  "/admin": "داشبورد",
+  "/admin/products": "محصولات",
+  "/admin/products/create": "افزودن محصول",
+  "/admin/products/:productCode/edit": "ویرایش محصول",
+  "/admin/discounts": "تخفیف‌ها",
+  "/admin/categories": "دسته‌بندی‌ها",
+  "/admin/categories/:slug": "محصولات دسته‌بندی",
+  "/admin/orders": "سفارش‌ها",
+  "/admin/product-comments": "نظرات و پرسش‌ها",
+  "/admin/support": "پشتیبانی",
+  "/admin/analytics": "آمار فروشگاه",
+  "/admin/users": "کاربران",
+  "/admin/banners": "بنرها",
+  "/admin/footer-trust-badges": "نمادهای اعتماد",
+  "/admin/social-links": "شبکه‌های اجتماعی",
+  "/admin/payment-settings": "تنظیمات پرداخت",
+  "/admin/faq": "پرسش‌های متداول",
+  "/admin/about": "درباره ما",
+  "/admin/site-settings": "تنظیمات سایت",
+  "/admin/shipping-methods": "تنظیمات ارسال",
+};
 
 const STATUS_LABELS = {
   PENDING: "در انتظار پرداخت",
@@ -72,6 +95,7 @@ export default function AdminAnalytics() {
   const [days, setDays] = useState("30");
   const [report, setReport] = useState(null);
   const [users, setUsers] = useState(null);
+  const [recentPages, setRecentPages] = useState(null);
   const [userPage, setUserPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -86,6 +110,11 @@ export default function AdminAnalytics() {
       ]);
       setReport(analytics);
       setUsers(loggedUsers);
+      try {
+        setRecentPages(await getRecentAdminPageVisits());
+      } catch {
+        setRecentPages(null);
+      }
     } catch (e) {
       setError(e.message || "دریافت گزارش مدیریتی ناموفق بود.");
     } finally {
@@ -180,19 +209,18 @@ export default function AdminAnalytics() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[620px] text-right text-sm">
             <thead className="bg-black/20 text-zinc-400">
-              <tr>{["نام کاربری", "شماره تماس", "نقش", "تاریخ ثبت‌نام", "آخرین ورود"].map((h) => <th key={h} className="px-4 py-3 font-medium">{h}</th>)}</tr>
+              <tr>{["نام کاربری", "نقش", "تاریخ ثبت‌نام", "آخرین ورود"].map((h) => <th key={h} className="px-4 py-3 font-medium">{h}</th>)}</tr>
             </thead>
             <tbody>
               {(users?.items || []).map((user) => (
                 <tr key={user.id} className="border-t border-white/5">
                   <td className="px-4 py-3">{user.username}</td>
-                  <td className="px-4 py-3">{user.phone || "—"}</td>
-                  <td className="px-4 py-3">{user.role === "ADMIN" ? "مدیر" : "مشتری"}</td>
+                  <td className="px-4 py-3">{user.role === "ADMIN" ? "مدیر کل" : "مدیر محدود"}</td>
                   <td className="px-4 py-3">{date(user.createdAt)}</td>
                   <td className="px-4 py-3">{date(user.lastLoginAt)}</td>
                 </tr>
               ))}
-              {!users?.items?.length && <tr><td colSpan="5" className="p-6 text-center text-zinc-500">هنوز ورود ثبت‌شده‌ای وجود ندارد.</td></tr>}
+              {!users?.items?.length && <tr><td colSpan="4" className="p-6 text-center text-zinc-500">هنوز ورود مدیری ثبت نشده است.</td></tr>}
             </tbody>
           </table>
         </div>
@@ -204,6 +232,36 @@ export default function AdminAnalytics() {
           </div>
         )}
       </section>
+
+      {recentPages && (
+        <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#151d2a]">
+          <div className="border-b border-white/10 p-4">
+            <h3 className="font-bold">صفحات اخیر بازدیدشده توسط شما</h3>
+            <p className="mt-1 text-xs text-zinc-500">حداکثر ۵۰ صفحه اخیر؛ سوابق پس از ۹۰ روز پاک‌سازی می‌شوند.</p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[420px] text-right text-sm">
+              <thead className="bg-black/20 text-zinc-400">
+                <tr>
+                  <th className="px-4 py-3 font-medium">صفحه</th>
+                  <th className="px-4 py-3 font-medium">زمان بازدید</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentPages.map((visit, index) => (
+                  <tr key={`${visit.path}-${visit.createdAt}-${index}`} className="border-t border-white/5">
+                    <td className="px-4 py-3">{ADMIN_PAGE_LABELS[visit.path] || "صفحه مدیریت"}</td>
+                    <td className="px-4 py-3">{date(visit.createdAt)}</td>
+                  </tr>
+                ))}
+                {!recentPages.length && (
+                  <tr><td colSpan="2" className="p-6 text-center text-zinc-500">هنوز صفحه‌ای ثبت نشده است؛ از این پس بازدیدها ثبت می‌شوند.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
