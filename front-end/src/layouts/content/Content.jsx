@@ -56,14 +56,18 @@ const Content = () => {
         </div>
 
         {siteSettings?.showPopularShowcase !== false && (
-          <Suspense fallback={<div aria-hidden="true" className="min-h-[260px]" />}>
-            <PopularShowcase />
-          </Suspense>
+          <DeferredMount rootMargin="350px 0px" minHeight={260}>
+            <Suspense fallback={<div aria-hidden="true" className="min-h-[260px]" />}>
+              <PopularShowcase />
+            </Suspense>
+          </DeferredMount>
         )}
         {siteSettings?.showDiscountShowcase !== false && (
-          <Suspense fallback={<div aria-hidden="true" className="min-h-[260px]" />}>
-            <DiscountShowcase />
-          </Suspense>
+          <DeferredMount rootMargin="350px 0px" minHeight={260}>
+            <Suspense fallback={<div aria-hidden="true" className="min-h-[260px]" />}>
+              <DiscountShowcase />
+            </Suspense>
+          </DeferredMount>
         )}
 
         <DeferredMount rootMargin="500px 0px" minHeight={300}>
