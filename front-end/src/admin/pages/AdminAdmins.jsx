@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../../context/useAuth";
 import { createManagedStaff, deleteManagedStaff, getManagedAdmins, updateManagedStaff } from "../../services/adminManagementApi";
 
 const LABELS = {
@@ -24,7 +26,7 @@ const LABELS = {
 
 const emptyForm = { username: "", phone: "", password: "", permissions: [] };
 
-export default function AdminAdmins() {
+export default function AdminAdmins() {\n  const { user } = useAuth();\n  if (user?.role !== "ADMIN") return <Navigate to="/admin" replace />;
   const [data, setData] = useState({ items: [], permissions: [], summary: {} });
   const [form, setForm] = useState(emptyForm);
   const [editing, setEditing] = useState(null);
