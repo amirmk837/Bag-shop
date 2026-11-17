@@ -9,6 +9,7 @@ const API_ORIGIN = API_URL.startsWith("http") ? new URL(API_URL).origin : "";
 // =================================================
 
 const GET_CACHE_TTL = 15_000;
+const MAX_READ_CACHE_ENTRIES = 60;
 const responseCache = new Map();
 const inFlightGetRequests = new Map();
 let productCacheVersion = 0;
@@ -104,10 +105,17 @@ const request = async (path, options = {}) => {
     // A GET started before a product mutation must never repopulate the cache
     // with stale product/discount data after that mutation completes.
     if (requestVersion === null || requestVersion === productCacheVersion) {
+      // Keep the short-lived read cache bounded when users search many terms.
+      responseCache.delete(path);
       responseCache.set(path, {
         value: result,
         expiresAt: Date.now() + GET_CACHE_TTL,
       });
+
+      while (responseCache.size > MAX_READ_CACHE_ENTRIES) {
+        const oldestKey = responseCache.keys().next().value;
+        responseCache.delete(oldestKey);
+      }
     }
     return result;
   } finally {
