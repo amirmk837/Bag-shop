@@ -35,6 +35,7 @@ const AdminCategoryProducts = lazy(
 );
 const AdminOrders = lazy(() => import("./admin/pages/AdminOrders"));
 const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminAdmins = lazy(() => import("./admin/pages/AdminAdmins"));
 const CategoryProducts = lazy(() => import("./components/CategoryProducts"));
 const CustomerLogin = lazy(() => import("./pages/auth/CustomerLogin"));
 const CustomerRegister = lazy(() => import("./pages/auth/CustomerRegister"));
