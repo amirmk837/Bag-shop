@@ -34,6 +34,25 @@ const navItems = [
   { label: "نمادهای اعتماد فوتر", to: "/admin/footer-trust-badges" },
 ];
 
+const NAV_PERMISSION_BY_PATH = {
+  "/admin": "VIEW_ANALYTICS",
+  "/admin/products": "MANAGE_PRODUCTS",
+  "/admin/discounts": "MANAGE_PRODUCTS",
+  "/admin/banners": "MANAGE_BANNERS",
+  "/admin/orders": "VIEW_ORDERS",
+  "/admin/product-comments": "MODERATE_COMMENTS",
+  "/admin/support": "MANAGE_SUPPORT",
+  "/admin/categories": "MANAGE_CATEGORIES",
+  "/admin/users": "VIEW_CUSTOMERS",
+  "/admin/analytics": "VIEW_ANALYTICS",
+  "/admin/site-settings": "MANAGE_SITE_SETTINGS",
+  "/admin/about": "MANAGE_CONTENT",
+  "/admin/faq": "MANAGE_CONTENT",
+  "/admin/social-links": "MANAGE_SOCIAL_LINKS",
+  "/admin/shipping-methods": "MANAGE_SHIPPING_SETTINGS",
+  "/admin/footer-trust-badges": "MANAGE_CONTENT",
+};
+
 const linkClass = ({ isActive }) =>
   [
     "inline-flex shrink-0 items-center rounded-lg px-3 py-2 text-xs font-medium transition sm:text-sm",
@@ -45,7 +64,7 @@ const linkClass = ({ isActive }) =>
 const AdminLayout = ({ children }) => {
   const location = useLocation();
   const { user } = useAuth();
-  const visibleNavItems = navItems.filter((item) => user?.role === "ADMIN" || (item.permission && user?.permissions?.includes(item.permission)) || (!item.permission && item.to !== "/admin/administrators"));
+  const visibleNavItems = navItems.filter((item) => user?.role === "ADMIN" || Boolean(NAV_PERMISSION_BY_PATH[item.to] && user?.permissions?.includes(NAV_PERMISSION_BY_PATH[item.to])));
   const isDashboard = location.pathname === "/admin";
   const [summary, setSummary] = useState({});
 
