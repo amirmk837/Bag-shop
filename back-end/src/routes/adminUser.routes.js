@@ -7,19 +7,19 @@ import {
   updateUserController,
   deleteUserController,
 } from "../controllers/user.controller.js";
-import { requireAuth, requireAdmin, requirePermission } from "../middlewares/auth.middleware.js";
+import { requireAuth, requirePermission } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-// تمام این بخش فقط برای ADMIN است.
+// مشاهده و مدیریت مشتریان با مجوزهای جداگانه؛ مدیریت مدیران فقط ADMIN.
 router.use(requireAuth);
 
 router.get("/", requirePermission("VIEW_CUSTOMERS"), getUsersController);
 
 router.get("/:id", requirePermission("VIEW_CUSTOMERS"), getUserDetailController);
 
-router.patch("/:id", requireAdmin, updateUserController);
+router.patch("/:id", requirePermission("MANAGE_CUSTOMERS"), updateUserController);
 
-router.delete("/:id", requireAdmin, deleteUserController);
+router.delete("/:id", requirePermission("MANAGE_CUSTOMERS"), deleteUserController);
 
 export default router;
