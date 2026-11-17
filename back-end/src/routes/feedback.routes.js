@@ -1,7 +1,7 @@
 import express from "express";
 import { z } from "zod";
 import prisma from "../config/prisma.js";
-import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
+import { requireAuth, requirePermission } from "../middlewares/auth.middleware.js";
 import { requireCustomer } from "../middlewares/customer.middleware.js";
 import { createRateLimiter } from "../middlewares/rateLimit.middleware.js";
 
@@ -159,7 +159,7 @@ router.post("/products/:productCode/comments", ...customerOnly, limitCustomerMes
 });
 
 // Admin: chronological moderation queue.
-router.get("/admin/product-comments", requireAuth, requireAdmin, async (req, res) => {
+router.get("/admin/product-comments", requireAuth, requirePermission("MODERATE_COMMENTS"), async (req, res) => {
   try {
     const pagination = parsePagination(req.query);
     if (!pagination) return sendError(res, 400, "صفحه‌بندی نامعتبر است.");
@@ -193,7 +193,7 @@ router.get("/admin/product-comments", requireAuth, requireAdmin, async (req, res
   }
 });
 
-router.patch("/admin/product-comments/:id", requireAuth, requireAdmin, async (req, res) => {
+router.patch("/admin/product-comments/:id", requireAuth, requirePermission("MODERATE_COMMENTS"), async (req, res) => {
   try {
     const id = parseId(req.params.id);
     if (!id) return sendError(res, 400, "شناسه دیدگاه نامعتبر است.");
@@ -229,7 +229,7 @@ router.patch("/admin/product-comments/:id", requireAuth, requireAdmin, async (re
   }
 });
 
-router.delete("/admin/product-comments/:id", requireAuth, requireAdmin, async (req, res) => {
+router.delete("/admin/product-comments/:id", requireAuth, requirePermission("MODERATE_COMMENTS"), async (req, res) => {
   try {
     const id = parseId(req.params.id);
     if (!id) return sendError(res, 400, "شناسه دیدگاه نامعتبر است.");
@@ -263,7 +263,7 @@ router.get("/support/settings", async (_req, res) => {
   }
 });
 
-router.put("/admin/support/settings", requireAuth, requireAdmin, async (req, res) => {
+router.put("/admin/support/settings", requireAuth, requirePermission("MANAGE_SUPPORT"), async (req, res) => {
   try {
     const validation = supportSettingsSchema.safeParse(req.body);
     if (!validation.success) return sendError(res, 400, "ساعات کاری یا متن پاسخگویی نامعتبر است.");
@@ -409,7 +409,7 @@ router.post("/support/:id/messages", ...customerOnly, limitCustomerMessage, asyn
 });
 
 // Admin support inbox.
-router.get("/admin/support", requireAuth, requireAdmin, async (req, res) => {
+router.get("/admin/support", requireAuth, requirePermission("MANAGE_SUPPORT"), async (req, res) => {
   try {
     const pagination = parsePagination(req.query);
     if (!pagination) return sendError(res, 400, "صفحه‌بندی نامعتبر است.");
@@ -439,7 +439,7 @@ router.get("/admin/support", requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
-router.get("/admin/support/:id", requireAuth, requireAdmin, async (req, res) => {
+router.get("/admin/support/:id", requireAuth, requirePermission("MANAGE_SUPPORT"), async (req, res) => {
   try {
     const id = parseId(req.params.id);
     if (!id) return sendError(res, 400, "شناسه درخواست نامعتبر است.");
@@ -458,7 +458,7 @@ router.get("/admin/support/:id", requireAuth, requireAdmin, async (req, res) => 
   }
 });
 
-router.post("/admin/support/:id/messages", requireAuth, requireAdmin, async (req, res) => {
+router.post("/admin/support/:id/messages", requireAuth, requirePermission("MANAGE_SUPPORT"), async (req, res) => {
   try {
     const id = parseId(req.params.id);
     if (!id) return sendError(res, 400, "شناسه درخواست نامعتبر است.");
@@ -484,7 +484,7 @@ router.post("/admin/support/:id/messages", requireAuth, requireAdmin, async (req
   }
 });
 
-router.patch("/admin/support/:id", requireAuth, requireAdmin, async (req, res) => {
+router.patch("/admin/support/:id", requireAuth, requirePermission("MANAGE_SUPPORT"), async (req, res) => {
   try {
     const id = parseId(req.params.id);
     if (!id) return sendError(res, 400, "شناسه درخواست نامعتبر است.");
@@ -499,7 +499,7 @@ router.patch("/admin/support/:id", requireAuth, requireAdmin, async (req, res) =
   }
 });
 
-router.delete("/admin/support/:id", requireAuth, requireAdmin, async (req, res) => {
+router.delete("/admin/support/:id", requireAuth, requirePermission("MANAGE_SUPPORT"), async (req, res) => {
   try {
     const id = parseId(req.params.id);
     if (!id) return sendError(res, 400, "شناسه درخواست نامعتبر است.");
