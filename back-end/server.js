@@ -18,6 +18,7 @@ import adminShippingMethodRoutes from "./src/routes/adminShippingMethod.routes.j
 import shippingMethodRoutes from "./src/routes/shippingMethod.routes.js";
 import siteSettingsRoutes from "./src/routes/siteSettings.routes.js";
 import adminAnalyticsRoutes from "./src/routes/adminAnalytics.routes.js";
+import adminPageVisitRoutes from "./src/routes/adminPageVisit.routes.js";
 import siteAnalyticsRoutes from "./src/routes/siteAnalytics.routes.js";
 import feedbackRoutes from "./src/routes/feedback.routes.js";
 import { csrfProtection } from "./src/middlewares/csrf.middleware.js";
@@ -83,6 +84,7 @@ app.use("/api/about", aboutRoutes);
 app.use("/api/faq", faqRoutes);
 app.use("/api/analytics", siteAnalyticsRoutes);
 app.use("/api/admin/analytics", adminAnalyticsRoutes);
+app.use("/api/admin/analytics", adminPageVisitRoutes);
 app.use("/api/admin/users", adminUserRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 app.use("/api/admin/dashboard", adminDashboardRoutes);
