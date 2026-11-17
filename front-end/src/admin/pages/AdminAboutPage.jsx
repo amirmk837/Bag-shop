@@ -53,7 +53,6 @@ export default function AdminAboutPage() {
   const [message, setMessage] = useState("");
 
   const load = async (signal) => {
-    setLoading(true); setError("");
     try {
       const data = await getAdminAboutPage();
       if (!signal?.aborted) setForm(toEditableAboutPage(data));
@@ -95,7 +94,7 @@ export default function AdminAboutPage() {
   return <main dir="rtl" className="space-y-6 text-white">
     <header className="flex flex-wrap items-start justify-between gap-3">
       <div><h1 className="text-2xl font-black">مدیریت صفحه درباره ما</h1><p className="mt-2 max-w-2xl text-sm leading-7 text-zinc-400">محتوای صفحه عمومی را از اینجا ویرایش و منتشر کن. متن‌ها به‌صورت ساده نمایش داده می‌شوند و امکان درج HTML وجود ندارد.</p></div>
-      <button type="button" onClick={() => load()} disabled={saving} className="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-4 py-2.5 text-sm text-zinc-300 transition hover:bg-zinc-800 disabled:opacity-50"><FiRefreshCw /> تازه‌سازی</button>
+      <button type="button" onClick={() => { setLoading(true); setError(""); void load(); }} disabled={saving} className="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-4 py-2.5 text-sm text-zinc-300 transition hover:bg-zinc-800 disabled:opacity-50"><FiRefreshCw /> تازه‌سازی</button>
     </header>
 
     {error && <p role="alert" className="rounded-xl border border-red-900/50 bg-red-950/30 p-3 text-sm text-red-300">{error}</p>}
