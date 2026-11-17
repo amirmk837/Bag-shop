@@ -6,12 +6,12 @@ import {
   getPublicSocialLinksController,
   saveSocialLinkController,
 } from "../controllers/socialLink.controller.js";
-import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
+import { requireAuth, requirePermission } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
 router.get("/", getPublicSocialLinksController);
-router.use(requireAuth, requireAdmin);
+router.use(requireAuth, requirePermission("MANAGE_SOCIAL_LINKS"));
 router.get("/admin", getAdminSocialLinksController);
 router.post("/admin", createSocialLinkController);
 router.put("/admin/:platform", saveSocialLinkController);
