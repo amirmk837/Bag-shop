@@ -33,14 +33,21 @@ const invalidateReadCache = (path) => {
 const request = async (path, options = {}) => {
   const method = (options.method || "GET").toUpperCase();
   const cacheable =
-    method === "GET" && /^\/(products|categories)(\?|$)/.test(path);
+    method === "GET" && /^\\/(products|categories)(\\?|$)/.test(path);
+  const acceptHeader =
+    options.headers?.Accept || options.headers?.accept || "";
+  const requestKey = `${path}::${options.credentials || "same-origin"}::${acceptHeader}`;
 
-  if (cacheable) {
-    const cached = responseCache.get(path);
-    if (cached && cached.expiresAt > Date.now()) return cached.value;
-    if (cached) responseCache.delete(path);
+  if (method === "GET") {
+    if (cacheable) {
+      const cached = responseCache.get(requestKey);
+      if (cached && cached.expiresAt > Date.now()) return cached.value;
+      if (cached) responseCache.delete(requestKey);
+    }
 
-    const pending = inFlightGetRequests.get(path);
+    // Coalesce concurrent reads even for endpoints that are intentionally
+    // not cached (for example, product details and analytics).
+    const pending = inFlightGetRequests.get(requestKey);
     if (pending) return pending;
   }
 
@@ -92,22 +99,24 @@ const request = async (path, options = {}) => {
     return result;
   };
 
-  if (!cacheable) return execute();
+  if (method !== "GET") return execute();
 
   const requestVersion = path.startsWith("/products")
     ? productCacheVersion
     : null;
-  const pending = execute();
-  inFlightGetRequests.set(path, pending);
+  const pendingRequest = execute();
+  inFlightGetRequests.set(requestKey, pendingRequest);
 
   try {
-    const result = await pending;
+    const result = await pendingRequest;
     // A GET started before a product mutation must never repopulate the cache
     // with stale product/discount data after that mutation completes.
-    if (requestVersion === null || requestVersion === productCacheVersion) {
-      // Keep the short-lived read cache bounded when users search many terms.
-      responseCache.delete(path);
-      responseCache.set(path, {
+    if (
+      cacheable &&
+      (requestVersion === null || requestVersion === productCacheVersion)
+    ) {
+      responseCache.delete(requestKey);
+      responseCache.set(requestKey, {
         value: result,
         expiresAt: Date.now() + GET_CACHE_TTL,
       });
@@ -119,8 +128,8 @@ const request = async (path, options = {}) => {
     }
     return result;
   } finally {
-    if (inFlightGetRequests.get(path) === pending) {
-      inFlightGetRequests.delete(path);
+    if (inFlightGetRequests.get(requestKey) === pendingRequest) {
+      inFlightGetRequests.delete(requestKey);
     }
   }
 };
