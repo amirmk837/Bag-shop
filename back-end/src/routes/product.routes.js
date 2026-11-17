@@ -37,7 +37,7 @@ router.post("/", requireAuth, requirePermission("MANAGE_PRODUCTS"), createProduc
 router.patch(
   "/:productCode",
   requireAuth,
-  requireAdmin,
+  requirePermission("MANAGE_PRODUCTS"),
   updateProductController,
 );
 
@@ -45,7 +45,7 @@ router.patch(
 router.delete(
   "/:productCode",
   requireAuth,
-  requireAdmin,
+  requirePermission("MANAGE_PRODUCTS"),
   deleteProductController,
 );
 
