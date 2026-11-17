@@ -271,7 +271,7 @@ export const auditFailedAdminLogin = async (identifier) => {
   if (normalizedPhone) conditions.push({ phone: normalizedPhone });
 
   const admin = await prisma.user.findFirst({
-    where: { OR: conditions, role: "ADMIN" },
+    where: { OR: conditions, role: { in: ["ADMIN", "ADMIN_STAFF"] } },
     select: { id: true },
   });
 
