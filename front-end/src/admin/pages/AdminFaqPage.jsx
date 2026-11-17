@@ -24,8 +24,6 @@ export default function AdminFaqPage() {
   const [message, setMessage] = useState("");
 
   const load = async () => {
-    setLoading(true);
-    setError("");
     try {
       const data = await getAdminFaq();
       setItems(Array.isArray(data) ? data : []);
@@ -142,7 +140,7 @@ export default function AdminFaqPage() {
             پرسش‌ها و پاسخ‌های راهنمای مشتری را مدیریت و مرتب کن. فقط موارد فعال در صفحه عمومی نمایش داده می‌شوند.
           </p>
         </div>
-        <button type="button" onClick={load} disabled={loading || saving} className="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-4 py-2.5 text-sm text-zinc-300 transition hover:bg-zinc-800 disabled:opacity-50">
+        <button type="button" onClick={() => { setLoading(true); setError(""); void load(); }} disabled={loading || saving} className="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-4 py-2.5 text-sm text-zinc-300 transition hover:bg-zinc-800 disabled:opacity-50">
           <FiRefreshCw /> تازه‌سازی
         </button>
       </header>
