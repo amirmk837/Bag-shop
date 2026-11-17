@@ -6,7 +6,7 @@ import { lazy, Suspense, useEffect } from "react";
 import { trackPageView } from "./services/siteAnalyticsApi";
 import { trackAdminPageVisit } from "./services/adminAnalyticsApi";
 import DeferredMount from "./components/DeferredMount";
-import SupportWidget from "./components/SupportWidget";
+import SupportWidgetLoader from "./components/SupportWidgetLoader";
 
 const Footer = lazy(() => import("./layouts/footer/Footer"));
 
@@ -483,7 +483,7 @@ const App = () => {
         </Suspense>
       </main>
 
-      {!isAdminArea && <SupportWidget />}
+      {!isAdminArea && <SupportWidgetLoader />}
 
       {!isAdminArea && (
         <DeferredMount rootMargin="700px 0px" minHeight={300}>
