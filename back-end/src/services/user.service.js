@@ -499,26 +499,63 @@ export const updateUser = async ({
       select: USER_SELECT,
     });
 
-    await tx.adminAuditLog.create({
-      data: {
-        adminId: actorId,
-        action: "USER_UPDATED",
-        targetType: "USER",
+    const beforeState = {
+      role: existingUser.role,
+      permissions: existingUser.permissions,
+      isActive: existingUser.isActive,
+    };
+    const afterState = {
+      role: updatedUser.role,
+      permissions: updatedUser.permissions,
+      isActive: updatedUser.isActive,
+    };
+
+    const auditEvents = [{
+      action: "USER_UPDATED",
+      targetType: "USER",
+      targetId,
+      details: { before: beforeState, after: afterState },
+    }];
+
+    const isAdminAccount =
+      ["ADMIN", "ADMIN_STAFF"].includes(existingUser.role) ||
+      ["ADMIN", "ADMIN_STAFF"].includes(updatedUser.role);
+
+    if (isAdminAccount && existingUser.role !== updatedUser.role) {
+      auditEvents.push({
+        action: "ADMIN_ROLE_CHANGED",
+        targetType: "ADMIN",
+        targetId,
+        details: { before: existingUser.role, after: updatedUser.role },
+      });
+    }
+
+    if (
+      isAdminAccount &&
+      JSON.stringify(existingUser.permissions) !== JSON.stringify(updatedUser.permissions)
+    ) {
+      auditEvents.push({
+        action: "ADMIN_PERMISSIONS_CHANGED",
+        targetType: "ADMIN",
         targetId,
         details: {
-          before: {
-            role: existingUser.role,
-            permissions: existingUser.permissions,
-            isActive: existingUser.isActive,
-          },
-          after: {
-            role: updatedUser.role,
-            permissions: updatedUser.permissions,
-            isActive: updatedUser.isActive,
-          },
+          before: existingUser.permissions,
+          after: updatedUser.permissions,
         },
-      },
-      select: { id: true },
+      });
+    }
+
+    if (isAdminAccount && existingUser.isActive !== updatedUser.isActive) {
+      auditEvents.push({
+        action: "ADMIN_STATUS_CHANGED",
+        targetType: "ADMIN",
+        targetId,
+        details: { before: existingUser.isActive, after: updatedUser.isActive },
+      });
+    }
+
+    await tx.adminAuditLog.createMany({
+      data: auditEvents.map((event) => ({ ...event, adminId: actorId })),
     });
 
     return updatedUser;
@@ -573,11 +610,12 @@ export const hardDeleteUser = async (targetUserId, actorUserId) => {
       },
     });
 
+    const deletingAdmin = ["ADMIN", "ADMIN_STAFF"].includes(targetUser.role);
     await tx.adminAuditLog.create({
       data: {
         adminId: actorId,
-        action: "USER_DELETED",
-        targetType: "USER",
+        action: deletingAdmin ? "ADMIN_DELETED" : "USER_DELETED",
+        targetType: deletingAdmin ? "ADMIN" : "USER",
         targetId,
         details: {
           previousRole: targetUser.role,
