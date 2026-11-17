@@ -11,7 +11,7 @@ import {
   deleteFooterTrustBadgeController,
 } from "../controllers/footerTrustBadge.controller.js";
 
-import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
+import { requireAuth, requirePermission } from "../middlewares/auth.middleware.js";
 import { validateUploadedImages } from "../middlewares/validateImage.middleware.js";
 import { createRateLimiter } from "../middlewares/rateLimit.middleware.js";
 
@@ -93,7 +93,7 @@ const adminRateLimit = createRateLimiter({
 router.get("/", getPublicFooterTrustBadgesController);
 
 // همه مسیرهای مدیریتی نیازمند احراز هویت و نقش مدیر هستند
-router.use(requireAuth, requireAdmin, adminRateLimit);
+router.use(requireAuth, requirePermission("MANAGE_CONTENT"), adminRateLimit);
 
 router.get("/admin", getAdminFooterTrustBadgesController);
 
