@@ -99,6 +99,7 @@ model User {
 
   permissions UserPermission[]
   auditLogs   AdminAuditLog[]
+  adminPageVisits AdminPageVisit[]
 
   isActive  Boolean   @default(true)
   deletedAt DateTime?
@@ -596,4 +597,17 @@ model FaqItem {
   updatedAt DateTime @updatedAt
 
   @@index([isActive, sortOrder, id])
+}
+
+
+model AdminPageVisit {
+  id        Int      @id @default(autoincrement())
+  adminId   Int
+  path      String   @db.VarChar(120)
+  createdAt DateTime @default(now())
+
+  admin User @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([adminId, createdAt])
+  @@index([createdAt])
 }
