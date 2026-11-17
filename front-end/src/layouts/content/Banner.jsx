@@ -147,7 +147,7 @@ const Banner = () => {
           alt={banner?.name || "بنر فروشگاه کاظمی"}
           decoding="async"
           loading={isCurrent ? "eager" : "lazy"}
-          fetchPriority={isCurrent ? "high" : "auto"}
+          fetchPriority={isCurrent ? "high" : "low"}
           onError={() => {
             if (banner) handleImageError(banner.id);
           }}
