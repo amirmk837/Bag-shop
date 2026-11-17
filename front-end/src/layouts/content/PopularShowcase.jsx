@@ -310,6 +310,7 @@ const PopularShowcase = () => {
                           alt={product.title}
                           loading="lazy"
                           decoding="async"
+                          fetchPriority="low"
                           className="h-full w-full object-contain drop-shadow-[0_12px_18px_rgba(0,0,0,.35)] transition duration-500 group-hover:scale-105"
                         />
                       ) : (
