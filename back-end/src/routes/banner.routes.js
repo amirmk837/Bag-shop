@@ -12,7 +12,7 @@ import {
   updateBannerController,
 } from "../controllers/banner.controller.js";
 
-import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
+import { requireAuth, requirePermission } from "../middlewares/auth.middleware.js";
 import { validateUploadedImages } from "../middlewares/validateImage.middleware.js";
 
 const router = express.Router();
@@ -88,7 +88,7 @@ const uploadBannerImages = (req, res, next) => {
 router.get("/active", getActiveBannerController);
 
 // بقیه مسیرها فقط برای ادمین
-router.use(requireAuth, requireAdmin);
+router.use(requireAuth, requirePermission("MANAGE_BANNERS"));
 
 router.get("/", getAdminBannersController);
 
