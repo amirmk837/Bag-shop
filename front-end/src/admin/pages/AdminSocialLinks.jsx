@@ -34,8 +34,6 @@ const AdminSocialLinks = () => {
 
   const loadLinks = async (signal) => {
     try {
-      setLoading(true);
-      setError("");
       const response = await fetch(`${API_BASE_URL}/social-links/admin`, { credentials: "include", signal });
       const result = await response.json();
       if (!response.ok) throw new Error(result.message || "دریافت تنظیمات ناموفق بود.");
@@ -179,7 +177,7 @@ const AdminSocialLinks = () => {
           <h2 className="text-2xl font-black">مدیریت شبکه‌های اجتماعی</h2>
           <p className="mt-2 text-sm leading-6 text-zinc-400">پلتفرم‌های پیش‌فرض و دلخواه، لینک، نام کانال و ترتیب نمایش را مدیریت کن.</p>
         </div>
-        <button type="button" onClick={() => loadLinks()} disabled={loading || savingPlatform !== null}
+        <button type="button" onClick={() => { setLoading(true); setError(""); void loadLinks(); }} disabled={loading || savingPlatform !== null}
           className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm transition hover:bg-zinc-800 disabled:opacity-50">
           <FiRefreshCw /> تازه‌سازی
         </button>
