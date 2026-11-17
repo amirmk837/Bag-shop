@@ -4,6 +4,7 @@ import BackPage from "../../components/BackPage";
 import { useEffect, useState } from "react";
 import { getAdminFeedbackSummary } from "../../services/feedbackApi";
 import ThemeToggle from "../../components/ThemeToggle";
+import { useAuth } from "../../context/useAuth";
 
 const navItems = [
   { label: "داشبورد", to: "/admin" },
@@ -43,6 +44,8 @@ const linkClass = ({ isActive }) =>
 
 const AdminLayout = ({ children }) => {
   const location = useLocation();
+  const { user } = useAuth();
+  const visibleNavItems = navItems.filter((item) => user?.role === "ADMIN" || (item.permission && user?.permissions?.includes(item.permission)) || (!item.permission && item.to !== "/admin/administrators"));
   const isDashboard = location.pathname === "/admin";
   const [summary, setSummary] = useState({});
 
@@ -113,7 +116,7 @@ const AdminLayout = ({ children }) => {
           aria-label="منوی پنل مدیریت"
           className="flex gap-1 overflow-x-auto border-t border-white/[0.05] px-2 py-2 md:hidden"
         >
-          {navItems.map((item) => (
+          {visibleNavItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
