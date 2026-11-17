@@ -418,7 +418,11 @@ const runUserAdminTransaction = async (operation) => {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
       return await prisma.$transaction(
-        async (tx) => {\n          // Acquire the shared lock before the transaction reads its snapshot.\n          await tx.$queryRaw`SELECT pg_advisory_xact_lock(741852963)`;\n          return operation(tx);\n        },
+        async (tx) => {
+          // Acquire the shared lock before the transaction reads its snapshot.
+          await tx.$queryRaw`SELECT pg_advisory_xact_lock(741852963)`;
+          return operation(tx);
+        },
         { isolationLevel: "Serializable" },
       );
     } catch (error) {
