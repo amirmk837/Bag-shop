@@ -2,7 +2,7 @@ import express from "express";
 import multer from "multer";
 import path from "node:path";
 import fs from "node:fs";
-import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
+import { requireAuth, requirePermission } from "../middlewares/auth.middleware.js";
 import { validateUploadedImages } from "../middlewares/validateImage.middleware.js";
 import { handleUploadError } from "../middlewares/uploadError.middleware.js";
 import { createRateLimiter } from "../middlewares/rateLimit.middleware.js";
@@ -64,7 +64,7 @@ router.get("/", getSiteSettingsController);
 router.put(
   "/",
   requireAuth,
-  requireAdmin,
+  requirePermission("MANAGE_SITE_SETTINGS"),
   limitSiteSettingsUpdates,
   parseSiteSettingsUpload,
   handleUploadError,
