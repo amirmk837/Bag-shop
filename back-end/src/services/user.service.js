@@ -401,8 +401,6 @@ const validateUserMutationIds = (targetUserId, actorUserId) => {
 };
 
 const ensureAnotherActiveAdmin = async (tx) => {
-  // Serialize concurrent demotion/deactivation/deletion attempts.
-  await tx.$queryRaw`SELECT pg_advisory_xact_lock(741852963)`;
   const activeAdminCount = await tx.user.count({
     where: {
       role: "ADMIN",
@@ -420,7 +418,7 @@ const runUserAdminTransaction = async (operation) => {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
       return await prisma.$transaction(
-        (tx) => operation(tx),
+        async (tx) => {\n          // Acquire the shared lock before the transaction reads its snapshot.\n          await tx.$queryRaw`SELECT pg_advisory_xact_lock(741852963)`;\n          return operation(tx);\n        },
         { isolationLevel: "Serializable" },
       );
     } catch (error) {
