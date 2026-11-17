@@ -7,6 +7,27 @@ import {
   invalidateUserTokens,
 } from "../services/auth.service.js";
 import { getRegistrationConflictMessage } from "../utils/registrationErrors.js";
+import { recordAdminAudit } from "../services/adminAudit.service.js";
+
+const auditAdminAuthEvent = async (user, action) => {
+  if (!user || !["ADMIN", "ADMIN_STAFF"].includes(user.role)) return;
+
+  try {
+    await recordAdminAudit({
+      adminId: user.id,
+      action,
+      targetType: "ADMIN",
+      targetId: user.id,
+      details: { method: "PASSWORD" },
+    });
+  } catch (error) {
+    // Audit failures must not prevent a valid login or secure logout.
+    console.error("ADMIN AUTH AUDIT ERROR:", {
+      action,
+      errorType: error?.name || "Error",
+    });
+  }
+};
 
 const COOKIE_NAME = "auth_token";
 
@@ -52,6 +73,8 @@ export const loginController = async (req, res) => {
         message: "اطلاعات ورود صحیح نیست.",
       });
     }
+
+    await auditAdminAuthEvent(user, "ADMIN_LOGIN_SUCCESS");
 
     const token = createAuthToken(user);
 
@@ -199,6 +222,8 @@ export const logoutController = async (req, res) => {
       message: "خروج امن انجام نشد؛ دوباره تلاش کنید.",
     });
   }
+
+  await auditAdminAuthEvent(req.user, "ADMIN_LOGOUT");
 
   res.clearCookie(COOKIE_NAME, getCookieOptions());
 
