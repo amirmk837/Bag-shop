@@ -153,7 +153,7 @@ const AdminLayout = ({ children }) => {
       <div className="flex min-h-[calc(100vh-57px)]">
         <aside className="admin-sidebar-shell hidden w-56 shrink-0 border-l border-white/[0.06] bg-[#111722] p-3 lg:sticky lg:top-[57px] lg:block lg:h-[calc(100vh-57px)] lg:w-60">
           <nav aria-label="منوی پنل مدیریت" className="space-y-1">
-            {navItems.map((item) => (
+            {visibleNavItems.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
