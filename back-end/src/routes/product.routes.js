@@ -8,7 +8,7 @@ import {
   deleteProductController,
 } from "../controllers/product.controller.js";
 
-import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
+import { requireAuth, requirePermission } from "../middlewares/auth.middleware.js";
 import { popularProductsController } from "../controllers/analytics.controller.js";
 
 const router = express.Router();
@@ -31,7 +31,7 @@ router.get("/:productCode", getProductByCodeController);
 // =========================================
 
 // ایجاد محصول
-router.post("/", requireAuth, requireAdmin, createProductController);
+router.post("/", requireAuth, requirePermission("MANAGE_PRODUCTS"), createProductController);
 
 // ویرایش محصول
 router.patch(
