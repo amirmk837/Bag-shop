@@ -513,7 +513,7 @@ router.delete("/admin/support/:id", requireAuth, requirePermission("MANAGE_SUPPO
   }
 });
 
-router.get("/admin/feedback-summary", requireAuth, requireAdmin, async (_req, res) => {
+router.get("/admin/feedback-summary", requireAuth, requirePermission("MANAGE_SUPPORT"), async (_req, res) => {
   try {
     const [pendingComments, newTickets, unansweredTickets] = await prisma.$transaction([
       prisma.productComment.count({ where: { status: "PENDING" } }),
