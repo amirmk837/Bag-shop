@@ -55,7 +55,7 @@ const AdminLogin = () => {
               throw new Error("اطلاعات کاربر پس از ورود دریافت نشد.");
             }
 
-            if (user.role !== "ADMIN") {
+            if (!["ADMIN", "ADMIN_STAFF"].includes(user.role)) {
               await logout();
 
               setStatus("این حساب دسترسی مدیر ندارد.");
