@@ -22,7 +22,7 @@ const navItems = [
     badgeKey: "unansweredTickets",
   },
   { label: "دسته‌بندی‌ها", to: "/admin/categories" },
-  { label: "کاربران", to: "/admin/users" },
+  { label: "کاربران", to: "/admin/users" },\n  { label: "مدیریت مدیران", to: "/admin/administrators" },
   { label: "بازدیدکنندگان و آمار", to: "/admin/analytics" },
   { label: "تنظیمات ظاهری سایت", to: "/admin/site-settings" },
   { label: "صفحه درباره ما", to: "/admin/about" },
