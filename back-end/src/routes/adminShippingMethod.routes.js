@@ -5,11 +5,11 @@ import {
   updateShippingMethodController,
   deleteShippingMethodController,
 } from "../controllers/adminShippingMethod.controller.js";
-import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
+import { requireAuth, requirePermission } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.use(requireAuth, requireAdmin);
+router.use(requireAuth, requirePermission("MANAGE_SHIPPING_SETTINGS"));
 
 router.get("/", getAdminShippingMethodsController);
 router.post("/", createShippingMethodController);
