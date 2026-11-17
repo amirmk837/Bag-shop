@@ -1,5 +1,6 @@
 import prisma from "../config/prisma.js";
 import { hashPassword, isValidPassword } from "./auth.service.js";
+import { hardDeleteUser } from "./user.service.js";
 import { ADMIN_PERMISSIONS } from "../middlewares/authorization.middleware.js";
 
 const STAFF_SELECT = {
@@ -43,7 +44,7 @@ const ensureAnotherActiveSuperAdmin = async (tx) => {
 
 export const listManagedAdmins = async () => {
   const items = await prisma.user.findMany({
-    where: { role: { in: ["ADMIN", "ADMIN_STAFF"] }, deletedAt: null },
+    where: { OR: [{ role: "ADMIN", deletedAt: null }, { role: "ADMIN_STAFF" }] },
     select: STAFF_SELECT,
     orderBy: [{ role: "asc" }, { createdAt: "desc" }],
   });
@@ -137,16 +138,13 @@ export const updateManagedStaff = async ({ targetId, actorId, permissions, isAct
 export const deleteManagedStaff = async ({ targetId, actorId }) => {
   const id = parseId(targetId);
   if (id === Number(actorId)) fail("مدیر نمی‌تواند حساب خودش را حذف کند.", 403);
-  return prisma.$transaction(async (tx) => {
-    const target = await tx.user.findUnique({ where: { id }, select: { id: true, role: true, username: true } });
-    if (!target || target.role !== "ADMIN_STAFF") fail("فقط حساب مدیر محدود از این بخش قابل حذف است.", 404);
-    await tx.user.delete({ where: { id } });
-    await tx.adminAuditLog.create({
-      data: { adminId: Number(actorId), action: "ADMIN_DELETED", targetType: "ADMIN", targetId: id, details: { previousRole: "ADMIN_STAFF", username: target.username } },
-    });
-    return { id, deleted: true };
+  const target = await prisma.user.findUnique({
+    where: { id },
+    select: { id: true, role: true },
   });
+  if (!target || target.role !== "ADMIN_STAFF") {
+    fail("فقط حساب مدیر محدود از این بخش قابل حذف است.", 404);
+  }
+  // Reuse the established deletion workflow so linked orders are anonymized safely.
+  return hardDeleteUser(id, actorId, "ADMIN");
 };
-
-// Exported for reuse by user.service's last-super-admin protections.
-export { ensureAnotherActiveSuperAdmin };
