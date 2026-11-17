@@ -26,7 +26,12 @@ const LABELS = {
 
 const emptyForm = { username: "", phone: "", password: "", permissions: [] };
 
-export default function AdminAdmins() {\n  const { user } = useAuth();\n  if (user?.role !== "ADMIN") return <Navigate to="/admin" replace />;
+export default function AdminAdmins() {
+  const { user } = useAuth();
+  return user?.role === "ADMIN" ? <AdminAdminsContent /> : <Navigate to="/admin" replace />;
+}
+
+function AdminAdminsContent() {
   const [data, setData] = useState({ items: [], permissions: [], summary: {} });
   const [form, setForm] = useState(emptyForm);
   const [editing, setEditing] = useState(null);
