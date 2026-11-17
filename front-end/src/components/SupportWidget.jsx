@@ -54,7 +54,7 @@ const getTehranSupportStatus = (hours, timestamp) => {
   return now >= day.start && now < day.end;
 };
 
-const SupportWidget = () => {
+const SupportWidget = ({ initialOpen = false }) => {
   const { user, loading: authLoading } = useAuth();
   const customer = !authLoading && user?.role === "USER" ? user : null;
   return <SupportWidgetContent key={customer?.id ?? (authLoading ? "loading" : "guest")} user={customer} authLoading={authLoading} />;
@@ -63,7 +63,7 @@ const SupportWidget = () => {
 const SupportWidgetContent = ({ user, authLoading }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(initialOpen);
   const [tickets, setTickets] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [ticket, setTicket] = useState(null);
