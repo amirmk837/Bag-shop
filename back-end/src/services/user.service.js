@@ -452,7 +452,7 @@ export const updateUser = async ({
 
     const actorIsSuperAdmin = actorRole === "ADMIN";
     const targetIsAdmin = ["ADMIN", "ADMIN_STAFF"].includes(existingUser.role);
-    if (!actorIsSuperAdmin && (targetIsAdmin || role !== undefined || permissions !== undefined || isActive !== undefined)) {
+    if (!actorIsSuperAdmin && (targetIsAdmin || role !== undefined || permissions !== undefined)) {
       throw new Error("تغییر نقش، مجوز یا وضعیت حساب‌های مدیریتی فقط برای مدیر کل مجاز است.");
     }
 
