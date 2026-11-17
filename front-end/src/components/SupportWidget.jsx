@@ -76,9 +76,12 @@ const SupportWidgetContent = ({ user, authLoading }) => {
   const [clock, setClock] = useState(() => Date.now());
 
   useEffect(() => {
+    if (!open) return undefined;
+
+    setClock(Date.now());
     const timer = window.setInterval(() => setClock(Date.now()), 60000);
     return () => window.clearInterval(timer);
-  }, []);
+  }, [open]);
 
   const supportStatus = useMemo(
     () => getTehranSupportStatus(settings.supportHours, clock),
@@ -119,7 +122,10 @@ const SupportWidgetContent = ({ user, authLoading }) => {
     }
   }, []);
 
-  useEffect(() => { void loadSettings(); }, [loadSettings]);
+  // Public support settings are not needed until the customer opens the widget.
+  useEffect(() => {
+    if (open) void loadSettings();
+  }, [open, loadSettings]);
 
   useEffect(() => {
     if (!open || !user) return undefined;
