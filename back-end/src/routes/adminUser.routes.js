@@ -7,19 +7,19 @@ import {
   updateUserController,
   deleteUserController,
 } from "../controllers/user.controller.js";
-import { requireAuth, requireAdmin } from "../middlewares/auth.middleware.js";
+import { requireAuth, requireAdmin, requirePermission } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
 // تمام این بخش فقط برای ADMIN است.
-router.use(requireAuth, requireAdmin);
+router.use(requireAuth);
 
-router.get("/", getUsersController);
+router.get("/", requirePermission("VIEW_CUSTOMERS"), getUsersController);
 
-router.get("/:id", getUserDetailController);
+router.get("/:id", requirePermission("VIEW_CUSTOMERS"), getUserDetailController);
 
-router.patch("/:id", updateUserController);
+router.patch("/:id", requireAdmin, updateUserController);
 
-router.delete("/:id", deleteUserController);
+router.delete("/:id", requireAdmin, deleteUserController);
 
 export default router;
