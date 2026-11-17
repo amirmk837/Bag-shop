@@ -62,6 +62,7 @@ export const updateUserController = async (req, res) => {
     const updatedUser = await updateUser({
       targetUserId: req.params.id,
       actorUserId: req.user.id,
+      actorRole: req.user.role,
       role: req.body.role,
       permissions: req.body.permissions,
       isActive: req.body.isActive,
@@ -89,7 +90,7 @@ export const updateUserController = async (req, res) => {
 // =========================================
 export const deleteUserController = async (req, res) => {
   try {
-    const deletedUser = await hardDeleteUser(req.params.id, req.user.id);
+    const deletedUser = await hardDeleteUser(req.params.id, req.user.id, req.user.role);
 
     return res.status(200).json({
       message: "حساب کاربر به‌صورت دائمی حذف شد؛ سوابق مالی سفارش‌ها بدون اطلاعات شخصی باقی ماند.",
