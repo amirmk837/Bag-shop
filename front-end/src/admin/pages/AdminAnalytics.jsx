@@ -104,12 +104,15 @@ export default function AdminAnalytics() {
     setLoading(true);
     setError("");
     try {
-      const [analytics, loggedUsers] = await Promise.all([
-        getAnalyticsReport(days),
-        getLoggedInUsers({ page: userPage, pageSize: 20 }),
-      ]);
+      const analytics = await getAnalyticsReport(days);
       setReport(analytics);
-      setUsers(loggedUsers);
+
+      try {
+        setUsers(await getLoggedInUsers({ page: userPage, pageSize: 20 }));
+      } catch {
+        setUsers(null);
+      }
+
       try {
         setRecentPages(await getRecentAdminPageVisits());
       } catch {
@@ -201,9 +204,10 @@ export default function AdminAnalytics() {
         </>
       )}
 
+      {users && (
       <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#151d2a]">
         <div className="border-b border-white/10 p-4">
-          <h3 className="font-bold">کاربرانی که وارد حساب شده‌اند</h3>
+          <h3 className="font-bold">مدیرانی که وارد حساب شده‌اند</h3>
           <p className="mt-1 text-xs text-zinc-500">مرتب‌شده بر اساس آخرین ورود موفق ثبت‌شده</p>
         </div>
         <div className="overflow-x-auto">
@@ -232,6 +236,7 @@ export default function AdminAnalytics() {
           </div>
         )}
       </section>
+      )}
 
       {recentPages && (
         <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#151d2a]">
