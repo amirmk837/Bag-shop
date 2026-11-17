@@ -47,8 +47,6 @@ const AdminFooterTrustBadges = () => {
 
   const loadBadges = async () => {
     try {
-      setLoading(true);
-      setError("");
       const data = await getAdminFooterTrustBadges();
       setBadges(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -207,7 +205,7 @@ const AdminFooterTrustBadges = () => {
 
         <button
           type="button"
-          onClick={loadBadges}
+          onClick={() => { setLoading(true); setError(""); void loadBadges(); }}
           disabled={loading}
           className="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-4 py-3 text-sm hover:bg-zinc-800 disabled:opacity-50"
         >
