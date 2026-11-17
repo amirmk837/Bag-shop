@@ -31,6 +31,8 @@ const DiscountProductCard = ({ product }) => {
             src={image}
             alt={product.title || "محصول تخفیف‌دار"}
             loading="lazy"
+            decoding="async"
+            fetchPriority="low"
             className="h-full w-full object-contain p-4 transition-transform duration-500 ease-out group-hover:scale-110 sm:p-5"
           />
         ) : (
