@@ -4,6 +4,7 @@ import { Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import { lazy, Suspense, useEffect } from "react";
 import { trackPageView } from "./services/siteAnalyticsApi";
+import { trackAdminPageVisit } from "./services/adminAnalyticsApi";
 import DeferredMount from "./components/DeferredMount";
 import SupportWidget from "./components/SupportWidget";
 
@@ -421,8 +422,11 @@ const App = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (!location.pathname.startsWith("/admin"))
+    if (location.pathname.startsWith("/admin")) {
+      trackAdminPageVisit(location.pathname);
+    } else {
       trackPageView(location.pathname);
+    }
   }, [location.pathname]);
 
   const isAdminArea = location.pathname.startsWith("/admin");
